@@ -167,7 +167,7 @@ in
         "ShowConnected"
         "!ExitItem"
       ];
-   
+
       services.hypridle.enable = true;
       programs = {
         waybar.enable = true;
@@ -251,10 +251,8 @@ in
                 "Super+Return".action = spawn "wofi";
                 "Super+Shift+L".action = spawn "loginctl" "lock-session";
 
-                 
                 "Super+S".action = sh "swaync-client -t";
                 "Super+A".action = sh "cliphist list | wofi -S dmenu | cliphist decode | wl-copy";
-
 
                 "XF86AudioMute".action = sh "swayosd-client --output-volume=mute-toggle";
                 "XF86AudioPlay".action = sh "playerctl play-pause";
@@ -268,49 +266,53 @@ in
                 "Super+X".action = close-window;
 
                 # Focus (movement)
-                "Super+H".action       = focus-column-or-monitor-left;
-                "Super+J".action       = focus-window-or-workspace-down;
-                "Super+K".action       = focus-window-or-workspace-up;
-                "Super+L".action       = focus-column-or-monitor-right;
-                "Super+Left".action    = focus-monitor-left;
-                "Super+Down".action    = focus-monitor-down;
-                "Super+Up".action      = focus-monitor-up;
-                "Super+Right".action   = focus-monitor-right;
-                "Super+Home".action    = focus-column-first;
-                "Super+End".action     = focus-column-last;
+                "Super+H".action = focus-column-or-monitor-left;
+                "Super+J".action = focus-window-or-workspace-down;
+                "Super+K".action = focus-window-or-workspace-up;
+                "Super+L".action = focus-column-or-monitor-right;
+                "Super+Left".action = focus-monitor-left;
+                "Super+Down".action = focus-monitor-down;
+                "Super+Up".action = focus-monitor-up;
+                "Super+Right".action = focus-monitor-right;
+                "Super+Home".action = focus-column-first;
+                "Super+End".action = focus-column-last;
 
                 # Move windows
-                "Super+Ctrl+H".action    = move-column-left-or-to-monitor-left;
-                "Super+Ctrl+J".action    = move-window-down-or-to-workspace-down;
-                "Super+Ctrl+K".action    = move-window-up-or-to-workspace-up;
-                "Super+Ctrl+L".action    = move-column-right-or-to-monitor-right;
+                "Super+Ctrl+H".action = move-column-left-or-to-monitor-left;
+                "Super+Ctrl+J".action = move-window-down-or-to-workspace-down;
+                "Super+Ctrl+K".action = move-window-up-or-to-workspace-up;
+                "Super+Ctrl+L".action = move-column-right-or-to-monitor-right;
                 "Super+Ctrl+Left".action = move-column-to-monitor-left;
                 "Super+Ctrl+Down".action = move-column-to-monitor-down;
-                "Super+Ctrl+Up".action   = move-column-to-monitor-up;
-                "Super+Ctrl+Right".action= move-column-to-monitor-right;
+                "Super+Ctrl+Up".action = move-column-to-monitor-up;
+                "Super+Ctrl+Right".action = move-column-to-monitor-right;
                 "Super+Ctrl+Home".action = move-column-to-first;
-                "Super+Ctrl+End".action  = move-column-to-last;
+                "Super+Ctrl+End".action = move-column-to-last;
 
                 # Overview toggle
                 "Super+Ctrl+Space".action = toggle-overview;
+                # Rebinding the Copilot-Key: Touchpad works, even tho wev says it should be Assistant
+                "Super+Shift+XF86TouchpadOff".action = toggle-overview;
+                # "XF86Assistant".action = toggle-overview;
+                # "Super+Shift+XF86Assistant".action = toggle-overview;
 
                 # Mouse wheel – switch workspace (cooldown 150 ms)
-                "Super+WheelScrollDown".action      = focus-workspace-down;
-                "Super+WheelScrollUp".action        = focus-workspace-up;
+                "Super+WheelScrollDown".action = focus-workspace-down;
+                "Super+WheelScrollUp".action = focus-workspace-up;
                 "Super+Ctrl+WheelScrollDown".action = move-column-to-workspace-down;
-                "Super+Ctrl+WheelScrollUp".action   = move-column-to-workspace-up;
+                "Super+Ctrl+WheelScrollUp".action = move-column-to-workspace-up;
 
                 # Mouse wheel – switch column
-                "Super+WheelScrollRight".action      = focus-column-right;
-                "Super+WheelScrollLeft".action       = focus-column-left;
+                "Super+WheelScrollRight".action = focus-column-right;
+                "Super+WheelScrollLeft".action = focus-column-left;
                 "Super+Ctrl+WheelScrollRight".action = move-column-right;
-                "Super+Ctrl+WheelScrollLeft".action  = move-column-left;
+                "Super+Ctrl+WheelScrollLeft".action = move-column-left;
 
                 # Mouse wheel + Shift (horizontal scrolling)
-                "Super+Shift+WheelScrollDown".action      = focus-column-right;
-                "Super+Shift+WheelScrollUp".action        = focus-column-left;
+                "Super+Shift+WheelScrollDown".action = focus-column-right;
+                "Super+Shift+WheelScrollUp".action = focus-column-left;
                 "Super+Ctrl+Shift+WheelScrollDown".action = move-column-right;
-                "Super+Ctrl+Shift+WheelScrollUp".action   = move-column-left;
+                "Super+Ctrl+Shift+WheelScrollUp".action = move-column-left;
 
                 # Workspaces
                 "Super+1".action = focus-workspace 1;
@@ -322,42 +324,42 @@ in
                 "Super+7".action = focus-workspace 7;
                 "Super+8".action = focus-workspace 8;
                 "Super+9".action = focus-workspace 9;
-                "Super+Tab".action   = focus-workspace-previous;
+                "Super+Tab".action = focus-workspace-previous;
 
                 # Consume or expel window from column
-                "Super+BracketLeft".action  = consume-or-expel-window-left;
+                "Super+BracketLeft".action = consume-or-expel-window-left;
                 "Super+BracketRight".action = consume-or-expel-window-right;
 
                 # Individual window in column
-                "Super+Comma".action  = consume-window-into-column;
+                "Super+Comma".action = consume-window-into-column;
                 "Super+Period".action = expel-window-from-column;
 
                 # Presets & sizing
-                "Super+R".action       = switch-preset-column-width;
+                "Super+R".action = switch-preset-column-width;
                 "Super+Shift+R".action = switch-preset-window-height;
-                "Super+Ctrl+R".action  = reset-window-height;
-                "Super+F".action       = maximize-column;
+                "Super+Ctrl+R".action = reset-window-height;
+                "Super+F".action = maximize-column;
                 "Super+Shift+F".action = fullscreen-window;
-                "Super+Ctrl+F".action  = expand-column-to-available-width;
-                "Super+C".action       = center-column;
+                "Super+Ctrl+F".action = expand-column-to-available-width;
+                "Super+C".action = center-column;
 
                 # Fine adjustments
-                "Super+Minus".action       = set-column-width "-10%";
-                "Super+Equal".action       = set-column-width "+10%";
+                "Super+Minus".action = set-column-width "-10%";
+                "Super+Equal".action = set-column-width "+10%";
                 "Super+Shift+Minus".action = set-window-height "-10%";
                 "Super+Shift+Equal".action = set-window-height "+10%";
 
                 # Floating vs. tiling
-                "Super+V".action       = toggle-window-floating;
+                "Super+V".action = toggle-window-floating;
                 "Super+Shift+V".action = switch-focus-between-floating-and-tiling;
 
                 # Tabbed column display
                 "Super+W".action = toggle-column-tabbed-display;
 
                 # Screenshots
-                "Super+Shift+P".action.screenshot = [];
-                "Print".action.screenshot = [];
-                "Alt+Print".action.screenshot-window = [];
+                "Super+Shift+P".action.screenshot = [ ];
+                "Print".action.screenshot = [ ];
+                "Alt+Print".action.screenshot-window = [ ];
 
                 # Session & power
                 "Ctrl+Alt+Delete".action = quit;
@@ -394,11 +396,15 @@ in
                   # aqua0
                   # { color = "rgba(104, 157, 106, 1)"; };
                   # orange (ayu_mirage)
-                  { color = "#ffad66"; };
+                  {
+                    color = "#ffad66";
+                  };
                 inactive =
                   # fg0
-                  # { color = "rgba(235, 219, 178, 1)"; }; 
-                  { color = "#1f2439"; };
+                  # { color = "rgba(235, 219, 178, 1)"; };
+                  {
+                    color = "#1f2439";
+                  };
 
               };
 
@@ -417,12 +423,12 @@ in
                 active = {
                   # aqua0
                   # color = "rgba(104, 157, 106, 1)";
-                  color = "#ffad66"; 
+                  color = "#ffad66";
                 };
                 inactive = {
                   # fg0
-                # color = "rgba(251, 241, 199, 1)";
-                   color = "#1f2439"; 
+                  # color = "rgba(251, 241, 199, 1)";
+                  color = "#1f2439";
                 };
                 length.total-proportion = 1.0;
               };
