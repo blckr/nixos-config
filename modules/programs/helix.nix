@@ -27,7 +27,10 @@ let
   '';
 in
 {
-  environment.systemPackages = with pkgs; [ lazygit rust-analyzer ];
+  environment.systemPackages = with pkgs; [
+    lazygit
+    rust-analyzer
+  ];
   environment.variables.EDITOR = "hx";
   environment.variables.VISUAL = "hx";
 
@@ -121,6 +124,7 @@ in
             palette = {
               orange = "#ce6d22ff";
               yellow = "#ff9500";
+              green = "#08ad10";
             };
           };
         };

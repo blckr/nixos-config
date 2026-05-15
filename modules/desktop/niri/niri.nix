@@ -202,7 +202,14 @@ lib.mkIf config.modules.desktop.enable {
                 # { command = sh ++ [ "systemctl --user start swaync.service" ]; }
                 { command = sh ++ [ "systemctl --user start fnott.service" ]; }
                 { command = sh ++ [ "systemctl --user start kanshi.service" ]; }
-                { command = [ "ibus-daemon" "--wayland" "--daemonize" "--replace" ]; }
+                {
+                  command = [
+                    "ibus-daemon"
+                    "--wayland"
+                    "--daemonize"
+                    "--replace"
+                  ];
+                }
                 { command = sh ++ [ "sleep 1 && blueman-applet" ]; }
                 { command = [ "nm-applet" ]; }
                 {
@@ -278,9 +285,6 @@ lib.mkIf config.modules.desktop.enable {
                 "Super+Shift+S".action = spawn "script-selector";
                 "Super+N".action = spawn "fnottctl" "dismiss";
 
-                # "Super+S".action = sh "swaync-client -t";
-                "Super+A".action = spawn "walker" "--modules" "clipboard";
-
                 "XF86AudioMute".action = sh "swayosd-client --output-volume=mute-toggle";
                 "XF86AudioPlay".action = sh "playerctl play-pause";
                 "XF86AudioPrev".action = sh "playerctl previous";
@@ -316,6 +320,7 @@ lib.mkIf config.modules.desktop.enable {
                 "Super+Ctrl+Home".action = move-column-to-first;
                 "Super+Ctrl+End".action = move-column-to-last;
 
+                # "Super+Space".action = toggle-overview;
                 # Overview toggle
                 "Super+Ctrl+Space".action = toggle-overview;
                 # Rebinding the Copilot-Key: Touchpad works, even tho wev says it should be Assistant
@@ -396,7 +401,7 @@ lib.mkIf config.modules.desktop.enable {
             gestures.hot-corners.enable = true;
 
             layout = {
-              gaps = 0;
+              gaps = 6;
               default-column-width.proportion = 0.5;
               insert-hint.display = {
                 color = "rgba(28, 28, 44, 30%)";
@@ -418,7 +423,7 @@ lib.mkIf config.modules.desktop.enable {
               # Creates the Border around each windowpreset-window-heights
               border = {
                 enable = true;
-                width = 3;
+                width = 2;
                 active =
                   # aqua0
                   # { color = "rgba(104, 157, 106, 1)"; };
