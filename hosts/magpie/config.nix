@@ -22,6 +22,7 @@
       vscode.enable = true;
       fnott.enable = true;
       # swaync.enable = true;
+      container.enable = true;
     };
   };
 
