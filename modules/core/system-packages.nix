@@ -54,6 +54,9 @@
     cyme
     kmon
 
+    #tui
+    impala
+
     openssl
     openconnect
     networkmanager-openconnect

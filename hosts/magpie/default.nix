@@ -40,8 +40,6 @@
     thunderbird
     zotero
 
-    hoard
-
     eog
     evince
     gnome-sound-recorder
@@ -50,6 +48,8 @@
     cargo
     tldr
     python3
+
+    yazi
   ];
 
   programs.nix-ld.enable = true;

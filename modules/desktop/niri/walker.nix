@@ -165,9 +165,9 @@ in
 
               .box-wrapper {
                 background-color: @bg;
-                border: 3px solid @accent;
+                border: 2px solid @accent;
                 padding: 20px;
-                border-radius: 0px;
+                border-radius: 4px;
                 box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
                 min-width: 600px;
                 min-height: 400px;
@@ -178,7 +178,7 @@ in
                 background-color: #191e2a;
                 padding: 15px;
                 margin-bottom: 20px;
-                border: 2px solid @accent;
+                border: 1px solid @accent;
                 caret-color: @accent;
                 font-size: 18px;
               }
@@ -201,7 +201,7 @@ in
               child:selected .item-box,
               row:selected .item-box {
                 background-color: @selection;
-                border-left: 5px solid @accent;
+                border-left: 2px solid @accent;
               }
 
               .item-text {

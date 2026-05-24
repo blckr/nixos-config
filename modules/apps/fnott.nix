@@ -33,10 +33,10 @@ in
         (pkgs.writeShellScriptBin "fnott-toggle-dnd" ''
           STATE_FILE="$HOME/.cache/fnott-paused"
           if [ -f "$STATE_FILE" ]; then
-            fnottctl unpause
+            ${pkgs.fnott}/bin/fnottctl unpause
             rm "$STATE_FILE"
           else
-            fnottctl pause
+            ${pkgs.fnott}/bin/fnottctl pause
             touch "$STATE_FILE"
           fi
         '')
@@ -50,8 +50,9 @@ in
             stacking-order = "top-down";
             min-width = 500;
             max-width = 500;
-            edge-margin-vertical = 10;
-            edge-margin-horizontal = 10;
+            edge-margin-vertical = 12;
+            layer = "top";
+            edge-margin-horizontal = 20;
             notification-margin = 8;
             icon-theme = "Papirus";
             max-icon-size = 48;
@@ -69,6 +70,7 @@ in
             summary-color = "${colors.fg}ff";
             body-font = "JetBrainsMono Nerd Font:size=11";
             body-color = "${colors.fg}ff";
+            border-radius = 4;
 
             # Persistent notifications
             default-timeout = 0;

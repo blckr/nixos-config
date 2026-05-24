@@ -83,7 +83,7 @@ lib.mkIf config.modules.desktop.enable {
         after = [ "graphical-session.target" ];
         serviceConfig = {
           Type = "simple";
-          ExecStart = "${pkgs.swayosd}/bin/swayosd-server";
+          ExecStart = "${pkgs.swayosd}/bin/swayosd-server -s /home/${username}/.config/swayosd/style.css";
           Restart = "on-failure";
           RestartSec = 2;
           StandardOutput = "journal";
@@ -155,6 +155,49 @@ lib.mkIf config.modules.desktop.enable {
   home-manager.users.${username} =
     { pkgs, config, ... }:
     {
+      xdg.configFile."swayosd/style.css".text = ''
+        /* The main OSD window container */
+        window#osd {
+          /* Adjust sizes to make it wide and short */
+          min-width: 240px;          /* Makes it wider */
+          min-height: 50px;          /* Makes it shorter/smaller vertically */
+          padding: 8px 16px;         /* Keeps padding slim */
+          
+          border-radius: 4px;        /* Radius of 4 */
+          border: 2px solid #ffad66;   /* Orange border, 2px wide */
+          background-color: #1f2439; /* Dark blue background */
+        }
+
+        /* Container that wraps the icon and progress bar together */
+        box#osd_box {
+          /* Swaps layout from stacked (vertical) to a sleek horizontal line */
+          orientation: horizontal;   
+          spacing: 14px;             /* Space between the icon and the bar */
+        }
+
+        /* The volume/brightness level container (the slider track) */
+        scale trough {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-radius: 999px;
+          min-height: 6px;           /* Slim bar track */
+          min-width: 160px;          /* Stretches the progress bar wider */
+        }
+
+        /* The actual active fill/progress indicator */
+        scale progress {
+          background-color: #ffffff; /* White loudness-bar */
+          border-radius: 999px;
+        }
+
+        /* Styling for the icons */
+        image {
+          color: #ffffff;
+          /* Remove bottom margin since it's now side-by-side instead of stacked */
+          margin-bottom: 0px;        
+          -gtk-icon-transform: scale(0.7); /* Makes the icon slightly smaller to match */
+        }
+      '';
+
       dconf.settings."org/blueman/general".plugin-list = [
         "StatusIcon"
         "ShowConnected"
@@ -173,6 +216,7 @@ lib.mkIf config.modules.desktop.enable {
             screenshot-path = "~/Nextcloud/Photos/Sammlungen/Screenshots-Desktop/%Y-%m-%d-%H%M%S.png";
 
             environment = {
+              NIRI_STRUT_IN_FRACTIONAL_SCALE_AS_INTEGER = "1";
               ELM_DISPLAY = "wl";
               GDK_BACKEND = "wayland,x11";
               MOZ_ENABLE_WAYLAND = "1"; # Run Firefox under Wayland
@@ -401,7 +445,7 @@ lib.mkIf config.modules.desktop.enable {
             gestures.hot-corners.enable = true;
 
             layout = {
-              gaps = 6;
+              gaps = 4;
               default-column-width.proportion = 0.5;
               insert-hint.display = {
                 color = "rgba(28, 28, 44, 30%)";
@@ -419,6 +463,15 @@ lib.mkIf config.modules.desktop.enable {
                 { proportion = 2.0 / 3.0; }
                 { proportion = 1.0; }
               ];
+
+              struts = {
+                left = 8;
+                right = 8;
+              };
+
+              # shadow = {
+              #   enable = true;
+              # };
 
               # Creates the Border around each windowpreset-window-heights
               border = {
@@ -448,10 +501,11 @@ lib.mkIf config.modules.desktop.enable {
                 enable = true;
                 place-within-column = true;
                 width = 8;
-                corner-radius = 0;
-                gap = 0;
-                gaps-between-tabs = 0;
-                position = "bottom";
+                corner-radius = 4;
+                gap = 4;
+                gaps-between-tabs = 4;
+                # position = "bottom";
+                position = "left";
                 active = {
                   # aqua0
                   # color = "rgba(104, 157, 106, 1)";
@@ -460,7 +514,8 @@ lib.mkIf config.modules.desktop.enable {
                 inactive = {
                   # fg0
                   # color = "rgba(251, 241, 199, 1)";
-                  color = "#1f2439";
+                  # color = "#1f2439";
+                  color = "#ffffff";
                 };
                 length.total-proportion = 1.0;
               };
@@ -473,7 +528,7 @@ lib.mkIf config.modules.desktop.enable {
               {
                 geometry-corner-radius =
                   let
-                    radius = 0.0;
+                    radius = 4.0;
                   in
                   {
                     bottom-left = radius;

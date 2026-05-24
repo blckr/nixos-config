@@ -31,22 +31,25 @@
           }
           {
             profile = {
-              # Laptop screen below external Screen
-              name = "home";
+              name = "home-3";
               outputs = [
                 {
-                  criteria = "Lenovo Group Limited 0x414B Unknown";
-                  mode = "2880x1800";
-                  status = "enable";
-                  scale = 1.5;
-                  position = "${builtins.toString ((2560 - 1920) / 2)},${builtins.toString 1440}";
+                  criteria = "Dell Inc. DELL S2725QS DQHP364";
+                  mode = "2560x1440@119.998";
+                  scale = 1.0;
+                  position = "2560,0";
                 }
                 {
                   criteria = "Lenovo Group Limited Q27q-20 UPP023CY";
-                  mode = "2560x1440";
-                  status = "enable";
+                  mode = "2560x1440@74.991";
                   scale = 1.0;
                   position = "0,0";
+                }
+                {
+                  criteria = "Lenovo Group Limited 0x414B Unknown";
+                  mode = "2880x1800@120.000";
+                  scale = 1.5; # 2880 / 1.5 = 1920 logische Breite
+                  position = "0,1440";
                 }
               ];
             };
