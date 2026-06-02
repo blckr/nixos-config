@@ -18,10 +18,10 @@ in
       packages = [ pkgs.android-studio ];
       extraGroups = [
         "kvm"
-        "adbusers"
+        # "adbusers"
       ];
     };
 
-    programs.adb.enable = true;
+    # programs.adb.enable = true;
   };
 }
