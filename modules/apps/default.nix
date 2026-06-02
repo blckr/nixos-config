@@ -6,7 +6,7 @@
     ./firefox.nix
     ./mullvad.nix
     ./fnott.nix
-    ./swaync.nix
+    # ./swaync.nix
     ./vscode.nix
     ./wireshark.nix
     ./zen-browser.nix

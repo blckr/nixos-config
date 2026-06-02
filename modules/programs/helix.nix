@@ -1,30 +1,11 @@
-{ username, pkgs, ... }:
-
+{
+  username,
+  pkgs,
+  config,
+  ...
+}:
 let
-  helixFullConfig = ''
-    theme = "ayu_mirage_transparent"
-
-    [editor]
-    lsp.display-inlay-hints = true
-    line-number = "relative"
-    bufferline = "always"
-
-    [editor.soft-wrap]
-    enable = true
-    max-wrap = 25
-
-    [editor.whitespace]
-    render = "all"
-
-    [editor.whitespace.characters]
-    tab = "→"
-    space = "·"
-
-    [keys.normal]
-    "C-n" = ":sh ~/.config/helix/open-blame-github %{buffer_name} %{cursor_line}"
-    "C-v" = ":sh git log -n 5 --format='format:%%h (%%an: %%ar) %%s' --no-patch -L%{cursor_line},+1:%{buffer_name}"
-    "C-m" = [ ":write-all", ":new", ":insert-output lazygit", ":buffer-close!", ":redraw", ":reload-all" ]
-  '';
+  themeData = config.modules.theme.data;
 in
 {
   environment.systemPackages = with pkgs; [
@@ -35,18 +16,73 @@ in
   environment.variables.VISUAL = "hx";
 
   home-manager.users.${username} =
-    { config, pkgs, ... }:
+    { ... }:
     {
       programs.helix = {
         enable = true;
         defaultEditor = true;
+
+        settings = {
+          theme = "transparent_theme";
+
+          editor = {
+            auto-format = true;
+            completion-replace = true;
+            trim-final-newlines = true;
+            trim-trailing-whitespace = true;
+            end-of-line-diagnostics = "hint";
+            inline-diagnostics = {
+              cursor-line = "hint";
+              other-lines = "warning";
+            };
+            lsp.display-inlay-hints = true;
+
+            whitespace = {
+              render = "all";
+
+              characters = {
+                tab = "→";
+                space = "·";
+              };
+            };
+
+            line-number = "relative";
+            bufferline = "always";
+
+            soft-wrap = {
+              enable = true;
+              max-wrap = 25;
+              max-indent-retain = 5;
+            };
+
+            cursor-shape = {
+              normal = "block";
+              insert = "bar";
+              select = "block";
+            };
+          };
+
+          keys.normal = {
+            "C-n" = ":sh ~/.config/helix/open-blame-github %{buffer_name} %{cursor_line}";
+            "C-v" =
+              ":sh git log -n 5 --format='format:%%h (%%an: %%ar) %%s' --no-patch -L%{cursor_line},+1:%{buffer_name}";
+            "C-m" = [
+              ":write-all"
+              ":new"
+              ":insert-output lazygit"
+              ":buffer-close!"
+              ":redraw"
+              ":reload-all"
+            ];
+          };
+        };
 
         languages = {
           language = [
             {
               name = "nix";
               formatter = {
-                command = "nixfmt";
+                command = "nixfmt-rfc-style";
               };
               auto-format = true;
             }
@@ -90,8 +126,8 @@ in
         };
 
         themes = {
-          ayu_mirage_transparent = {
-            "inherits" = "ayu_mirage";
+          transparent_theme = {
+            "inherits" = themeData.helix-theme;
             "ui.background" = { };
             "ui.linenr" = "gray";
             "ui.linenr.selected" = "foreground";
@@ -99,44 +135,10 @@ in
               fg = "gray";
             };
             "ui.virtual.inlay-hint" = {
-              fg = "#5c6773";
-            };
-            "ui.selection" = {
-              bg = "#264563";
-            };
-          };
-
-          ayu_light_transparent = {
-            "inherits" = "ayu_light";
-            "ui.background" = { };
-            "ui.linenr" = "gray";
-            "ui.linenr.selected" = "foreground";
-            "ui.whitespace" = {
-              fg = "gray";
-            };
-            "ui.virtual.inlay-hint" = {
-              fg = "#8692a0ff";
-            };
-            "ui.selection" = {
-              bg = "#b0c4b1";
-            };
-
-            palette = {
-              orange = "#ce6d22ff";
-              yellow = "#ff9500";
-              green = "#08ad10";
+              fg = "#${themeData.colors.gray}";
             };
           };
         };
-      };
-
-      xdg.configFile."helix/config-base-nix.toml" = {
-        text = helixFullConfig;
-        onChange = ''
-          rm -f ~/.config/helix/config.toml
-          cp ~/.config/helix/config-base-nix.toml ~/.config/helix/config.toml
-          chmod 644 ~/.config/helix/config.toml
-        '';
       };
 
       home.file.".config/helix/open-blame-github" = {

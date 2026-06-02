@@ -9,6 +9,7 @@
 }:
 lib.mkIf config.modules.desktop.enable (
   let
+    themeData = config.modules.theme.data;
     ppdEnabled = config.modules.powerManagement.profile == "ppd";
     fnottEnabled = config.modules.apps.fnott.enable == true;
     waybarSettings = [
@@ -130,15 +131,6 @@ lib.mkIf config.modules.desktop.enable (
             ];
           };
           "on-click" = "pwvucontrol";
-          "menu" = "on-click-right";
-          "menu-file" = "~/.config/waybar/audio_menu.xml";
-          "menu-actions" = {
-            "toggle-input" = "wpctl set-mute @DEFAULT_SOURCE@ toggle";
-            "toggle-output" = "wpctl set-mute @DEFAULT_SINK@ toggle";
-            "settings" = "nohup pwvucontrol > /dev/null 2>&1 & disown && exit";
-            "patchbay" = "nohup helvum > /dev/null 2>&1 & disown && exit";
-            "effects" = "nohup easyeffects > /dev/null 2>&1 & disown && exit";
-          };
         };
         "idle_inhibitor" = {
           "format" = "{icon}";
@@ -274,7 +266,6 @@ lib.mkIf config.modules.desktop.enable (
     environment.systemPackages = with pkgs; [
       easyeffects
       pwvucontrol
-      helvum
       # swaynotificationcenter
       wttrbar
       playerctl
@@ -287,18 +278,6 @@ lib.mkIf config.modules.desktop.enable (
 
         # Files will be put in ~/.config/waybar which can be executed.
         xdg.configFile = {
-          "waybar/audio_menu.xml".text = ''
-            <?xml version="1.0" encoding="UTF-8"?>
-            <interface>
-              <object class="GtkMenu" id="menu">
-                <child><object class="GtkMenuItem" id="toggle-input"><property name="label">Toggle Input</property></object></child>
-                <child><object class="GtkMenuItem" id="toggle-output"><property name="label">Toggle Output</property></object></child>
-                <child><object class="GtkMenuItem" id="settings"><property name="label">Settings</property></object></child>
-                <child><object class="GtkMenuItem" id="patchbay"><property name="label">Patchbay</property></object></child>
-                <child><object class="GtkMenuItem" id="effects"><property name="label">Effects</property></object></child>
-              </object>
-            </interface>
-          '';
           "waybar/notify_menu.xml".text = ''
             <?xml version="1.0" encoding="UTF-8"?>
             <interface>
@@ -437,12 +416,12 @@ lib.mkIf config.modules.desktop.enable (
           # CSS-Styling for the Waybar
           style = ''
 
-            @define-color bg rgba(33,39,51, 0.9);
-            @define-color border rgba(104, 157, 106, 1);
-            @define-color text #cccac2;
+            @define-color bg #${themeData.ui_colors.bg};
+            @define-color border #${themeData.ui_colors.accent};
+            @define-color text #${themeData.ui_colors.fg};
 
-            @define-color warning #ffad66;
-            @define-color critical red;
+            @define-color warning #${themeData.ui_colors.accent};
+            @define-color critical #${themeData.colors.red};
 
             * {
               font-size: 10px;

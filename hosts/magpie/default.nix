@@ -24,7 +24,7 @@
     antigravity-fhs
     arduino-ide
     ausweisapp
-    bitwarden-desktop
+    # bitwarden-desktop
     element-desktop
     freecad
     fwupd # install Firmware updates

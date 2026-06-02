@@ -7,7 +7,8 @@
   ...
 }:
 let
-  bgImage = ./../../../pkgs/wallpaper/RedBlueMountain.png;
+  theme = config.modules.theme.data;
+  bgImage = theme.wallpaper;
 in
 lib.mkIf config.modules.desktop.enable {
   services = {
@@ -162,16 +163,16 @@ lib.mkIf config.modules.desktop.enable {
           min-width: 240px;          /* Makes it wider */
           min-height: 50px;          /* Makes it shorter/smaller vertically */
           padding: 8px 16px;         /* Keeps padding slim */
-          
+
           border-radius: 4px;        /* Radius of 4 */
-          border: 2px solid #ffad66;   /* Orange border, 2px wide */
-          background-color: #1f2439; /* Dark blue background */
+          border: 2px solid #${theme.ui_colors.accent};
+          background-color: #${theme.ui_colors.bg};
         }
 
         /* Container that wraps the icon and progress bar together */
         box#osd_box {
           /* Swaps layout from stacked (vertical) to a sleek horizontal line */
-          orientation: horizontal;   
+          orientation: horizontal;
           spacing: 14px;             /* Space between the icon and the bar */
         }
 
@@ -185,15 +186,15 @@ lib.mkIf config.modules.desktop.enable {
 
         /* The actual active fill/progress indicator */
         scale progress {
-          background-color: #ffffff; /* White loudness-bar */
+          background-color: #${theme.ui_colors.fg};
           border-radius: 999px;
         }
 
         /* Styling for the icons */
         image {
-          color: #ffffff;
+          color: #${theme.ui_colors.fg};
           /* Remove bottom margin since it's now side-by-side instead of stacked */
-          margin-bottom: 0px;        
+          margin-bottom: 0px;
           -gtk-icon-transform: scale(0.7); /* Makes the icon slightly smaller to match */
         }
       '';
@@ -480,15 +481,14 @@ lib.mkIf config.modules.desktop.enable {
                 active =
                   # aqua0
                   # { color = "rgba(104, 157, 106, 1)"; };
-                  # orange (ayu_mirage)
                   {
-                    color = "#ffad66";
+                    color = "#${theme.colors.accent}";
                   };
                 inactive =
                   # fg0
                   # { color = "rgba(235, 219, 178, 1)"; };
                   {
-                    color = "#1f2439";
+                    color = "#${theme.colors.bg_alt}";
                   };
 
               };
@@ -509,7 +509,7 @@ lib.mkIf config.modules.desktop.enable {
                 active = {
                   # aqua0
                   # color = "rgba(104, 157, 106, 1)";
-                  color = "#ffad66";
+                  color = "#${theme.colors.accent}";
                 };
                 inactive = {
                   # fg0
@@ -522,7 +522,7 @@ lib.mkIf config.modules.desktop.enable {
             };
             # bg1
             # overview.backdrop-color = "rgb(60,56,54)";
-            overview.backdrop-color = "#1f2439";
+            overview.backdrop-color = "#${theme.colors.bg}";
 
             window-rules = [
               {
@@ -554,6 +554,18 @@ lib.mkIf config.modules.desktop.enable {
                 matches = [
                   { is-window-cast-target = true; }
                 ];
+              }
+              {
+                matches = [
+                  { app-id = "spotify"; }
+                  { app-id = ".spotify-wrapped"; }
+                  # { app-id = "firefox"; }
+                ];
+                # background-effect = {
+                #   blur = true;
+                # };
+                opacity = 0.9;
+                # blur = true;
               }
             ];
           };

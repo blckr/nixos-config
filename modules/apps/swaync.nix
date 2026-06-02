@@ -200,33 +200,32 @@ in
           @define-color orange1              #fe8019;
           */
 
-          /* Ayu Mirage Colours ──────────────────────────────────────── */
-
-          @define-color bg0                  #212733;
-          @define-color bg1                  #30394a;
-          @define-color bg2                  #404c63;
-          @define-color bg3                  #515f7b;
-          @define-color fg0                  #cbccc6;
-          @define-color fg1                  #b8b9b4;
-          @define-color fg2                  #a6a7a3;
-          @define-color fg3                  #8a8b87;
-          @define-color gray                 #565b66;
-          @define-color dark-gray            #322843;
-          @define-color black                #1a1f29;
-          @define-color red0                 #f28779;
-          @define-color red1                 #ee6958;
-          @define-color green0               #d5ff80;
-          @define-color green1               #c9ff5c;
-          @define-color yellow0              #ffcc77;
-          @define-color yellow1              #ffc35c;
-          @define-color blue0                #73d0ff;
-          @define-color blue1                #5cc9ff;
-          @define-color purple0              #dfbfff;
-          @define-color purple1              #cc99ff;
-          @define-color aqua0                #444b55;
-          @define-color aqua1                #5b6471;
-          @define-color orange0              #ffad66;
-          @define-color orange1              #ff9d47;
+          /* Central Theme Colours ───────────────────────────────────────── */
+          @define-color bg0                  #${config.modules.theme.data.ui_colors.bg};
+          @define-color bg1                  #${config.modules.theme.data.ui_colors.bg_alt};
+          @define-color bg2                  #${config.modules.theme.data.ui_colors.bg_alt};
+          @define-color bg3                  #${config.modules.theme.data.ui_colors.gray};
+          @define-color fg0                  #${config.modules.theme.data.ui_colors.fg};
+          @define-color fg1                  #${config.modules.theme.data.ui_colors.fg};
+          @define-color fg2                  #${config.modules.theme.data.ui_colors.fg};
+          @define-color fg3                  #${config.modules.theme.data.ui_colors.gray};
+          @define-color gray                 #${config.modules.theme.data.ui_colors.gray};
+          @define-color dark-gray            #${config.modules.theme.data.ui_colors.bg_alt};
+          @define-color black                #${config.modules.theme.data.ui_colors.bg_alt};
+          @define-color red0                 #${config.modules.theme.data.ui_colors.red};
+          @define-color red1                 #${config.modules.theme.data.ui_colors.red};
+          @define-color green0               #${config.modules.theme.data.ui_colors.green};
+          @define-color green1               #${config.modules.theme.data.ui_colors.green};
+          @define-color yellow0              #${config.modules.theme.data.ui_colors.yellow};
+          @define-color yellow1              #${config.modules.theme.data.ui_colors.yellow};
+          @define-color blue0                #${config.modules.theme.data.ui_colors.blue};
+          @define-color blue1                #${config.modules.theme.data.ui_colors.blue};
+          @define-color purple0              #${config.modules.theme.data.ui_colors.magenta};
+          @define-color purple1              #${config.modules.theme.data.ui_colors.magenta};
+          @define-color aqua0                #${config.modules.theme.data.ui_colors.cyan};
+          @define-color aqua1                #${config.modules.theme.data.ui_colors.cyan};
+          @define-color orange0              #${config.modules.theme.data.ui_colors.accent};
+          @define-color orange1              #${config.modules.theme.data.ui_colors.accent};
 
 
           /* Palette ─────────────────────────────────────────────────── */

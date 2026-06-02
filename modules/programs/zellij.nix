@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ pkgs, username, config, ... }:
 
 let
   zellijBaseConfig = ''
@@ -32,7 +32,7 @@ let
 in
 {
   home-manager.users.${username} =
-    { config, pkgs, ... }:
+    { pkgs, ... }:
     {
       programs.zellij = {
         enable = true;
@@ -48,8 +48,12 @@ in
         '';
       };
 
-      home.file.".config/zellij/config-base.kdl" = {
-        text = zellijBaseConfig;
+      home.file.".config/zellij/config.kdl" = {
+        force = true;
+        text = ''
+          ${config.modules.theme.data.zellij}
+          ${zellijBaseConfig}
+        '';
       };
     };
 }

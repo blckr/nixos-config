@@ -7,15 +7,8 @@
 }:
 let
   cfg = config.modules.apps.fnott;
-  # Ayu Mirage Colors
-  colors = {
-    bg = "212733";
-    fg = "d9d7ce";
-    accent = "ffad66";
-    red = "f28779";
-    blue = "73d0ff";
-    green = "d5ff80";
-  };
+  # Use colors from the central theme system
+  colors = config.modules.theme.data.ui_colors;
 in
 {
   options.modules.apps.fnott = {

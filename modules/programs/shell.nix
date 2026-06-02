@@ -1,6 +1,6 @@
 # Setting for the shell
 {
-  pkgs, username, ...
+  pkgs, username, config, ...
 }:
 {
   programs.fish.enable = true;
@@ -19,6 +19,7 @@
     interactiveShellInit = ''
       set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
       set -gx MANROFFOPT "-c"
+      ${config.modules.theme.data.fish}
     '';
   };
 }

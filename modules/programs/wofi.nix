@@ -1,9 +1,10 @@
 # Wofi is a app-launcher
-{
-  username,
-  ...
-}: {
-  home-manager.users.${username} = { config, ... }: {
+{ username, config, pkgs, ... }: {
+  home-manager.users.${username} = { ... }: 
+  let
+    theme = config.modules.theme.data;
+  in
+  {
     programs.wofi = {
       enable = true;
 
@@ -21,89 +22,74 @@
         allow_images = true;
       };
 
-    style = ''
+      style = ''
+        @define-color base   #${theme.colors.bg};
+        @define-color accent #${theme.colors.accent};
+        @define-color text   #${theme.colors.fg};
 
+        #window {
+          margin: 0px;
+          border: 2px solid @accent;
+          border-radius: 0px;
+          background-color: @base;
+          font-size: 16px;
+          font-weight: normal;
+        }
 
-      @define-color dark-gray rgba(40, 40, 40, 0.98);
-      @define-color light-beige #D3C6AA;
-      @define-color soft-red #E67E80;
-      @define-color soft-cyan rgb(104, 157, 106);
-      @define-color ayu-mirage-blue rgba(33,39,51,0.85);
-      @define-color ayu-mirage-orange #ffad66;
-          
-      @define-color base   ayu-mirage-blue; /* Dark Gray */
-      @define-color mantle #181825;
-      @define-color crust  rgb(104, 157, 106); /* Soft Cyan */
+        #input {
+          border-radius: 0px;
+          color: @text;
+          background-color: @base;
+          padding: 6px 8px;
+          font-size: 16px;
+          border: 4px solid @accent;
+          margin-bottom: 6px;
+        }
 
-      @define-color text   #cccac2; /* white */
-      @define-color red    #f38ba8;
-      @define-color surface0  #313244;
-      @define-color surface1  #45475a;
-      @define-color surface2  #585b70;
+        #outer-box {
+          margin: 8px;
+          border: none;
+          border-radius: 0px;
+          background-color: transparent;
+        }
 
-      #window {
-        margin: 0px;
-        border: 2px solid @ayu-mirage-orange;
-        border-radius: 0px;
-        background-color: @ayu-mirage-blue;
-        font-size: 16px;
-        font-weight: normal;
-      }
+        #text {
+          margin: 0px 8px;
+          border: none;
+          color: @text;
+        }
 
-      #input {
-        border-radius: 0px;
-        color: @text;
-        background-color: @ayu-mirage-blue;
-        padding: 6px 8px;
-        font-size: 16px;
-        border: 4px solid @ayu-mirage-orange;
-        margin-bottom: 6px;
-      }
+        #entry:selected {
+          background-color: @base;
+          font-weight: bold;
+          border-radius: 0px;
+        }
 
-      #outer-box {
-        margin: 8px;
-        border: none;
-        border-radius: 0px;
-        background-color: transparent;
-      }
+        #text:selected {
+          background-color: @base;
+          color: @text;
+          font-weight: bold;
+        }
 
-      #text {
-        margin: 0px 8px;
-        border: none;
-        color: @text;
-      }
+        #expander-box {
+          background: @base;
+          color: @text;
+          font-weight: normal;
+        }
 
-      #entry:selected {
-        background-color: @ayu-mirage-blue;
-        font-weight: bold;
-        border-radius: 0px;
-      }
+        #expander-box:selected {
+          background: @base;
+          color: @text;
+          font-weight: normal;
+        }
 
-      #text:selected {
-        background-color: @ayu-mirage-blue;
-        color: @text;
-        font-weight: bold;
-      }
-
-      #expander-box {
-        background: @ayu-mirage-blue;
-        color: @text;
-        font-weight: normal;
-      }
-
-      #expander-box:selected {
-        background: @ayu-mirage-blue;
-        color: @text;
-        font-weight: normal;
-      }
-
-      /* Override the blue selection indicator (e.g. app icon circle) */
-      #entry:selected image {
-        background-color: transparent;
-        color: white;
-        border-radius: 50%;
-      }
-    '';
+        /* Override the blue selection indicator (e.g. app icon circle) */
+        #entry:selected image {
+          background-color: transparent;
+          color: white;
+          border-radius: 50%;
+        }
+      '';
     };
   };
 }

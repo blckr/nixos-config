@@ -1,18 +1,12 @@
-# Kitty is a terminal emulator
-{
-  pkgs,
-  username,
-  ...
-}:
+{ pkgs, username, config, ... }:
 let
+  theme = config.modules.theme.data;
+  colors = theme.colors;
+  
   # Wrapper shell that kills any zellij sessions when kitty closes.
-  # When niri's close-window (Super+X) closes kitty, kitty sends SIGHUP to
-  # its child (this wrapper). The trap ensures zellij is killed cleanly.
   kittyShell = pkgs.writeShellScript "kitty-shell" ''
     _cleanup() {
-      # Kill zellij processes that are descendants of this shell (child tree)
       pkill -P $$ zellij 2>/dev/null || true
-      # Kill any zellij in the same session as this shell
       pkill -s $$ zellij 2>/dev/null || true
     }
     trap _cleanup EXIT HUP TERM
@@ -21,7 +15,7 @@ let
 in
 {
   home-manager.users.${username} =
-    { config, ... }:
+    { ... }:
     {
       programs.kitty = {
         enable = true;
@@ -29,75 +23,35 @@ in
           editor = "hx";
           term = "xterm-256color";
           window_padding_width = 4;
+          background_opacity = theme.opacity;
           confirm_os_window_close = 0;
-          # background_opacity = "0.9";
-          # Remote control für Theme-Toggle über alle Instanzen
           allow_remote_control = "yes";
           listen_on = "unix:/tmp/kitty-{kitty_pid}";
-          # Use wrapper shell so closing kitty also kills zellij
           shell = "${kittyShell}";
+
+          background = "#${colors.bg}";
+          foreground = "#${colors.fg}";
+          cursor = "#${colors.accent}";
+          selection_background = "#${colors.accent}";
+          selection_foreground = "#${colors.bg}";
+
+          color0  = "#${colors.bg_alt}";
+          color1  = "#${colors.red}";
+          color2  = "#${colors.green}";
+          color3  = "#${colors.yellow}";
+          color4  = "#${colors.blue}";
+          color5  = "#${colors.magenta}";
+          color6  = "#${colors.cyan}";
+          color7  = "#${colors.fg}";
+          color8  = "#${colors.gray}";
+          color9  = "#${colors.red}";
+          color10 = "#${colors.green}";
+          color11 = "#${colors.yellow}";
+          color12 = "#${colors.blue}";
+          color13 = "#${colors.magenta}";
+          color14 = "#${colors.cyan}";
+          color15 = "#ffffff";
         };
-        extraConfig = ''
-          # Dark als Default
-          include dark-theme.conf
-          # Wird vom theme-toggle Script überschrieben (ignoriert falls fehlt)
-          include current-theme.conf
-        '';
       };
-
-      xdg.configFile."kitty/dark-theme.conf".text = ''
-        background_opacity 0.9
-
-        background #212733
-        foreground #d9d7ce
-        cursor #ffcc66
-        selection_background #343f4c
-        selection_foreground #212733
-
-        color0  #191e2a
-        color1  #ed8274
-        color2  #a6cc70
-        color3  #fad07b
-        color4  #6dcbfa
-        color5  #cfbafa
-        color6  #90e1c6
-        color7  #c7c7c7
-        color8  #686868
-        color9  #f28779
-        color10 #bae67e
-        color11 #ffd580
-        color12 #73d0ff
-        color13 #d4bfff
-        color14 #95e6cb
-        color15 #ffffff
-      '';
-
-      xdg.configFile."kitty/light-theme.conf".text = ''
-        background_opacity 0.95
-
-        background    #edebea
-        # background    #f2eeea
-        foreground    #2d3138
-        cursor        #c5282e
-        selection_foreground #ffffff
-        selection_background #a86200
-
-        color0  #3a4248
-        color1  #c5282e
-        color2  #507000
-        color3  #a86200
-        color4  #1060a0
-        color5  #6844a8
-        color6  #1a7a57
-        color7  #5c6470
-        color8  #2a2f3a
-        color9  #d43a40
-        color10 #5a8000
-        color11 #c47500
-        color12 #1a70c0
-        color13 #7850c0
-        color14 #228a65
-        color15 #8a9199
-      '';
     };
 }

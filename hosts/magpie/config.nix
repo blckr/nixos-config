@@ -4,6 +4,7 @@
 }:
 {
   modules = {
+    theme.active = "everforest-dark";
     desktop.enable = true;
 
     powerManagement.profile = "tlp";
@@ -15,12 +16,12 @@
     services.storage.enable = true;
 
     apps = {
-      android-studio.enable = true;
+      # android-studio.enable = true;
       ausweisapp.enable = true;
       firefox.enable = true;
       # mullvad.enable = true;
       vscode.enable = true;
-      fnott.enable = true;
+      fnott.enable = false;
       # swaync.enable = true;
       container.enable = true;
     };

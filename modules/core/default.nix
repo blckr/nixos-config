@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   imports = [
     ./boot.nix
@@ -9,7 +10,9 @@
     ./systemd.nix
 
     ./system-packages.nix
+    ./theme.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
+  documentation.man.cache.enable = lib.mkForce false;
 }

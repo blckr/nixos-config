@@ -25,7 +25,7 @@
     whois
     # Connection
     usbutils
-    blueberry
+    blueman
     # File and Archive
     bat
     binwalk

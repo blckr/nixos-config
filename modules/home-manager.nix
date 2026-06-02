@@ -14,6 +14,7 @@
         rm -f $HOME/.gtkrc-2.0
         rm -f $HOME/.gtkrc-2.0.hm-backup
         rm -f $HOME/.gtkrc-2.0.backup
+        rm -f $HOME/.config/zellij/config.kdl.backup
       '';
     };
 }

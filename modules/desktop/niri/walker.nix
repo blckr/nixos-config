@@ -8,6 +8,7 @@
 }:
 let
   cfg = config.modules.desktop.walker;
+  themeData = config.modules.theme.data;
 in
 {
   options.modules.desktop.walker = {
@@ -57,7 +58,7 @@ in
 
         config = {
           terminal = "${pkgs.kitty}/bin/kitty";
-          theme = "ayu-mirage";
+          theme = "dynamic";
           force_keyboard_focus = false;
           close_when_open = true;
           click_to_close = true;
@@ -145,13 +146,13 @@ in
         };
 
         themes = {
-          "ayu-mirage" = {
+          "dynamic" = {
             style = ''
-              @define-color bg #212733;
-              @define-color fg #d9d7ce;
-              @define-color accent #ffad66;
-              @define-color selection #343f4c;
-              @define-color border #343f4c;
+              @define-color bg #${themeData.ui_colors.bg};
+              @define-color fg #${themeData.ui_colors.fg};
+              @define-color accent #${themeData.ui_colors.accent};
+              @define-color selection #${themeData.ui_colors.bg_alt};
+              @define-color border #${themeData.ui_colors.bg_alt};
 
               * {
                 all: unset;
@@ -175,7 +176,7 @@ in
 
               .input {
                 color: @fg;
-                background-color: #191e2a;
+                background-color: #${themeData.ui_colors.bg_alt};
                 padding: 15px;
                 margin-bottom: 20px;
                 border: 1px solid @accent;
@@ -221,7 +222,7 @@ in
                 border: 1px solid @border;
                 padding: 15px;
                 margin-left: 15px;
-                background-color: #191e2a;
+                background-color: #${themeData.ui_colors.bg_alt};
                 color: @fg;
               }
 
@@ -233,7 +234,7 @@ in
               /* ── Actions ── */
               .keybinds-wrapper {
                 border: 1px solid alpha(@border, 0.45);
-                background-color: #191e2a;
+                background-color: #${themeData.ui_colors.bg_alt};
                 border-radius: 4px;
                 padding: 6px 12px;
                 margin-top: 10px;
