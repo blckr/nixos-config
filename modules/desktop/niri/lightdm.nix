@@ -5,29 +5,37 @@
   ...
 }:
 lib.mkIf config.modules.desktop.enable {
+  services.displayManager.sessionPackages = [ pkgs.niri ];
+
   services.xserver.displayManager.lightdm = {
     enable = true;
-    background = ../../../pkgs/wallpaper/RedBlueMountain.png;
+    background = config.modules.theme.data.wallpaper;
 
-    greeters.gtk = {
+    greeters.slick = {
       enable = true;
-      theme.package = pkgs.catppuccin-gtk.override {
-        variant = "mocha";
-        accents = [ "blue" ];
-      };
-      theme.name = "Catppuccin-Mocha-Blue";
+      theme.name = config.modules.theme.data.gtk.name;
+      theme.package = config.modules.theme.data.gtk.package;
 
-      iconTheme.package = pkgs.catppuccin-papirus-folders.override {
-        flavor = "mocha";
-        accent = "blue";
-      };
-      iconTheme.name = "Papirus-Dark";
+      iconTheme.name = config.modules.theme.data.gtk.icons;
+      iconTheme.package = config.modules.theme.data.gtk.iconPackage;
 
-      cursorTheme.package = pkgs.catppuccin-cursors.mochaDark;
-      cursorTheme.name = "Catppuccin-Mocha-Dark";
+      cursorTheme.name = "Adwaita";
+      cursorTheme.package = pkgs.adwaita-icon-theme;
       cursorTheme.size = 24;
 
-      indicators = [ ];
+      font = {
+        name = "JetBrains Mono 11";
+        package = pkgs.nerd-fonts.jetbrains-mono;
+      };
+
+      extraConfig = ''
+        background = ${config.modules.theme.data.wallpaper}
+        show-clock = true
+        show-keyboard = true
+        show-power = true
+        draw-grid = false
+        draw-user-backgrounds = false
+      '';
     };
   };
 }

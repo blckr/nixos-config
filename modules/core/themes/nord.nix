@@ -1,4 +1,5 @@
-{ pkgs }: {
+{ pkgs }:
+{
   # Nord
   variant = "dark";
   opacity = "0.9";
@@ -28,7 +29,7 @@
     cyan = "88c0d0";
     gray = "4c566a";
   };
-  wallpaper = ./../../../pkgs/wallpaper/NordLandscape.png; 
+  wallpaper = ./../../../pkgs/wallpaper/NordLandscape.png;
   helix-theme = "nord";
   kitty-theme = "Nord";
   gtk = {
@@ -37,7 +38,7 @@
     icons = "Papirus-Dark";
     iconPackage = pkgs.papirus-icon-theme;
   };
-  fish = ''
+  fish = /* sh */ ''
     set -U fish_color_normal d8dee9
     set -U fish_color_command 81a1c1
     set -U fish_color_quote a3be8c

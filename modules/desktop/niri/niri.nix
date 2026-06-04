@@ -9,15 +9,15 @@
 let
   theme = config.modules.theme.data;
   bgImage = theme.wallpaper;
+  statusbar = config.modules.desktop.niri.statusbar;
 in
 lib.mkIf config.modules.desktop.enable {
   services = {
-    blueman.enable = true;
     gnome.gnome-keyring.enable = true;
     logind.settings.Login = {
       HandlePowerKey = "poweroff";
       HandleLidSwitch = "suspend";
-      LidSwitchIgnoreInhibit = "yes";
+      LidSwitchIgnoreInhibited = "no";
     };
   };
 
@@ -66,32 +66,6 @@ lib.mkIf config.modules.desktop.enable {
           PartOf = [ "graphical-session.target" ];
         };
       };
-      swaybg = {
-        description = "swaybg service";
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.swaybg}/bin/swaybg -m fill -i ${bgImage}";
-          Restart = "on-failure";
-          PartOf = [ "graphical-session.target" ];
-        };
-      };
-
-      swayosd-libinput-backend = {
-        description = "SwayOSD LibInput backend";
-        documentation = [ "https://github.com/ErikReider/SwayOSD" ];
-        wantedBy = [ "graphical-session.target" ];
-        partOf = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.swayosd}/bin/swayosd-server -s /home/${username}/.config/swayosd/style.css";
-          Restart = "on-failure";
-          RestartSec = 2;
-          StandardOutput = "journal";
-          StandardError = "journal";
-          PartOf = [ "graphical-session.target" ];
-        };
-      };
 
       xwayland-satellite = {
         description = "xwayland-satellite";
@@ -109,10 +83,6 @@ lib.mkIf config.modules.desktop.enable {
     };
   };
 
-  services.udev.packages = with pkgs; [
-    swayosd
-  ];
-
   nixpkgs.overlays = [ inputs.niri.overlays.niri ];
   niri-flake.cache.enable = false;
 
@@ -121,15 +91,11 @@ lib.mkIf config.modules.desktop.enable {
   environment.systemPackages = with pkgs; [
     brightnessctl
     cliphist
-    hypridle
-    hyprlock
-    ghostty
     fuzzel
     kitty
     networkmanagerapplet
     playerctl
     # swaynotificationcenter
-    swayosd
     wl-clipboard
     # wl-clip-persist
     wl-color-picker
@@ -156,58 +122,7 @@ lib.mkIf config.modules.desktop.enable {
   home-manager.users.${username} =
     { pkgs, config, ... }:
     {
-      xdg.configFile."swayosd/style.css".text = ''
-        /* The main OSD window container */
-        window#osd {
-          /* Adjust sizes to make it wide and short */
-          min-width: 240px;          /* Makes it wider */
-          min-height: 50px;          /* Makes it shorter/smaller vertically */
-          padding: 8px 16px;         /* Keeps padding slim */
-
-          border-radius: 4px;        /* Radius of 4 */
-          border: 2px solid #${theme.ui_colors.accent};
-          background-color: #${theme.ui_colors.bg};
-        }
-
-        /* Container that wraps the icon and progress bar together */
-        box#osd_box {
-          /* Swaps layout from stacked (vertical) to a sleek horizontal line */
-          orientation: horizontal;
-          spacing: 14px;             /* Space between the icon and the bar */
-        }
-
-        /* The volume/brightness level container (the slider track) */
-        scale trough {
-          background-color: rgba(255, 255, 255, 0.1);
-          border-radius: 999px;
-          min-height: 6px;           /* Slim bar track */
-          min-width: 160px;          /* Stretches the progress bar wider */
-        }
-
-        /* The actual active fill/progress indicator */
-        scale progress {
-          background-color: #${theme.ui_colors.fg};
-          border-radius: 999px;
-        }
-
-        /* Styling for the icons */
-        image {
-          color: #${theme.ui_colors.fg};
-          /* Remove bottom margin since it's now side-by-side instead of stacked */
-          margin-bottom: 0px;
-          -gtk-icon-transform: scale(0.7); /* Makes the icon slightly smaller to match */
-        }
-      '';
-
-      dconf.settings."org/blueman/general".plugin-list = [
-        "StatusIcon"
-        "ShowConnected"
-        "!ExitItem"
-      ];
-
-      services.hypridle.enable = true;
       programs = {
-        waybar.enable = true;
         # wofi.enable = true;
 
         niri = {
@@ -215,6 +130,10 @@ lib.mkIf config.modules.desktop.enable {
             prefer-no-csd = true;
             hotkey-overlay.skip-at-startup = true;
             screenshot-path = "~/Nextcloud/Photos/Sammlungen/Screenshots-Desktop/%Y-%m-%d-%H%M%S.png";
+
+            switch-events = {
+              lid-close.action.spawn = [ "noctalia-shell" "ipc" "call" "lockScreen" "lock" ];
+            };
 
             environment = {
               NIRI_STRUT_IN_FRACTIONAL_SCALE_AS_INTEGER = "1";
@@ -235,17 +154,24 @@ lib.mkIf config.modules.desktop.enable {
                 ];
               in
               [
+                {
+                  command = sh ++ [
+                    "sleep 0.5 && [ \"$LOCK_ON_STARTUP\" = \"1\" ] && noctalia-shell ipc call lockScreen lock || true"
+                  ];
+                }
                 # { command = sh ++ [ "wl-clip-persist --clipboard regular" ]; } #Might cause Problems
                 { command = sh ++ [ "cliphist wipe" ]; }
                 { command = sh ++ [ "systemctl --user start cliphist.service" ]; }
                 { command = sh ++ [ "systemctl --user start cliphist-image.service" ]; }
                 { command = sh ++ [ "sleep 0.5 && cliphist wipe" ]; }
-                { command = sh ++ [ "systemctl --user start hypridle.service" ]; }
-                { command = sh ++ [ "systemctl --user start waybar.service" ]; }
+                (
+                  if statusbar == "noctalia" then
+                    { command = [ "noctalia-shell" ]; }
+                  else
+                    { command = sh ++ [ "systemctl --user start ${statusbar}.service" ]; }
+                )
                 { command = sh ++ [ "systemctl --user start xwayland-satellite.service" ]; }
-                { command = sh ++ [ "systemctl --user start swaybg.service" ]; }
                 # { command = sh ++ [ "systemctl --user start swaync.service" ]; }
-                { command = sh ++ [ "systemctl --user start fnott.service" ]; }
                 { command = sh ++ [ "systemctl --user start kanshi.service" ]; }
                 {
                   command = [
@@ -255,7 +181,6 @@ lib.mkIf config.modules.desktop.enable {
                     "--replace"
                   ];
                 }
-                { command = sh ++ [ "sleep 1 && blueman-applet" ]; }
                 { command = [ "nm-applet" ]; }
                 {
                   command = [
@@ -326,18 +251,18 @@ lib.mkIf config.modules.desktop.enable {
                 # "Super+P".action = spawn "zen";
                 "Super+Space".action = spawn "walker";
                 "Super+Return".action = spawn "walker";
-                "Super+Shift+L".action = spawn "loginctl" "lock-session";
+                "Super+Shift+L".action = spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock";
                 "Super+Shift+S".action = spawn "script-selector";
                 "Super+N".action = spawn "fnottctl" "dismiss";
 
-                "XF86AudioMute".action = sh "swayosd-client --output-volume=mute-toggle";
+                "XF86AudioMute".action = spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput";
                 "XF86AudioPlay".action = sh "playerctl play-pause";
                 "XF86AudioPrev".action = sh "playerctl previous";
                 "XF86AudioNext".action = sh "playerctl next";
-                "XF86AudioRaiseVolume".action = sh "swayosd-client --output-volume=raise";
-                "XF86AudioLowerVolume".action = sh "swayosd-client --output-volume=lower";
-                "XF86MonBrightnessUp".action = sh "swayosd-client --brightness=raise";
-                "XF86MonBrightnessDown".action = sh "swayosd-client --brightness=lower";
+                "XF86AudioRaiseVolume".action = spawn "noctalia-shell" "ipc" "call" "volume" "increase";
+                "XF86AudioLowerVolume".action = spawn "noctalia-shell" "ipc" "call" "volume" "decrease";
+                "XF86MonBrightnessUp".action = spawn "noctalia-shell" "ipc" "call" "brightness" "increase";
+                "XF86MonBrightnessDown".action = spawn "noctalia-shell" "ipc" "call" "brightness" "decrease";
                 # Close window
                 "Super+X".action = close-window;
 
@@ -541,7 +466,7 @@ lib.mkIf config.modules.desktop.enable {
               }
               {
                 matches = [
-                  { app-id = ".blueman-manager-wrapped"; }
+                  { app-id = "bluetui"; }
                   { app-id = "nm-connection-editor"; }
                   { app-id = "com.saivert.pwvucontrol"; }
                   { app-id = "org.pipewire.Helvum"; }
@@ -560,6 +485,7 @@ lib.mkIf config.modules.desktop.enable {
                   { app-id = "spotify"; }
                   { app-id = ".spotify-wrapped"; }
                   # { app-id = "firefox"; }
+                  { app-id = "discord"; }
                 ];
                 # background-effect = {
                 #   blur = true;

@@ -18,6 +18,7 @@
   secrets.enable = true;
 
   users.users.${username}.packages = with pkgs; [
+    steam
     discord
 
     android-studio

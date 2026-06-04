@@ -1,5 +1,13 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  inputs,
+  config,
+  lib,
+  ...
+}:
 let
+
+  noctalia-shell-bin = "${inputs.noctalia.packages.${pkgs.system}.default}/bin/noctalia-shell";
   wifi = pkgs.writeShellScriptBin "wifi" ''
     kitty impala
   '';
@@ -12,16 +20,15 @@ let
     kitty wiremix
   '';
 
-  theme-toggle = pkgs.writeShellScriptBin "theme-toggle" ''
+  theme-toggle = pkgs.writeShellScriptBin "theme-toggle" /* sh */ ''
     # Find the host config file
     HOSTNAME=$(hostname)
     CONFIG_FILE="/home/arved/code-blckr/nixos-config/hosts/$HOSTNAME/config.nix"
-    
+
     # Get active theme
     ACTIVE_THEME=$(grep 'theme.active =' "$CONFIG_FILE" | cut -d'"' -f2)
-    
-    # We need to find the complement. Since we can't easily eval Nix here without a full nix-instantiate,
-    # we'll look for the complement line in the nix file.
+
+    # Find complement
     THEME_FILE="/home/arved/code-blckr/nixos-config/modules/core/themes/$ACTIVE_THEME.nix"
     COMPLEMENT=$(grep "complement =" "$THEME_FILE" | cut -d'"' -f2)
 
@@ -54,19 +61,16 @@ let
 
     # Update host config with flexible regex
     sed -i "s/[[:space:]]*theme.active = \".*\";/    theme.active = \"$THEME\";/" "$HOST_CONFIG"
-    
+
     echo "Theme set to $THEME in $HOST_CONFIG. Rebuilding system..."
-    
+
     # Get hostname
     HOSTNAME=$(hostname)
-    
+
     # Run rebuild
     cd "$CONFIG_DIR"
     if sudo nixos-rebuild switch --flake .#"$HOSTNAME"; then
         echo "Rebuild successful. Reloading applications..."
-        
-        # Restart UI services if they exist (prevents errors if uninstalled)
-        systemctl --user try-restart swaybg.service waybar.service fnott.service swaync.service dunst.service 2>/dev/null || true
 
         # Set system-wide color scheme (GSettings/dconf)
         VARIANT=$(grep "variant =" "$THEME_FILE" | cut -d'"' -f2)
@@ -102,7 +106,20 @@ let
             Z_THEME=$(grep 'theme "' "$THEME_FILE" | cut -d'"' -f2)
             ${pkgs.zellij}/bin/zellij -s "$session" action themes "$Z_THEME" 2>/dev/null || true
         done
-        
+
+        # Get the wallpaper path for the selected theme dynamically at runtime.
+        WP_REL_PATH=$(grep "wallpaper =" "$THEME_FILE" | cut -d'=' -f2 | tr -d ' ;' || true)
+        if [ -n "$WP_REL_PATH" ]; then
+            if [[ "$WP_REL_PATH" == .* ]]; then
+                WP_ABS_PATH=$(realpath "$THEMES_DIR/$WP_REL_PATH" 2>/dev/null || true)
+            else
+                WP_ABS_PATH="$WP_REL_PATH"
+            fi
+            if [ -f "$WP_ABS_PATH" ]; then
+                ${noctalia-shell-bin} ipc call wallpaper set "$WP_ABS_PATH" || true
+            fi
+        fi
+
         # Send notification in background to prevent timeout blocking if no daemon is running
         notify-send "Theme" "Switched to $THEME" 2>/dev/null &
     else
@@ -117,7 +134,7 @@ let
     SCRIPTS="wifi\nbluetooth\naudio\ntheme-toggle\ntheme-select"
 
     CHOICE=$(echo -e "$SCRIPTS" | ${pkgs.wofi}/bin/wofi -d -p "Select Script:")
-    
+
     if [ "$CHOICE" == "theme-select" ]; then
         SELECTED_THEME=$(ls "$THEMES_DIR" | grep .nix | grep -v current.nix | sed 's/.nix//' | ${pkgs.wofi}/bin/wofi -d -p "Select Theme:")
         if [ -n "$SELECTED_THEME" ]; then

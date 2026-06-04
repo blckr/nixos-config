@@ -7,7 +7,7 @@
   username,
   ...
 }:
-lib.mkIf config.modules.desktop.enable (
+lib.mkIf (config.modules.desktop.enable && config.modules.desktop.niri.statusbar == "waybar") (
   let
     themeData = config.modules.theme.data;
     ppdEnabled = config.modules.powerManagement.profile == "ppd";
@@ -153,7 +153,7 @@ lib.mkIf config.modules.desktop.enable (
           };
           "tooltip" = true;
           "tooltip-format" = "{device_alias} ({device_address})";
-          "on-click" = "blueman-manager";
+          "on-click" = "kitty --class bluetui -e bluetui";
         };
         "custom/microphone" = {
           "exec" = "$HOME/.config/waybar/microphone-usage.sh";

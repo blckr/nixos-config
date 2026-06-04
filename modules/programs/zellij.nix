@@ -1,9 +1,13 @@
-{ pkgs, username, config, ... }:
+{
+  username,
+  config,
+  ...
+}:
 
 let
-  zellijBaseConfig = ''
+  zellijBaseConfig = /* kdl */ ''
     copy_on_select true;
-    default_mode "locked"; 
+    default_mode "locked";
     on_force_close "quit";
 
     keybinds {

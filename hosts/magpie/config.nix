@@ -4,8 +4,9 @@
 }:
 {
   modules = {
-    theme.active = "everforest-dark";
+    theme.active = "nord";
     desktop.enable = true;
+    desktop.niri.statusbar = "noctalia";
 
     powerManagement.profile = "tlp";
 

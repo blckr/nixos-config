@@ -32,7 +32,7 @@
   helix-theme = "everforest_light";
   kitty-theme = "Everforest Light Hard";
   gtk = {
-    name = "Everforest-Light-BL";
+    name = "Everforest-Light";
     package = pkgs.everforest-gtk-theme;
     icons = "Adwaita";
     iconPackage = pkgs.adwaita-icon-theme;

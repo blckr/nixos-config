@@ -6,6 +6,6 @@
     ./scanner.nix
     ./storage.nix
     ./xserver.nix
-    ./greetd.nix
+    # ./greetd.nix
   ];
 }

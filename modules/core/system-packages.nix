@@ -25,7 +25,6 @@
     whois
     # Connection
     usbutils
-    blueman
     # File and Archive
     bat
     binwalk
