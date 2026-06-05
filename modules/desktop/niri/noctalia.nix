@@ -75,6 +75,22 @@ lib.mkIf (config.modules.desktop.enable && cfg.statusbar == "noctalia") {
                 id = "Tray";
               }
               {
+                id = "CustomButton";
+                showIcon = false;
+                icon = "";
+
+                updateInterval = 3000;
+
+                textCommand = ''
+                  VPN=$(${pkgs.networkmanager}/bin/nmcli -t -f NAME,TYPE connection show --active | grep -E 'vpn|wireguard|tun' | cut -d: -f1 | head -n 1)
+                  if [ -n "$VPN" ]; then
+                    echo "$VPN"
+                  else
+                    echo ""
+                  fi
+                '';
+              }
+              {
                 id = "Volume";
               }
               {
@@ -548,14 +564,29 @@ lib.mkIf (config.modules.desktop.enable && cfg.statusbar == "noctalia") {
           manualSunset = "18:30";
         };
         hooks = {
-          enabled = false;
+          enabled = true;
+          startup = /* sh */ ''
+            while true; do
+              VPN_NAME=$(${pkgs.networkmanager}/bin/nmcli -t -f NAME,TYPE connection show --active | grep -E 'vpn|wireguard|tun' | cut -d: -f1 | head -n 1)
+
+              if [ -n "$VPN_NAME" ]; then
+                noctalia-shell ipc call setCustomWidgetText "aa🔒"
+                noctalia-shell ipc call setCustomWidgetTooltip "Verbunden: $VPN_NAME"
+              else
+                noctalia-shell ipc call setCustomWidgetText "bb🔓"
+                noctalia-shell ipc call setCustomWidgetTooltip "Kein VPN verbunden"
+              fi
+
+              sleep 3
+            done &
+          '';
           wallpaperChange = "";
           darkModeChange = "";
           screenLock = "";
           screenUnlock = "";
           performanceModeEnabled = "";
           performanceModeDisabled = "";
-          startup = "";
+          # startup = "";
           session = "";
           colorGeneration = "";
         };

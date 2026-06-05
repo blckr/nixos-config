@@ -1,4 +1,10 @@
-{ lib, pkgs, config, username, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  username,
+  ...
+}:
 {
   boot.kernelParams = [
     "quiet"
@@ -28,12 +34,8 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-user-session --cmd niri-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%H:%M | %A, %d. %B' --remember --remember-user-session --asterisks --cmd niri-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions";
         user = "greeter";
-      };
-      initial_session = {
-        command = "${pkgs.bash}/bin/bash --login -c 'export LOCK_ON_STARTUP=1; exec niri-session'";
-        user = username;
       };
     };
   };

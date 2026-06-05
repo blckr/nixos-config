@@ -8,7 +8,6 @@
 }:
 let
   theme = config.modules.theme.data;
-  bgImage = theme.wallpaper;
   statusbar = config.modules.desktop.niri.statusbar;
 in
 lib.mkIf config.modules.desktop.enable {
@@ -132,7 +131,11 @@ lib.mkIf config.modules.desktop.enable {
             screenshot-path = "~/Nextcloud/Photos/Sammlungen/Screenshots-Desktop/%Y-%m-%d-%H%M%S.png";
 
             switch-events = {
-              lid-close.action.spawn = [ "noctalia-shell" "ipc" "call" "lockScreen" "lock" ];
+              lid-close.action.spawn = [
+                "sh"
+                "-c"
+                "elapsed=$(ps -o etimes= -C noctalia-shell | head -n1 | tr -d ' '); if [ -n \"$elapsed\" ] && [ \"$elapsed\" -gt 5 ]; then noctalia-shell ipc call lockScreen lock; fi"
+              ];
             };
 
             environment = {
@@ -154,11 +157,6 @@ lib.mkIf config.modules.desktop.enable {
                 ];
               in
               [
-                {
-                  command = sh ++ [
-                    "sleep 0.5 && [ \"$LOCK_ON_STARTUP\" = \"1\" ] && noctalia-shell ipc call lockScreen lock || true"
-                  ];
-                }
                 # { command = sh ++ [ "wl-clip-persist --clipboard regular" ]; } #Might cause Problems
                 { command = sh ++ [ "cliphist wipe" ]; }
                 { command = sh ++ [ "systemctl --user start cliphist.service" ]; }

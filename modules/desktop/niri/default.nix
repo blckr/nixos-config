@@ -10,7 +10,7 @@
 
   imports = [
     ./niri.nix
-    ./lightdm.nix
+    # ./lightdm.nix
     ./waybar.nix
     ./noctalia.nix
     ./walker.nix
