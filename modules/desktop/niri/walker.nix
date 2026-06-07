@@ -8,7 +8,6 @@
 }:
 let
   cfg = config.modules.desktop.walker;
-  themeData = config.modules.theme.data;
 in
 {
   options.modules.desktop.walker = {
@@ -147,12 +146,9 @@ in
 
         themes = {
           "dynamic" = {
-            style = ''
-              @define-color bg #${themeData.ui_colors.bg};
-              @define-color fg #${themeData.ui_colors.fg};
-              @define-color accent #${themeData.ui_colors.accent};
-              @define-color selection #${themeData.ui_colors.bg_alt};
-              @define-color border #${themeData.ui_colors.bg_alt};
+            style = /* css */ ''
+              /* Wir importieren die von Noctalia generierten Farben! */
+              @import url("/home/${username}/.config/walker/themes/noctalia-colors.css");
 
               * {
                 all: unset;
@@ -176,7 +172,7 @@ in
 
               .input {
                 color: @fg;
-                background-color: #${themeData.ui_colors.bg_alt};
+                background-color: @selection;
                 padding: 15px;
                 margin-bottom: 20px;
                 border: 1px solid @accent;
@@ -222,7 +218,7 @@ in
                 border: 1px solid @border;
                 padding: 15px;
                 margin-left: 15px;
-                background-color: #${themeData.ui_colors.bg_alt};
+                background-color: @selection;
                 color: @fg;
               }
 
@@ -234,7 +230,7 @@ in
               /* ── Actions ── */
               .keybinds-wrapper {
                 border: 1px solid alpha(@border, 0.45);
-                background-color: #${themeData.ui_colors.bg_alt};
+                background-color: @selection;
                 border-radius: 4px;
                 padding: 6px 12px;
                 margin-top: 10px;

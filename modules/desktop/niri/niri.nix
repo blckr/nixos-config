@@ -6,10 +6,6 @@
   username,
   ...
 }:
-let
-  theme = config.modules.theme.data;
-  statusbar = config.modules.desktop.niri.statusbar;
-in
 lib.mkIf config.modules.desktop.enable {
   services = {
     gnome.gnome-keyring.enable = true;
@@ -94,9 +90,7 @@ lib.mkIf config.modules.desktop.enable {
     kitty
     networkmanagerapplet
     playerctl
-    # swaynotificationcenter
     wl-clipboard
-    # wl-clip-persist
     wl-color-picker
     wofi-power-menu
     xwayland-satellite
@@ -121,379 +115,211 @@ lib.mkIf config.modules.desktop.enable {
   home-manager.users.${username} =
     { pkgs, config, ... }:
     {
-      programs = {
-        # wofi.enable = true;
+      home.file.".config/niri/config.kdl".text = /* kdl */ ''
+        include "/home/${username}/.config/niri/noctalia.kdl"
+        include "/home/${username}/.config/niri/theme.kdl"
 
-        niri = {
-          settings = {
-            prefer-no-csd = true;
-            hotkey-overlay.skip-at-startup = true;
-            screenshot-path = "~/Nextcloud/Photos/Sammlungen/Screenshots-Desktop/%Y-%m-%d-%H%M%S.png";
+        prefer-no-csd
+        screenshot-path "~/Nextcloud/Photos/Sammlungen/Screenshots-Desktop/%Y-%m-%d-%H%M%S.png"
 
-            switch-events = {
-              lid-close.action.spawn = [
-                "sh"
-                "-c"
-                "elapsed=$(ps -o etimes= -C noctalia-shell | head -n1 | tr -d ' '); if [ -n \"$elapsed\" ] && [ \"$elapsed\" -gt 5 ]; then noctalia-shell ipc call lockScreen lock; fi"
-              ];
-            };
+        hotkey-overlay {
+            skip-at-startup
+        }
 
-            environment = {
-              NIRI_STRUT_IN_FRACTIONAL_SCALE_AS_INTEGER = "1";
-              ELM_DISPLAY = "wl";
-              GDK_BACKEND = "wayland,x11";
-              MOZ_ENABLE_WAYLAND = "1"; # Run Firefox under Wayland
-              QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-              QT_QPA_PLATFORMTHEME = "qt6ct";
-              SDL_VIDEODRIVER = "wayland";
-              CLUTTER_BACKEND = "wayland";
-            };
+        environment {
+            NIRI_STRUT_IN_FRACTIONAL_SCALE_AS_INTEGER "1"
+            ELM_DISPLAY "wl"
+            GDK_BACKEND "wayland,x11"
+            MOZ_ENABLE_WAYLAND "1"
+            QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+            QT_QPA_PLATFORMTHEME "qt6ct"
+            QT_STYLE_OVERRIDE "kvantum"
+            SDL_VIDEODRIVER "wayland"
+            CLUTTER_BACKEND "wayland"
+        }
 
-            spawn-at-startup =
-              let
-                sh = [
-                  "sh"
-                  "-c"
-                ];
-              in
-              [
-                # { command = sh ++ [ "wl-clip-persist --clipboard regular" ]; } #Might cause Problems
-                { command = sh ++ [ "cliphist wipe" ]; }
-                { command = sh ++ [ "systemctl --user start cliphist.service" ]; }
-                { command = sh ++ [ "systemctl --user start cliphist-image.service" ]; }
-                { command = sh ++ [ "sleep 0.5 && cliphist wipe" ]; }
-                (
-                  if statusbar == "noctalia" then
-                    { command = [ "noctalia-shell" ]; }
-                  else
-                    { command = sh ++ [ "systemctl --user start ${statusbar}.service" ]; }
-                )
-                { command = sh ++ [ "systemctl --user start xwayland-satellite.service" ]; }
-                # { command = sh ++ [ "systemctl --user start swaync.service" ]; }
-                { command = sh ++ [ "systemctl --user start kanshi.service" ]; }
-                {
-                  command = [
-                    "ibus-daemon"
-                    "--wayland"
-                    "--daemonize"
-                    "--replace"
-                  ];
+        spawn-at-startup "sh" "-c" "cliphist wipe"
+        spawn-at-startup "sh" "-c" "systemctl --user start cliphist.service"
+        spawn-at-startup "sh" "-c" "systemctl --user start cliphist-image.service"
+        spawn-at-startup "sh" "-c" "sleep 0.5 && cliphist wipe"
+        spawn-at-startup "noctalia"
+        spawn-at-startup "sh" "-c" "systemctl --user start xwayland-satellite.service"
+        spawn-at-startup "sh" "-c" "systemctl --user start kanshi.service"
+        spawn-at-startup "ibus-daemon" "--wayland" "--daemonize" "--replace"
+        spawn-at-startup "nm-applet"
+        spawn-at-startup "dbus-send" "--session" "--print-reply" "--dest=org.freedesktop.impl.portal.PermissionStore" "/org/freedesktop/impl/portal/PermissionStore" "org.freedesktop.impl.portal.PermissionStore.SetPermission" "string:devices" "boolean:true" "string:camera" "string:org.gnome.Snapshot" "array:string:yes"
+        spawn-at-startup "dbus-send" "--session" "--print-reply" "--dest=org.freedesktop.impl.portal.PermissionStore" "/org/freedesktop/impl/portal/PermissionStore" "org.freedesktop.impl.portal.PermissionStore.SetPermission" "string:devices" "boolean:true" "string:camera" "string:" "array:string:yes"
+
+        input {
+            keyboard {
+                xkb {
+                    layout "us"
+                    variant "altgr-intl"
+                    options "caps:none"
                 }
-                { command = [ "nm-applet" ]; }
-                {
-                  command = [
-                    "dbus-send"
-                    "--session"
-                    "--print-reply"
-                    "--dest=org.freedesktop.impl.portal.PermissionStore"
-                    "/org/freedesktop/impl/portal/PermissionStore"
-                    "org.freedesktop.impl.portal.PermissionStore.SetPermission"
-                    "string:devices"
-                    "boolean:true"
-                    "string:camera"
-                    "string:org.gnome.Snapshot"
-                    "array:string:yes"
-                  ];
-                }
-                {
-                  command = [
-                    "dbus-send"
-                    "--session"
-                    "--print-reply"
-                    "--dest=org.freedesktop.impl.portal.PermissionStore"
-                    "/org/freedesktop/impl/portal/PermissionStore"
-                    "org.freedesktop.impl.portal.PermissionStore.SetPermission"
-                    "string:devices"
-                    "boolean:true"
-                    "string:camera"
-                    "string:"
-                    "array:string:yes"
-                  ];
-                }
-              ];
+            }
+            touchpad { accel-speed 0.0; }
+            mouse { accel-speed 0.0; }
+            warp-mouse-to-focus
+            focus-follows-mouse max-scroll-amount="25%"
+        }
 
-            input = {
-              power-key-handling.enable = false;
-              warp-mouse-to-focus.enable = true;
+        layout {
+            gaps 4
+            default-column-width { proportion 0.5; }
 
-              mouse = {
-                accel-speed = 0.0;
-              };
+            preset-column-widths {
+                proportion 0.33333
+                proportion 0.5
+                proportion 0.66667
+            }
 
-              touchpad = {
-                accel-speed = 0.0;
-              };
+            preset-window-heights {
+                proportion 0.33333
+                proportion 0.5
+                proportion 0.66667
+                proportion 1.0
+            }
 
-              keyboard.xkb.layout = "us";
-              keyboard.xkb.variant = "altgr-intl";
-              keyboard.xkb.options = "caps:none";
+            struts {
+                left 8
+                right 8
+            }
+        }
 
-              focus-follows-mouse = {
-                enable = true;
-                max-scroll-amount = "25%";
-              };
-            };
+        window-rule {
+            geometry-corner-radius 4.0 4.0 4.0 4.0
+            clip-to-geometry true
+            draw-border-with-background false
+        }
 
-            binds =
-              with config.lib.niri.actions;
-              let
-                sh = spawn "sh" "-c";
-              in
-              {
-                # Overlay
-                "Super+Shift+Slash".action = show-hotkey-overlay;
+        window-rule {
+            match app-id="bluetui"
+            match app-id="nm-connection-editor"
+            match app-id="com.saivert.pwvucontrol"
+            match app-id="org.pipewire.Helvum"
+            match app-id="wdisplays"
+            open-floating true
+        }
 
-                # Tools
-                "Super+E".action = spawn "kitty";
-                "Super+P".action = spawn "firefox";
-                # "Super+P".action = spawn "zen";
-                "Super+Space".action = spawn "walker";
-                "Super+Return".action = spawn "walker";
-                "Super+Shift+L".action = spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock";
-                "Super+Shift+S".action = spawn "script-selector";
-                "Super+N".action = spawn "fnottctl" "dismiss";
+        window-rule {
+            match is-window-cast-target=true
+        }
 
-                "XF86AudioMute".action = spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput";
-                "XF86AudioPlay".action = sh "playerctl play-pause";
-                "XF86AudioPrev".action = sh "playerctl previous";
-                "XF86AudioNext".action = sh "playerctl next";
-                "XF86AudioRaiseVolume".action = spawn "noctalia-shell" "ipc" "call" "volume" "increase";
-                "XF86AudioLowerVolume".action = spawn "noctalia-shell" "ipc" "call" "volume" "decrease";
-                "XF86MonBrightnessUp".action = spawn "noctalia-shell" "ipc" "call" "brightness" "increase";
-                "XF86MonBrightnessDown".action = spawn "noctalia-shell" "ipc" "call" "brightness" "decrease";
-                # Close window
-                "Super+X".action = close-window;
+        window-rule {
+            match app-id="spotify"
+            match app-id=".spotify-wrapped"
+            match app-id="discord"
+            opacity 0.9
+        }
 
-                # Focus (movement)
-                "Super+H".action = focus-column-or-monitor-left;
-                "Super+J".action = focus-window-or-workspace-down;
-                "Super+K".action = focus-window-or-workspace-up;
-                "Super+L".action = focus-column-or-monitor-right;
-                "Super+Left".action = focus-monitor-left;
-                "Super+Down".action = focus-monitor-down;
-                "Super+Up".action = focus-monitor-up;
-                "Super+Right".action = focus-monitor-right;
-                "Super+Home".action = focus-column-first;
-                "Super+End".action = focus-column-last;
+        binds {
+            Mod+Shift+Slash { show-hotkey-overlay; }
+            Mod+E { spawn "kitty"; }
+            Mod+P { spawn "firefox"; }
+            Mod+Space { spawn "walker"; }
+            Mod+Return { spawn "walker"; }
+            Mod+Shift+L { spawn "noctalia" "msg" "session" "lock"; }
+            Mod+Shift+S { spawn "script-selector"; }
+            Mod+N { spawn "fnottctl" "dismiss"; }
 
-                # Move windows
-                "Super+Ctrl+H".action = move-column-left-or-to-monitor-left;
-                "Super+Ctrl+J".action = move-window-down-or-to-workspace-down;
-                "Super+Ctrl+K".action = move-window-up-or-to-workspace-up;
-                "Super+Ctrl+L".action = move-column-right-or-to-monitor-right;
-                "Super+Ctrl+Left".action = move-column-to-monitor-left;
-                "Super+Ctrl+Down".action = move-column-to-monitor-down;
-                "Super+Ctrl+Up".action = move-column-to-monitor-up;
-                "Super+Ctrl+Right".action = move-column-to-monitor-right;
-                "Super+Ctrl+Home".action = move-column-to-first;
-                "Super+Ctrl+End".action = move-column-to-last;
+            XF86AudioMute allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
+            XF86AudioPlay { spawn "sh" "-c" "playerctl play-pause"; }
+            XF86AudioPrev { spawn "sh" "-c" "playerctl previous"; }
+            XF86AudioNext { spawn "sh" "-c" "playerctl next"; }
+            XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
+            XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
+            XF86MonBrightnessUp { spawn "noctalia" "msg" "brightness-up"; }
+            XF86MonBrightnessDown { spawn "noctalia" "msg" "brightness-down"; }
+            Mod+X { close-window; }
 
-                # "Super+Space".action = toggle-overview;
-                # Overview toggle
-                "Super+Ctrl+Space".action = toggle-overview;
-                # Rebinding the Copilot-Key: Touchpad works, even tho wev says it should be Assistant
-                "Super+Shift+XF86TouchpadOff".action = toggle-overview;
-                # "XF86Assistant".action = toggle-overview;
-                # "Super+Shift+XF86Assistant".action = toggle-overview;
+            Mod+H { focus-column-or-monitor-left; }
+            Mod+J { focus-window-or-workspace-down; }
+            Mod+K { focus-window-or-workspace-up; }
+            Mod+L { focus-column-or-monitor-right; }
+            Mod+Left { focus-monitor-left; }
+            Mod+Down { focus-monitor-down; }
+            Mod+Up { focus-monitor-up; }
+            Mod+Right { focus-monitor-right; }
+            Mod+Home { focus-column-first; }
+            Mod+End { focus-column-last; }
 
-                # Mouse wheel – switch workspace (cooldown 150 ms)
-                "Super+WheelScrollDown".action = focus-workspace-down;
-                "Super+WheelScrollUp".action = focus-workspace-up;
-                "Super+Ctrl+WheelScrollDown".action = move-column-to-workspace-down;
-                "Super+Ctrl+WheelScrollUp".action = move-column-to-workspace-up;
+            Mod+Ctrl+H { move-column-left-or-to-monitor-left; }
+            Mod+Ctrl+J { move-window-down-or-to-workspace-down; }
+            Mod+Ctrl+K { move-window-up-or-to-workspace-up; }
+            Mod+Ctrl+L { move-column-right-or-to-monitor-right; }
+            Mod+Ctrl+Left { move-column-to-monitor-left; }
+            Mod+Ctrl+Down { move-column-to-monitor-down; }
+            Mod+Ctrl+Up { move-column-to-monitor-up; }
+            Mod+Ctrl+Right { move-column-to-monitor-right; }
+            Mod+Ctrl+Home { move-column-to-first; }
+            Mod+Ctrl+End { move-column-to-last; }
 
-                # Mouse wheel – switch column
-                "Super+WheelScrollRight".action = focus-column-right;
-                "Super+WheelScrollLeft".action = focus-column-left;
-                "Super+Ctrl+WheelScrollRight".action = move-column-right;
-                "Super+Ctrl+WheelScrollLeft".action = move-column-left;
+            Mod+Ctrl+Space { toggle-overview; }
+            Mod+Shift+XF86TouchpadOff { toggle-overview; }
 
-                # Mouse wheel + Shift (horizontal scrolling)
-                "Super+Shift+WheelScrollDown".action = focus-column-right;
-                "Super+Shift+WheelScrollUp".action = focus-column-left;
-                "Super+Ctrl+Shift+WheelScrollDown".action = move-column-right;
-                "Super+Ctrl+Shift+WheelScrollUp".action = move-column-left;
+            Mod+WheelScrollDown { focus-workspace-down; }
+            Mod+WheelScrollUp { focus-workspace-up; }
+            Mod+Ctrl+WheelScrollDown { move-column-to-workspace-down; }
+            Mod+Ctrl+WheelScrollUp { move-column-to-workspace-up; }
 
-                # Workspaces
-                "Super+1".action = focus-workspace 1;
-                "Super+2".action = focus-workspace 2;
-                "Super+3".action = focus-workspace 3;
-                "Super+4".action = focus-workspace 4;
-                "Super+5".action = focus-workspace 5;
-                "Super+6".action = focus-workspace 6;
-                "Super+7".action = focus-workspace 7;
-                "Super+8".action = focus-workspace 8;
-                "Super+9".action = focus-workspace 9;
-                "Super+Tab".action = focus-workspace-previous;
+            Mod+WheelScrollRight { focus-column-right; }
+            Mod+WheelScrollLeft { focus-column-left; }
+            Mod+Ctrl+WheelScrollRight { move-column-right; }
+            Mod+Ctrl+WheelScrollLeft { move-column-left; }
 
-                # Consume or expel window from column
-                "Super+BracketLeft".action = consume-or-expel-window-left;
-                "Super+BracketRight".action = consume-or-expel-window-right;
+            Mod+Shift+WheelScrollDown { focus-column-right; }
+            Mod+Shift+WheelScrollUp { focus-column-left; }
+            Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+            Mod+Ctrl+Shift+WheelScrollUp { move-column-left; }
 
-                # Individual window in column
-                "Super+Comma".action = consume-window-into-column;
-                "Super+Period".action = expel-window-from-column;
+            Mod+1 { focus-workspace 1; }
+            Mod+2 { focus-workspace 2; }
+            Mod+3 { focus-workspace 3; }
+            Mod+4 { focus-workspace 4; }
+            Mod+5 { focus-workspace 5; }
+            Mod+6 { focus-workspace 6; }
+            Mod+7 { focus-workspace 7; }
+            Mod+8 { focus-workspace 8; }
+            Mod+9 { focus-workspace 9; }
+            Mod+Tab { focus-workspace-previous; }
 
-                # Presets & sizing
-                "Super+R".action = switch-preset-column-width;
-                "Super+Shift+R".action = switch-preset-window-height;
-                "Super+Ctrl+R".action = reset-window-height;
-                "Super+F".action = maximize-column;
-                "Super+Shift+F".action = fullscreen-window;
-                "Super+Ctrl+F".action = expand-column-to-available-width;
-                "Super+C".action = center-column;
+            Mod+BracketLeft { consume-or-expel-window-left; }
+            Mod+BracketRight { consume-or-expel-window-right; }
 
-                # Fine adjustments
-                "Super+Minus".action = set-column-width "-10%";
-                "Super+Equal".action = set-column-width "+10%";
-                "Super+Shift+Minus".action = set-window-height "-10%";
-                "Super+Shift+Equal".action = set-window-height "+10%";
+            Mod+Comma { consume-window-into-column; }
+            Mod+Period { expel-window-from-column; }
 
-                # Floating vs. tiling
-                "Super+V".action = toggle-window-floating;
-                "Super+Shift+V".action = switch-focus-between-floating-and-tiling;
+            Mod+R { switch-preset-column-width; }
+            Mod+Shift+R { switch-preset-window-height; }
+            Mod+Ctrl+R { reset-window-height; }
+            Mod+F { maximize-column; }
+            Mod+Shift+F { fullscreen-window; }
+            Mod+Ctrl+F { expand-column-to-available-width; }
+            Mod+C { center-column; }
 
-                # Tabbed column display
-                "Super+W".action = toggle-column-tabbed-display;
+            Mod+Minus { set-column-width "-10%"; }
+            Mod+Equal { set-column-width "+10%"; }
+            Mod+Shift+Minus { set-window-height "-10%"; }
+            Mod+Shift+Equal { set-window-height "+10%"; }
 
-                # Screenshots
-                "Super+Shift+P".action.screenshot = [ ];
-                "Print".action.screenshot = [ ];
-                "Alt+Print".action.screenshot-window = [ ];
+            Mod+V { toggle-window-floating; }
+            Mod+Shift+V { switch-focus-between-floating-and-tiling; }
 
-                # Session & power
-                "Ctrl+Alt+Delete".action = quit;
-                # "Super+Shift+P".action   = power-off-monitors;
-              };
+            Mod+W { toggle-column-tabbed-display; }
 
-            gestures.hot-corners.enable = true;
+            Mod+Shift+P { screenshot; }
+            Print { screenshot; }
+            Alt+Print { screenshot-window; }
 
-            layout = {
-              gaps = 4;
-              default-column-width.proportion = 0.5;
-              insert-hint.display = {
-                color = "rgba(28, 28, 44, 30%)";
-              };
+            Ctrl+Alt+Delete { quit; }
+        }
 
-              preset-column-widths = [
-                { proportion = 1.0 / 3.0; }
-                { proportion = 0.5; }
-                { proportion = 2.0 / 3.0; }
-              ];
-
-              preset-window-heights = [
-                { proportion = 1.0 / 3.0; }
-                { proportion = 0.5; }
-                { proportion = 2.0 / 3.0; }
-                { proportion = 1.0; }
-              ];
-
-              struts = {
-                left = 8;
-                right = 8;
-              };
-
-              # shadow = {
-              #   enable = true;
-              # };
-
-              # Creates the Border around each windowpreset-window-heights
-              border = {
-                enable = true;
-                width = 2;
-                active =
-                  # aqua0
-                  # { color = "rgba(104, 157, 106, 1)"; };
-                  {
-                    color = "#${theme.colors.accent}";
-                  };
-                inactive =
-                  # fg0
-                  # { color = "rgba(235, 219, 178, 1)"; };
-                  {
-                    color = "#${theme.colors.bg_alt}";
-                  };
-
-              };
-
-              # No Focus ring as it creates a variable width, which brings noise in my opinion. The border active/inactive is enough
-              focus-ring.enable = false;
-
-              # For Grouping Windows in Tabs (Super+W)
-              tab-indicator = {
-                enable = true;
-                place-within-column = true;
-                width = 8;
-                corner-radius = 4;
-                gap = 4;
-                gaps-between-tabs = 4;
-                # position = "bottom";
-                position = "left";
-                active = {
-                  # aqua0
-                  # color = "rgba(104, 157, 106, 1)";
-                  color = "#${theme.colors.accent}";
-                };
-                inactive = {
-                  # fg0
-                  # color = "rgba(251, 241, 199, 1)";
-                  # color = "#1f2439";
-                  color = "#ffffff";
-                };
-                length.total-proportion = 1.0;
-              };
-            };
-            # bg1
-            # overview.backdrop-color = "rgb(60,56,54)";
-            overview.backdrop-color = "#${theme.colors.bg}";
-
-            window-rules = [
-              {
-                geometry-corner-radius =
-                  let
-                    radius = 4.0;
-                  in
-                  {
-                    bottom-left = radius;
-                    bottom-right = radius;
-                    top-left = radius;
-                    top-right = radius;
-                  };
-                clip-to-geometry = true;
-                draw-border-with-background = false;
-              }
-              {
-                matches = [
-                  { app-id = "bluetui"; }
-                  { app-id = "nm-connection-editor"; }
-                  { app-id = "com.saivert.pwvucontrol"; }
-                  { app-id = "org.pipewire.Helvum"; }
-                  # { app-id = "com.github.wwmm.easyeffects"; }
-                  { app-id = "wdisplays"; }
-                ];
-                open-floating = true;
-              }
-              {
-                matches = [
-                  { is-window-cast-target = true; }
-                ];
-              }
-              {
-                matches = [
-                  { app-id = "spotify"; }
-                  { app-id = ".spotify-wrapped"; }
-                  # { app-id = "firefox"; }
-                  { app-id = "discord"; }
-                ];
-                # background-effect = {
-                #   blur = true;
-                # };
-                opacity = 0.9;
-                # blur = true;
-              }
-            ];
-          };
-        };
-      };
+        switch-events {
+            lid-close {
+                spawn "sh" "-c" "elapsed=$(ps -o etimes= -C noctalia | head -n1 | tr -d ' '); if [ -n \"$elapsed\" ] && [ \"$elapsed\" -gt 5 ]; then noctalia msg session lock; fi"
+            }
+        }
+      '';
     };
 }

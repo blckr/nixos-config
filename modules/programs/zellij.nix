@@ -1,6 +1,5 @@
 {
   username,
-  config,
   ...
 }:
 
@@ -9,6 +8,8 @@ let
     copy_on_select true;
     default_mode "locked";
     on_force_close "quit";
+
+    theme "noctalia"
 
     keybinds {
       shared {
@@ -55,7 +56,6 @@ in
       home.file.".config/zellij/config.kdl" = {
         force = true;
         text = ''
-          ${config.modules.theme.data.zellij}
           ${zellijBaseConfig}
         '';
       };

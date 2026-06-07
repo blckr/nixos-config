@@ -1,12 +1,8 @@
 {
   username,
   pkgs,
-  config,
   ...
 }:
-let
-  themeData = config.modules.theme.data;
-in
 {
   environment.systemPackages = with pkgs; [
     lazygit
@@ -22,8 +18,16 @@ in
         enable = true;
         defaultEditor = true;
 
+        themes = {
+          noctalia-custom = {
+            inherits = "noctalia";
+            "punctuation" = "outline";
+            "punctuation.special" = "outline";
+          };
+        };
+
         settings = {
-          theme = "transparent_theme";
+          theme = "noctalia-custom";
 
           editor = {
             auto-format = true;
@@ -124,26 +128,11 @@ in
             };
           };
         };
-
-        themes = {
-          transparent_theme = {
-            "inherits" = themeData.helix-theme;
-            "ui.background" = { };
-            "ui.linenr" = "gray";
-            "ui.linenr.selected" = "foreground";
-            "ui.whitespace" = {
-              fg = "gray";
-            };
-            "ui.virtual.inlay-hint" = {
-              fg = "#${themeData.colors.gray}";
-            };
-          };
-        };
       };
 
       home.file.".config/helix/open-blame-github" = {
         executable = true;
-        text = ''
+        text = /* sh */ ''
           #!/usr/bin/env bash
           FILE="$1"
           LINE="$2"

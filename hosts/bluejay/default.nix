@@ -36,7 +36,6 @@
     simple-scan # gnome scanner
     spotify
     # texliveFull
-    thunderbird
     vscode
     zotero
 

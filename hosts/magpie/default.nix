@@ -25,7 +25,7 @@
     antigravity-fhs
     arduino-ide
     ausweisapp
-    # bitwarden-desktop
+    bitwarden-desktop
     element-desktop
     freecad
     fwupd # install Firmware updates
@@ -38,7 +38,6 @@
     simple-scan # gnome scanner
     spotify
     # texliveFull
-    thunderbird
     zotero
 
     eog
@@ -66,6 +65,13 @@
   # Fingerprintreader
   #services.fprintd.enable = true;
 
+  # Enable zramSwap to avoid using a large disk partition.
+  # Since you have ~64GB RAM, capping ZRAM at 25% provides ~16GB of highly compressed swap.
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25;
+  };
+
   # Pin on Linux Version X
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 }

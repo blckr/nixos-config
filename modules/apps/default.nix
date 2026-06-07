@@ -9,5 +9,6 @@
     ./vscode.nix
     ./wireshark.nix
     ./zen-browser.nix
+    ./thunderbird.nix
   ];
 }

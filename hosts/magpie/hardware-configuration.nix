@@ -24,9 +24,10 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/6335255e-b210-4e8c-b1d4-63dee87500bd"; }
-    ];
+  # 64GB Swap partition disabled in favor of zramSwap
+  # swapDevices =
+  #   [ { device = "/dev/disk/by-uuid/6335255e-b210-4e8c-b1d4-63dee87500bd"; }
+  #   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

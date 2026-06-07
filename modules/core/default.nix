@@ -10,9 +10,11 @@
     ./systemd.nix
 
     ./system-packages.nix
-    ./theme.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "electron-39.8.10"
+  ];
   documentation.man.cache.enable = lib.mkForce false;
 }

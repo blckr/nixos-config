@@ -17,9 +17,9 @@
       android-studio.enable = true;
       ausweisapp.enable = true;
       firefox.enable = true;
+      thunderbird.enable = true;
       # mullvad.enable = true;
       vscode.enable = true;
-      swaync.enable = true;
     };
   };
 

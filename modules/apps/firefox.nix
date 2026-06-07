@@ -15,7 +15,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${username} =
-      { ... }:
+      { pkgs, ... }:
       let
         extension = shortId: guid: {
           "${guid}" = {
@@ -32,7 +32,21 @@ in
           profiles.default = {
             isDefault = true;
 
+            userChrome = ''
+              @import "${pkgs.firefox-gnome-theme}/share/firefox-gnome-theme/userChrome.css";
+              @import "noctalia-colors.css";
+            '';
+            userContent = ''
+              @import "${pkgs.firefox-gnome-theme}/share/firefox-gnome-theme/userContent.css";
+              @import "noctalia-colors.css";
+            '';
+
             settings = {
+              # GNOME Theme Integration
+              "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+              "browser.tabs.drawInTitlebar" = true;
+              "svg.context-properties.content.enabled" = true;
+
               # Form autofill
               "browser.formfill.enable" = false;
               "forms.autocomplete.enabled" = false;
@@ -62,6 +76,8 @@ in
               "layout.spellcheckDefaultMultilingual" = true;
 
               "widget.wayland.fractional-scale.enabled" = true;
+              "ui.systemUsesDarkTheme" = 1;
+              "widget.chrome.allow-gtk-dark-theme" = true;
               # "layout.css.devPixelsPerPx" = -1.0; # Auto-detect Scale (oder 1/1.5 = 0.6667)
               # "gfx.webrender.all" = true;
               # "widget.non-native-theme.enabled" = true; # GTK-Theme ignorieren für konsistente Icons

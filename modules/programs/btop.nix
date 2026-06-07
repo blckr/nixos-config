@@ -2,18 +2,13 @@
 { username, ... }:
 
 {
-  home-manager.users.${username} = { config, ... }: {
+  home-manager.users.${username} =
+    { config, ... }:
+    {
 
-    programs.btop = {
-      enable = true;
-      settings = {
-        # Name of the .theme-Datei in the share-Directory (or ~/.config/btop/themes)
-        color_theme      = "onedark.theme";
-        theme_background = false;
-        truecolor        = true;
+      programs.btop = {
+        enable = true;
       };
+
     };
-
-  };
 }
-

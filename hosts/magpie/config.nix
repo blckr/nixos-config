@@ -4,9 +4,7 @@
 }:
 {
   modules = {
-    theme.active = "nord";
     desktop.enable = true;
-    desktop.niri.statusbar = "noctalia";
 
     powerManagement.profile = "tlp";
 
@@ -20,6 +18,7 @@
       # android-studio.enable = true;
       ausweisapp.enable = true;
       firefox.enable = true;
+      thunderbird.enable = true;
       # mullvad.enable = true;
       vscode.enable = true;
       fnott.enable = false;

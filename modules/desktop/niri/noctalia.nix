@@ -6,635 +6,370 @@
   pkgs,
   ...
 }:
-let
-  cfg = config.modules.desktop.niri;
-  theme = config.modules.theme.data;
-in
-lib.mkIf (config.modules.desktop.enable && cfg.statusbar == "noctalia") {
+lib.mkIf config.modules.desktop.enable {
 
   home-manager.users.${username} = {
 
     imports = [ inputs.noctalia.homeModules.default ];
 
-    programs.noctalia-shell = {
+    # ==========================================================
+    # 2. NOCTALIA KONFIGURATION
+    # ==========================================================
+
+    programs.noctalia = {
       enable = true;
 
       settings = {
-        settingsVersion = 0;
-        bar = {
-          barType = "simple";
-          position = "bottom";
-          monitors = [ ];
-          density = "default";
-          showOutline = false;
-          showCapsule = false;
-          capsuleOpacity = 1;
-          capsuleColorKey = "none";
-          widgetSpacing = 6;
-          contentPadding = 2;
-          fontScale = 1;
-          enableExclusionZoneInset = true;
-          backgroundOpacity = 0.93;
-          useSeparateOpacity = false;
-          marginVertical = 4;
-          marginHorizontal = 4;
-          frameThickness = 8;
-          frameRadius = 4;
-          outerCorners = false;
-          hideOnOverview = false;
-          displayMode = "always_visible";
-          autoHideDelay = 500;
-          autoShowDelay = 150;
-          showOnWorkspaceSwitch = true;
-          widgets = {
-            left = [
-              # {
-              #   id = "Launcher";
-              # }
-              {
-                id = "Workspace";
-              }
-              {
-                id = "SystemMonitor";
-              }
-              # {
-              #   id = "ActiveWindow";
-              # }
-              {
-                id = "MediaMini";
-              }
-            ];
-            center = [
-              {
-                id = "ControlCenter";
-                useDistroLogo = true;
-              }
-            ];
-            right = [
-              {
-                id = "Tray";
-              }
-              {
-                id = "CustomButton";
-                showIcon = false;
-                icon = "";
-
-                updateInterval = 3000;
-
-                textCommand = ''
-                  VPN=$(${pkgs.networkmanager}/bin/nmcli -t -f NAME,TYPE connection show --active | grep -E 'vpn|wireguard|tun' | cut -d: -f1 | head -n 1)
-                  if [ -n "$VPN" ]; then
-                    echo "$VPN"
-                  else
-                    echo ""
-                  fi
-                '';
-              }
-              {
-                id = "Volume";
-              }
-              {
-                id = "Battery";
-              }
-              # {
-              #   id = "Brightness";
-              # }
-              {
-                id = "Clock";
-                # format = "%y-%m-%d %H:%M";
-                formatHorizontal = "yy-MM-dd  HH:mm";
-              }
-              {
-                id = "NotificationHistory";
-              }
-            ];
+        # Shell
+        shell = {
+          font_family = "noto-sans";
+          settings_show_advanced = true;
+          shared_gl_context = true;
+          clipboard_enabled = false;
+          app_icon_colorize = true;
+          animation = {
+            enabled = true;
+            speed = 1.0;
           };
-          mouseWheelAction = "none";
-          reverseScroll = false;
-          mouseWheelWrap = true;
-          middleClickAction = "none";
-          middleClickFollowMouse = false;
-          middleClickCommand = "";
-          rightClickAction = "controlCenter";
-          rightClickFollowMouse = true;
-          rightClickCommand = "";
-          screenOverrides = [ ];
-        };
-        general = {
-          avatarImage = "";
-          dimmerOpacity = 0.2;
-          showScreenCorners = false;
-          forceBlackScreenCorners = false;
-          scaleRatio = 1;
-          radiusRatio = 0.2;
-          iRadiusRatio = 0.2;
-          boxRadiusRatio = 0.2;
-          screenRadiusRatio = 0.2;
-          animationSpeed = 1;
-          animationDisabled = true;
-          compactLockScreen = false;
-          lockScreenAnimations = false;
-          lockOnSuspend = true;
-          showSessionButtonsOnLockScreen = true;
-          showHibernateOnLockScreen = false;
-          enableLockScreenMediaControls = false;
-          enableShadows = false;
-          enableBlurBehind = true;
-          shadowDirection = "bottom_right";
-          shadowOffsetX = 2;
-          shadowOffsetY = 3;
-          language = "";
-          allowPanelsOnScreenWithoutBar = true;
-          showChangelogOnStartup = true;
-          telemetryEnabled = false;
-          enableLockScreenCountdown = true;
-          lockScreenCountdownDuration = 10000;
-          autoStartAuth = false;
-          allowPasswordWithFprintd = false;
-          clockStyle = "custom";
-          clockFormat = "hh\nmm";
-          passwordChars = false;
-          lockScreenMonitors = [ ];
-          lockScreenBlur = 0;
-          lockScreenTint = 0;
-          keybinds = {
-            keyUp = [
-              "Up"
-            ];
-            keyDown = [
-              "Down"
-            ];
-            keyLeft = [
-              "Left"
-            ];
-            keyRight = [
-              "Right"
-            ];
-            keyEnter = [
-              "Return"
-              "Enter"
-            ];
-            keyEscape = [
-              "Esc"
-            ];
-            keyRemove = [
-              "Del"
-            ];
+          shadow = {
+            direction = "down";
+            alpha = 0.55;
           };
-          reverseScroll = false;
-          smoothScrollEnabled = true;
+          panel = {
+            transparency_mode = "solid";
+            borders = true;
+            shadow = false;
+            launcher_placement = "centered";
+            clipboard_placement = "centered";
+            control_center_placement = "attached";
+            wallpaper_placement = "attached";
+            session_placement = "attached";
+          };
         };
-        ui = {
-          fontDefault = "";
-          fontFixed = "";
-          fontDefaultScale = 1;
-          fontFixedScale = 1;
-          tooltipsEnabled = true;
-          scrollbarAlwaysVisible = true;
-          boxBorderEnabled = false;
-          panelBackgroundOpacity = 0.93;
-          translucentWidgets = false;
-          panelsAttachedToBar = false;
-          settingsPanelMode = "attached";
-          settingsPanelSideBarCardStyle = true;
-        };
-        location = {
-          name = "";
-          weatherEnabled = true;
-          weatherShowEffects = true;
-          weatherTaliaMascotAlways = false;
-          useFahrenheit = false;
-          use12hourFormat = false;
-          showWeekNumberInCalendar = false;
-          showCalendarEvents = true;
-          showCalendarWeather = true;
-          analogClockInCalendar = false;
-          firstDayOfWeek = -1;
-          hideWeatherTimezone = false;
-          hideWeatherCityName = false;
-          autoLocate = true;
-        };
-        calendar = {
-          cards = [
-            {
-              enabled = true;
-              id = "calendar-header-card";
-            }
-            {
-              enabled = true;
-              id = "calendar-month-card";
-            }
-            {
-              enabled = true;
-              id = "weather-card";
-            }
-          ];
-        };
+
+        # Wallpaper
         wallpaper = {
           enabled = true;
-          overviewEnabled = false;
-          directory = "/home/${username}/Nextcloud/Archiv/Wallpaper/";
-          monitorDirectories = [ ];
-          enableMultiMonitorDirectories = false;
-          showHiddenFiles = false;
-          viewMode = "single";
-          setWallpaperOnAllMonitors = true;
-          linkLightAndDarkWallpapers = true;
-          fillMode = "crop";
-          fillColor = "#000000";
-          useSolidColor = false;
-          solidColor = "#1a1a2e";
-          automationEnabled = false;
-          wallpaperChangeMode = "none";
-          randomIntervalSec = 300;
-          transitionDuration = 1500;
-          transitionType = [
+          fill_mode = "crop";
+          transition = [
             "fade"
+            "wipe"
             "disc"
             "stripes"
-            "wipe"
-            "pixelate"
+            "zoom"
             "honeycomb"
           ];
-          skipStartupTransition = false;
-          transitionEdgeSmoothness = 0.05;
-          panelPosition = "follow_bar";
-          hideWallpaperFilenames = false;
-          useOriginalImages = false;
-          overviewBlur = 0.4;
-          overviewTint = 0.6;
-          useWallhaven = false;
-          wallhavenQuery = "";
-          wallhavenSorting = "relevance";
-          wallhavenOrder = "desc";
-          wallhavenCategories = "111";
-          wallhavenPurity = "100";
-          wallhavenRatios = "";
-          wallhavenApiKey = "";
-          wallhavenResolutionMode = "atleast";
-          wallhavenResolutionWidth = "";
-          wallhavenResolutionHeight = "";
-          sortOrder = "name";
-          favorites = [ ];
-        };
-        appLauncher = {
-          enableClipboardHistory = false;
-          autoPasteClipboard = false;
-          enableClipPreview = true;
-          clipboardWrapText = true;
-          enableClipboardSmartIcons = true;
-          enableClipboardChips = true;
-          clipboardWatchTextCommand = "wl-paste --type text --watch cliphist store";
-          clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
-          position = "center";
-          pinnedApps = [ ];
-          sortByMostUsed = true;
-          terminalCommand = "alacritty -e";
-          customLaunchPrefixEnabled = false;
-          customLaunchPrefix = "";
-          viewMode = "list";
-          showCategories = true;
-          iconMode = "tabler";
-          showIconBackground = false;
-          enableSettingsSearch = true;
-          enableWindowsSearch = true;
-          enableSessionSearch = true;
-          ignoreMouseInput = false;
-          screenshotAnnotationTool = "";
-          overviewLayer = false;
-          density = "default";
-        };
-        controlCenter = {
-          position = "close_to_bar_button";
-          diskPath = "/";
-          shortcuts = {
-            left = [
-              {
-                id = "Network";
-              }
-              {
-                id = "Bluetooth";
-              }
-              {
-                id = "WallpaperSelector";
-              }
-              {
-                id = "NoctaliaPerformance";
-              }
-            ];
-            right = [
-              {
-                id = "Notifications";
-              }
-              {
-                id = "PowerProfile";
-              }
-              {
-                id = "KeepAwake";
-              }
-              {
-                id = "NightLight";
-              }
-            ];
-          };
-          cards = [
-            {
-              enabled = true;
-              id = "profile-card";
-            }
-            {
-              enabled = true;
-              id = "shortcuts-card";
-            }
-            {
-              enabled = true;
-              id = "audio-card";
-            }
-            {
-              enabled = false;
-              id = "brightness-card";
-            }
-            {
-              enabled = true;
-              id = "weather-card";
-            }
-            {
-              enabled = true;
-              id = "media-sysmon-card";
-            }
-          ];
-        };
-        systemMonitor = {
-          cpuWarningThreshold = 80;
-          cpuCriticalThreshold = 90;
-          tempWarningThreshold = 80;
-          tempCriticalThreshold = 90;
-          gpuWarningThreshold = 80;
-          gpuCriticalThreshold = 90;
-          memWarningThreshold = 80;
-          memCriticalThreshold = 90;
-          swapWarningThreshold = 80;
-          swapCriticalThreshold = 90;
-          diskWarningThreshold = 80;
-          diskCriticalThreshold = 90;
-          diskAvailWarningThreshold = 20;
-          diskAvailCriticalThreshold = 10;
-          batteryWarningThreshold = 20;
-          batteryCriticalThreshold = 5;
-          enableDgpuMonitoring = false;
-          useCustomColors = false;
-          warningColor = "";
-          criticalColor = "";
-          externalMonitor = "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor";
-        };
-        noctaliaPerformance = {
-          disableWallpaper = true;
-          disableDesktopWidgets = true;
-        };
-        dock = {
-          enabled = true;
-          position = "bottom";
-          displayMode = "auto_hide";
-          dockType = "floating";
-          backgroundOpacity = 1;
-          floatingRatio = 1;
-          size = 1;
-          onlySameOutput = true;
-          monitors = [ ];
-          pinnedApps = [ ];
-          colorizeIcons = false;
-          showLauncherIcon = false;
-          launcherPosition = "end";
-          launcherUseDistroLogo = false;
-          launcherIcon = "";
-          launcherIconColor = "none";
-          pinnedStatic = false;
-          inactiveIndicators = false;
-          groupApps = false;
-          groupContextMenuMode = "extended";
-          groupClickAction = "cycle";
-          groupIndicatorStyle = "dots";
-          deadOpacity = 0.6;
-          animationSpeed = 1;
-          sitOnFrame = false;
-          showDockIndicator = false;
-          indicatorThickness = 3;
-          indicatorColor = "primary";
-          indicatorOpacity = 0.6;
-        };
-        network = {
-          bluetoothRssiPollingEnabled = false;
-          bluetoothRssiPollIntervalMs = 60000;
-          networkPanelView = "wifi";
-          wifiDetailsViewMode = "grid";
-          bluetoothDetailsViewMode = "grid";
-          bluetoothHideUnnamedDevices = false;
-          disableDiscoverability = false;
-          bluetoothAutoConnect = true;
-        };
-        sessionMenu = {
-          enableCountdown = true;
-          countdownDuration = 10000;
-          position = "center";
-          showHeader = true;
-          showKeybinds = true;
-          largeButtonsStyle = true;
-          largeButtonsLayout = "single-row";
-          powerOptions = [
-            {
-              action = "lock";
-              enabled = true;
-              keybind = "1";
-            }
-            {
-              action = "suspend";
-              enabled = true;
-              keybind = "2";
-            }
-            {
-              action = "hibernate";
-              enabled = true;
-              keybind = "3";
-            }
-            {
-              action = "reboot";
-              enabled = true;
-              keybind = "4";
-            }
-            {
-              action = "logout";
-              enabled = true;
-              keybind = "5";
-            }
-            {
-              action = "shutdown";
-              enabled = true;
-              keybind = "6";
-            }
-            {
-              action = "rebootToUefi";
-              enabled = true;
-              keybind = "7";
-            }
-          ];
-        };
-        notifications = {
-          enabled = true;
-          enableMarkdown = false;
-          density = "default";
-          monitors = [ ];
-          location = "top_right";
-          overlayLayer = true;
-          backgroundOpacity = 1;
-          respectExpireTimeout = false;
-          lowUrgencyDuration = 3;
-          normalUrgencyDuration = 8;
-          criticalUrgencyDuration = 15;
-          clearDismissed = true;
-          saveToHistory = {
-            low = true;
-            normal = true;
-            critical = true;
-          };
-          sounds = {
+          transition_duration = 1500;
+          edge_smoothness = 0;
+          transition_on_startup = false;
+          directory = "/home/${username}/Nextcloud/Archiv/Wallpaper/";
+          automation = {
             enabled = false;
-            volume = 0.5;
-            separateSounds = false;
-            criticalSoundFile = "";
-            normalSoundFile = "";
-            lowSoundFile = "";
-            excludedApps = "discord,firefox,chrome,chromium,edge";
           };
-          enableMediaToast = false;
-          enableKeyboardLayoutToast = true;
-          enableBatteryToast = true;
         };
+
+        # Notification
+        notification = {
+          enable_daemon = true;
+          layer = "overlay";
+          background_opacity = 1.0;
+        };
+
+        # OSD
         osd = {
-          enabled = true;
-          location = "top_right";
-          autoHideMs = 2000;
-          overlayLayer = true;
-          backgroundOpacity = 1;
-          enabledTypes = [
-            0
-            1
-            2
-          ];
-          monitors = [ ];
+          position = "top_right";
+          background_opacity = 1.0;
         };
+
+        # Lock Screen
+        lockscreen = {
+          blurred_desktop = false;
+          blur_intensity = 0.0;
+          tint_intensity = 0.0;
+        };
+
+        # Audio
         audio = {
-          volumeStep = 5;
-          volumeOverdrive = false;
-          spectrumFrameRate = 30;
-          visualizerType = "linear";
-          spectrumMirrored = true;
-          mprisBlacklist = [ ];
-          preferredPlayer = "";
-          volumeFeedback = false;
-          volumeFeedbackSoundFile = "";
+          enable_overdrive = false;
+          enable_sounds = false;
+          sound_volume = 0.5;
         };
+
+        # Brightness
         brightness = {
-          brightnessStep = 5;
-          enforceMinimum = true;
-          enableDdcSupport = false;
-          backlightDeviceMappings = [ ];
+          enable_ddcutil = false;
         };
-        colorSchemes = {
-          useWallpaperColors = false;
-          predefinedScheme = "Noctalia (default)";
-          darkMode = true;
-          schedulingMode = "off";
-          manualSunrise = "06:30";
-          manualSunset = "18:30";
-          generationMethod = "tonal-spot";
-          monitorForColors = "";
-          syncGsettings = true;
-        };
-        templates = {
-          activeTemplates = [ ];
-          enableUserTheming = false;
-        };
-        nightLight = {
+
+        # Night Light
+        nightlight = {
           enabled = false;
-          forced = false;
-          autoSchedule = true;
-          nightTemp = "4000";
-          dayTemp = "6500";
-          manualSunrise = "06:30";
-          manualSunset = "18:30";
+          force = false;
+          temperature_day = 6500;
+          temperature_night = 4000;
         };
-        hooks = {
-          enabled = true;
-          startup = /* sh */ ''
-            while true; do
-              VPN_NAME=$(${pkgs.networkmanager}/bin/nmcli -t -f NAME,TYPE connection show --active | grep -E 'vpn|wireguard|tun' | cut -d: -f1 | head -n 1)
 
-              if [ -n "$VPN_NAME" ]; then
-                noctalia-shell ipc call setCustomWidgetText "aa🔒"
-                noctalia-shell ipc call setCustomWidgetTooltip "Verbunden: $VPN_NAME"
-              else
-                noctalia-shell ipc call setCustomWidgetText "bb🔓"
-                noctalia-shell ipc call setCustomWidgetTooltip "Kein VPN verbunden"
-              fi
+        # Location
+        location = {
+          auto_locate = true;
+        };
 
-              sleep 3
-            done &
-          '';
-          wallpaperChange = "";
-          darkModeChange = "";
-          screenLock = "";
-          screenUnlock = "";
-          performanceModeEnabled = "";
-          performanceModeDisabled = "";
-          # startup = "";
-          session = "";
-          colorGeneration = "";
-        };
-        plugins = {
-          autoUpdate = false;
-          notifyUpdates = true;
-        };
+        # Idle
         idle = {
-          enabled = true;
-          screenOffTimeout = 300;
-          lockTimeout = 300;
-          suspendTimeout = 1800;
-          fadeDuration = 5;
-          screenOffCommand = "niri msg action power-off-monitors";
-          lockCommand = "noctalia-shell ipc call lockScreen lock";
-          suspendCommand = "systemctl suspend";
-          resumeScreenOffCommand = "niri msg action power-on-monitors";
-          resumeLockCommand = "";
-          resumeSuspendCommand = "";
-          customCommands = "[]";
+          behavior = {
+            lock = {
+              timeout = 300;
+              command = "noctalia:session lock";
+              enabled = true;
+            };
+            screen-off = {
+              timeout = 300;
+              command = "niri msg action power-off-monitors";
+              resume_command = "niri msg action power-on-monitors";
+              enabled = true;
+            };
+            suspend = {
+              timeout = 1800;
+              command = "systemctl suspend";
+              enabled = true;
+            };
+          };
         };
-        desktopWidgets = {
-          enabled = false;
-          overviewEnabled = true;
-          gridSnap = false;
-          gridSnapScale = false;
-          monitorWidgets = [ ];
-        };
-      };
 
-      colors = {
-        mPrimary = "#${theme.ui_colors.accent}"; # Hauptfarbe (z.B. aktive Workspaces)
-        mOnPrimary = "#${theme.ui_colors.bg}"; # Text auf Hauptfarbe
-        mSecondary = "#${theme.ui_colors.blue}";
-        mOnSecondary = "#${theme.ui_colors.bg}";
-        mSurface = "#${theme.ui_colors.bg}"; # Hintergrund der Bar / Boxen
-        mOnSurface = "#${theme.ui_colors.fg}"; # Text auf der Bar
-        mSurfaceVariant = "#${theme.ui_colors.bg_alt}"; # Hintergrund für abgehobene Boxen
-        mOnSurfaceVariant = "#${theme.ui_colors.gray}";
-        mHover = "#${theme.ui_colors.bg_alt}"; # Farbe beim Drüberfahren
-        mOnHover = "#${theme.ui_colors.fg}";
-        mOutline = "#${theme.ui_colors.gray}"; # Rahmen um die Boxen
-        mError = "#${theme.ui_colors.red}";
-        mOnError = "#${theme.ui_colors.bg}";
-        mShadow = "#000000";
-        mOnTertiary = "#${theme.ui_colors.bg}";
-        mTertiary = "#${theme.ui_colors.cyan}";
+        # Keybinds
+        keybinds = {
+          validate = [
+            "return"
+            "kp_enter"
+          ];
+          cancel = [ "escape" ];
+          left = [ "left" ];
+          right = [ "right" ];
+          up = [ "up" ];
+          down = [ "down" ];
+        };
+
+        # Bar
+        bar = {
+          main = {
+            position = "bottom";
+            thickness = 32;
+            background_opacity = 0.93;
+            radius = 4;
+            margin_ends = 0;
+            margin_edge = 0;
+            padding = 4;
+            widget_spacing = 8;
+            scale = 1.0;
+            shadow = false;
+            auto_hide = false;
+            reserve_space = true;
+            capsule = false;
+            start = [
+              "workspaces"
+              "cpu"
+              "temp"
+              "ram"
+              "media"
+            ];
+            center = [ "control-center" ];
+            end = [
+              "tray"
+              "volume"
+              "battery"
+              "clock"
+              "notifications"
+            ];
+          };
+        };
+
+        # Dock
+        dock = {
+          enabled = false;
+          position = "bottom";
+          auto_hide = true;
+          reserve_space = false;
+          margin_ends = 0;
+          margin_edge = 8;
+        };
+
+        # Desktop Widgets
+        desktop_widgets = {
+          enabled = false;
+        };
+
+        # Control Center
+        control_center = {
+          shortcuts = [
+            { type = "wifi"; }
+            { type = "bluetooth"; }
+            { type = "wallpaper"; }
+            { type = "screen_recorder"; }
+          ];
+        };
+
+        # Widgets
+        widget = {
+          clock = {
+            type = "clock";
+            format = "{:%y-%m-%d  %H:%M}";
+          };
+          control-center = {
+            type = "control-center";
+            custom_image = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            custom_image_colorize = true;
+          };
+          workspaces = {
+            type = "workspaces";
+            minimal = false;
+          };
+          media = {
+            type = "media";
+            hide_when_no_media = true;
+          };
+          notifications = {
+            type = "notifications";
+            hide_when_no_unread = true;
+          };
+          sysmon = {
+            type = "sysmon";
+            display = "gauge";
+          };
+          cpu = {
+            type = "sysmon";
+            stat = "cpu_usage";
+            show_label = false;
+          };
+          temp = {
+            type = "sysmon";
+            stat = "cpu_temp";
+            show_label = false;
+          };
+          ram = {
+            type = "sysmon";
+            stat = "ram_used";
+            show_label = false;
+          };
+        };
+
+        # ==========================================================
+        # 3. TEMPLATE REGISTRIERUNG
+        # ==========================================================
+        theme = {
+          templates = {
+            enable_builtin_templates = true;
+            builtin_ids = [
+              "gtk3"
+              "gtk4"
+              "qt"
+            ];
+            user = {
+              zellij = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/zellij.kdl";
+                output_path = "$XDG_CONFIG_HOME/zellij/themes/noctalia.kdl";
+              };
+              walker = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/walker.css";
+                output_path = "$XDG_CONFIG_HOME/walker/themes/noctalia-colors.css";
+                post_hook = "systemctl --user restart walker";
+              };
+              firefox = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/firefox-colors.css";
+                output_path = "/home/${username}/.mozilla/firefox/default/chrome/noctalia-colors.css";
+              };
+              thunderbird = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/thunderbird-colors.css";
+                output_path = "/home/${username}/.thunderbird/default/chrome/noctalia-colors.css";
+              };
+              niri = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/niri-theme.kdl";
+                output_path = "/home/${username}/.config/niri/theme.kdl";
+                post_hook = "niri msg action reload-config";
+              };
+            };
+          };
+        };
       };
+    };
+    xdg.configFile."noctalia/templates/zellij.kdl" = {
+      text = "themes {\n  noctalia {\n    fg \"{{ colors.terminal_foreground.default.hex }}\"\n    bg \"{{ colors.terminal_background.default.hex }}\"\n    black \"{{ colors.terminal_normal_black.default.hex }}\"\n    red \"{{ colors.terminal_normal_red.default.hex }}\"\n    green \"{{ colors.terminal_normal_green.default.hex }}\"\n    yellow \"{{ colors.terminal_normal_yellow.default.hex }}\"\n    blue \"{{ colors.terminal_normal_blue.default.hex }}\"\n    magenta \"{{ colors.terminal_normal_magenta.default.hex }}\"\n    cyan \"{{ colors.terminal_normal_cyan.default.hex }}\"\n    white \"{{ colors.terminal_normal_white.default.hex }}\"\n    orange \"{{ colors.terminal_bright_yellow.default.hex }}\"\n  }\n}";
+    };
+
+    xdg.configFile."noctalia/templates/walker.css" = {
+      text = "@define-color bg {{ colors.surface.default.hex }};\n@define-color fg {{ colors.on_surface.default.hex }};\n@define-color accent {{ colors.primary.default.hex }};\n@define-color selection {{ colors.surface_container_highest.default.hex }};\n@define-color border {{ colors.outline_variant.default.hex }};";
+    };
+
+    xdg.configFile."noctalia/templates/firefox-colors.css" = {
+      text = ''
+        :root {
+          --gnome-window-background: {{ colors.surface.default.hex }} !important;
+          --gnome-window-foreground: {{ colors.on_surface.default.hex }} !important;
+          --gnome-view-background: {{ colors.surface.default.hex }} !important;
+          --gnome-view-foreground: {{ colors.on_surface.default.hex }} !important;
+          --gnome-headerbar-background: {{ colors.surface_container.default.hex }} !important;
+          --gnome-headerbar-foreground: {{ colors.on_surface.default.hex }} !important;
+          --gnome-headerbar-backdrop-background: {{ colors.surface.default.hex }} !important;
+
+          --gnome-accent-bg: {{ colors.primary.default.hex }} !important;
+          --gnome-accent-fg: {{ colors.on_primary.default.hex }} !important;
+
+          --gnome-popover-background: {{ colors.surface_container_high.default.hex }} !important;
+          --gnome-popover-foreground: {{ colors.on_surface.default.hex }} !important;
+
+          --gnome-card-background: {{ colors.surface_container_high.default.hex }} !important;
+          --gnome-card-foreground: {{ colors.on_surface.default.hex }} !important;
+
+          --gnome-sidebar-background: {{ colors.surface_container_low.default.hex }} !important;
+          --gnome-sidebar-foreground: {{ colors.on_surface.default.hex }} !important;
+
+          --gnome-dialog-background: {{ colors.surface.default.hex }} !important;
+          --gnome-dialog-foreground: {{ colors.on_surface.default.hex }} !important;
+        }
+      '';
+    };
+
+    xdg.configFile."noctalia/templates/thunderbird-colors.css" = {
+      text = ''
+        :root {
+          --gnome-window-background: {{ colors.surface.default.hex }} !important;
+          --gnome-window-foreground: {{ colors.on_surface.default.hex }} !important;
+          --gnome-view-background: {{ colors.surface.default.hex }} !important;
+          --gnome-view-foreground: {{ colors.on_surface.default.hex }} !important;
+          --gnome-headerbar-background: {{ colors.surface_container.default.hex }} !important;
+          --gnome-headerbar-foreground: {{ colors.on_surface.default.hex }} !important;
+          --gnome-headerbar-backdrop-background: {{ colors.surface.default.hex }} !important;
+
+          --gnome-accent-bg: {{ colors.primary.default.hex }} !important;
+          --gnome-accent-fg: {{ colors.on_primary.default.hex }} !important;
+
+          --gnome-popover-background: {{ colors.surface_container_high.default.hex }} !important;
+          --gnome-popover-foreground: {{ colors.on_surface.default.hex }} !important;
+
+          --gnome-card-background: {{ colors.surface_container_high.default.hex }} !important;
+          --gnome-card-foreground: {{ colors.on_surface.default.hex }} !important;
+
+          --gnome-sidebar-background: {{ colors.surface_container_low.default.hex }} !important;
+          --gnome-sidebar-foreground: {{ colors.on_surface.default.hex }} !important;
+
+          --gnome-dialog-background: {{ colors.surface.default.hex }} !important;
+          --gnome-dialog-foreground: {{ colors.on_surface.default.hex }} !important;
+        }
+      '';
+    };
+
+    xdg.configFile."noctalia/templates/niri-theme.kdl" = {
+      text = ''
+        layout {
+            focus-ring {
+                off
+            }
+            border {
+                on
+                width 2
+                active-color "{{ colors.primary.default.hex }}"
+                inactive-color "{{ colors.surface_container_highest.default.hex }}"
+            }
+        }
+      '';
     };
   };
 }
