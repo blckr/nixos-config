@@ -21,6 +21,8 @@
     steam
     discord
 
+    gnome-obfuscate
+
     android-studio
     antigravity-fhs
     arduino-ide
@@ -50,6 +52,8 @@
     python3
 
     yazi
+
+    claude-code
   ];
 
   programs.nix-ld.enable = true;

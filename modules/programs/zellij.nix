@@ -41,16 +41,16 @@ in
     {
       programs.zellij = {
         enable = true;
-        enableFishIntegration = true;
+        # enableFishIntegration = true;
       };
 
       programs.fish = {
         enable = true;
-        interactiveShellInit = ''
-          if status is-interactive
-            eval (zellij setup --generate-auto-start fish)
-          end
-        '';
+        # interactiveShellInit = ''
+        #   if status is-interactive
+        #     eval (zellij setup --generate-auto-start fish)
+        #   end
+        # '';
       };
 
       home.file.".config/zellij/config.kdl" = {

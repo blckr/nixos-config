@@ -36,8 +36,8 @@
             trim-trailing-whitespace = true;
             end-of-line-diagnostics = "hint";
             inline-diagnostics = {
-              cursor-line = "hint";
-              other-lines = "warning";
+              cursor-line = "warning";
+              other-lines = "disable";
             };
             lsp.display-inlay-hints = true;
 

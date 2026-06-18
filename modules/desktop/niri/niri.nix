@@ -158,7 +158,10 @@ lib.mkIf config.modules.desktop.enable {
                     options "caps:none"
                 }
             }
-            touchpad { accel-speed 0.0; }
+            touchpad {
+                accel-speed 0.0;
+                natural-scroll;
+            }
             mouse { accel-speed 0.0; }
             warp-mouse-to-focus
             focus-follows-mouse max-scroll-amount="25%"

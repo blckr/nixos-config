@@ -19,10 +19,8 @@
           package = pkgs.adw-gtk3;
         };
         gtk3.extraConfig = {
-          gtk-application-prefer-dark-theme = 1;
         };
         gtk4.extraConfig = {
-          gtk-application-prefer-dark-theme = 1;
         };
         gtk3.extraCss = ''
           @import url("noctalia.css");
@@ -34,10 +32,6 @@
       };
 
       dconf.settings = {
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-          gtk-theme = "adw-gtk3-dark";
-        };
       };
 
       home.file.".themes".source = "${config.system.path}/share/themes";

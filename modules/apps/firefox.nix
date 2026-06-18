@@ -76,11 +76,8 @@ in
               "layout.spellcheckDefaultMultilingual" = true;
 
               "widget.wayland.fractional-scale.enabled" = true;
-              "ui.systemUsesDarkTheme" = 1;
-              "widget.chrome.allow-gtk-dark-theme" = true;
-              # "layout.css.devPixelsPerPx" = -1.0; # Auto-detect Scale (oder 1/1.5 = 0.6667)
-              # "gfx.webrender.all" = true;
-              # "widget.non-native-theme.enabled" = true; # GTK-Theme ignorieren für konsistente Icons
+              "widget.use-xdg-desktop-portal.settings" = 1;
+              "layout.css.prefers-color-scheme.content-override" = 2;
             };
 
             search = {

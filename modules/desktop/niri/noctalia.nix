@@ -13,7 +13,7 @@ lib.mkIf config.modules.desktop.enable {
     imports = [ inputs.noctalia.homeModules.default ];
 
     # ==========================================================
-    # 2. NOCTALIA KONFIGURATION
+    # NOCTALIA KONFIGURATION
     # ==========================================================
 
     programs.noctalia = {
@@ -166,9 +166,9 @@ lib.mkIf config.modules.desktop.enable {
             capsule = false;
             start = [
               "workspaces"
-              "cpu"
-              "temp"
-              "ram"
+              # "cpu"
+              # "temp"
+              # "ram"
               "media"
             ];
             center = [ "control-center" ];
@@ -252,7 +252,7 @@ lib.mkIf config.modules.desktop.enable {
         };
 
         # ==========================================================
-        # 3. TEMPLATE REGISTRIERUNG
+        # TEMPLATES
         # ==========================================================
         theme = {
           templates = {
@@ -279,6 +279,11 @@ lib.mkIf config.modules.desktop.enable {
               thunderbird = {
                 input_path = "$XDG_CONFIG_HOME/noctalia/templates/thunderbird-colors.css";
                 output_path = "/home/${username}/.thunderbird/default/chrome/noctalia-colors.css";
+              };
+              dconf_sync = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/dconf-sync.sh";
+                output_path = "/tmp/noctalia-dconf-sync.sh";
+                post_hook = "bash /tmp/noctalia-dconf-sync.sh";
               };
               niri = {
                 input_path = "$XDG_CONFIG_HOME/noctalia/templates/niri-theme.kdl";
@@ -369,6 +374,22 @@ lib.mkIf config.modules.desktop.enable {
                 inactive-color "{{ colors.surface_container_highest.default.hex }}"
             }
         }
+      '';
+    };
+    xdg.configFile."noctalia/templates/dconf-sync.sh" = {
+      text = ''
+        #!/usr/bin/env bash
+        SURFACE="{{ colors.surface.default.hex }}"
+        SURFACE_HEX=''${SURFACE#*#}
+        R=$(printf "%d" 0x''${SURFACE_HEX:0:2})
+        G=$(printf "%d" 0x''${SURFACE_HEX:2:2})
+        B=$(printf "%d" 0x''${SURFACE_HEX:4:2})
+        LUMA=$(( (R * 299 + G * 587 + B * 114) / 1000 ))
+        if [ "$LUMA" -gt 127 ]; then
+          ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+        else
+          ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+        fi
       '';
     };
   };
