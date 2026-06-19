@@ -137,51 +137,61 @@
         "id_github" = {
           content = sshKeyTemplate "id_github";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/github-blckr";
         };
         "id_gitlab" = {
           content = sshKeyTemplate "id_gitlab";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/gitlab";
         };
         "id_codeberg_blckr" = {
           content = sshKeyTemplate "id_codeberg";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/codeberg-blckr";
         };
         "id_forgejo_blckr" = {
           content = sshKeyTemplate "id_git_blckr";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/forgejo-blckr";
         };
         "id_sra_gitlab" = {
           content = sshKeyTemplate "id_scm_sra";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/sra-gitlab";
         };
         "id_condor" = {
           content = sshKeyTemplate "id_condor";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/condor";
         };
         "id_condor_backup" = {
           content = sshKeyTemplate "id_condor_backup";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/hetzner-condorbackup";
         };
         "id_linnet" = {
           content = sshKeyTemplate "id_linnet";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/linnet";
         };
         "id_redstart" = {
           content = sshKeyTemplate "id_redstart";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/redstart";
         };
         "id_sra_lab" = {
           content = sshKeyTemplate "id_lab";
           owner = username;
+          mode = "0600";
           path = "/home/${username}/.ssh/sra-lab";
         };
 
