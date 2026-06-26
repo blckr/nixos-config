@@ -290,6 +290,10 @@ lib.mkIf config.modules.desktop.enable {
                 output_path = "/home/${username}/.config/niri/theme.kdl";
                 post_hook = "niri msg action reload-config";
               };
+              fish = {
+                input_path = "$XDG_CONFIG_HOME/noctalia/templates/fish-theme.fish";
+                output_path = "$XDG_CONFIG_HOME/fish/conf.d/noctalia-theme.fish";
+              };
             };
           };
         };
@@ -376,6 +380,39 @@ lib.mkIf config.modules.desktop.enable {
         }
       '';
     };
+    xdg.configFile."noctalia/templates/fish-theme.fish" = {
+      text = ''
+        set --global fish_color_autosuggestion {{ colors.terminal_bright_black.default.hex_stripped }}
+        set --global fish_color_cancel -r
+        set --global fish_color_command {{ colors.terminal_bright_green.default.hex_stripped }}
+        set --global fish_color_comment {{ colors.terminal_bright_black.default.hex_stripped }}
+        set --global fish_color_cwd {{ colors.terminal_normal_blue.default.hex_stripped }}
+        set --global fish_color_cwd_root {{ colors.terminal_bright_red.default.hex_stripped }}
+        set --global fish_color_end {{ colors.terminal_normal_cyan.default.hex_stripped }}
+        set --global fish_color_error {{ colors.terminal_bright_red.default.hex_stripped }}
+        set --global fish_color_escape {{ colors.terminal_normal_magenta.default.hex_stripped }}
+        set --global fish_color_history_current --bold
+        set --global fish_color_host normal
+        set --global fish_color_host_remote {{ colors.terminal_normal_yellow.default.hex_stripped }}
+        set --global fish_color_match --background={{ colors.terminal_normal_black.default.hex_stripped }}
+        set --global fish_color_normal {{ colors.terminal_foreground.default.hex_stripped }}
+        set --global fish_color_operator {{ colors.terminal_normal_yellow.default.hex_stripped }}
+        set --global fish_color_param {{ colors.terminal_foreground.default.hex_stripped }}
+        set --global fish_color_quote {{ colors.terminal_normal_yellow.default.hex_stripped }}
+        set --global fish_color_redirection {{ colors.terminal_normal_cyan.default.hex_stripped }}
+        set --global fish_color_search_match --background={{ colors.terminal_normal_black.default.hex_stripped }}
+        set --global fish_color_selection --background={{ colors.terminal_normal_black.default.hex_stripped }}
+        set --global fish_color_status {{ colors.terminal_bright_red.default.hex_stripped }}
+        set --global fish_color_user {{ colors.terminal_bright_green.default.hex_stripped }}
+        set --global fish_color_valid_path --underline
+        set --global fish_pager_color_completion {{ colors.terminal_foreground.default.hex_stripped }}
+        set --global fish_pager_color_description {{ colors.terminal_normal_yellow.default.hex_stripped }} --dim
+        set --global fish_pager_color_prefix {{ colors.terminal_foreground.default.hex_stripped }} --bold
+        set --global fish_pager_color_progress {{ colors.terminal_bright_white.default.hex_stripped }} --background={{ colors.terminal_normal_black.default.hex_stripped }}
+        set --global fish_pager_color_selected_background -r
+      '';
+    };
+
     xdg.configFile."noctalia/templates/dconf-sync.sh" = {
       text = ''
         #!/usr/bin/env bash
