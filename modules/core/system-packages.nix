@@ -8,6 +8,7 @@
     sops
     psmisc
     xdg-utils
+    binutils
     # Shell
     fish
     # Editor

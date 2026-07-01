@@ -1,6 +1,7 @@
 # Custom Settings for each user/pc that might be very individual. It only needs the import of ./hardware-configuration.nix as a bare minimum.
 {
   pkgs,
+  pkgs-unstable,
   username,
   nixos-hardware,
   ...
@@ -54,6 +55,8 @@
     yazi
 
     claude-code
+
+    pkgs-unstable.antigravity-cli
   ];
 
   programs.nix-ld.enable = true;

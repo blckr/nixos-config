@@ -8,6 +8,12 @@ let
     userDescription ? "Default User",
     hashedPassword ? null,
   }:
+  let
+    pkgs-unstable = import inputs.nixpkgs-unstable {
+      system = arch;
+      config.allowUnfree = true;
+    };
+  in
   inputs.nixpkgs.lib.nixosSystem {
     system = arch;
     specialArgs = {
@@ -18,6 +24,7 @@ let
         username
         userDescription
         hashedPassword
+        pkgs-unstable
         ;
       inherit (inputs) nixos-hardware;
     };
