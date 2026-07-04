@@ -113,8 +113,14 @@ lib.mkIf config.modules.desktop.enable {
   };
 
   home-manager.users.${username} =
-    { pkgs, config, ... }:
+    { pkgs, config, lib, ... }:
     {
+      home.activation.niriPlaceholders = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        mkdir -p "$HOME/.config/niri"
+        [ -f "$HOME/.config/niri/noctalia.kdl" ] || touch "$HOME/.config/niri/noctalia.kdl"
+        [ -f "$HOME/.config/niri/theme.kdl" ] || touch "$HOME/.config/niri/theme.kdl"
+      '';
+
       home.file.".config/niri/config.kdl".text = /* kdl */ ''
         include "/home/${username}/.config/niri/noctalia.kdl"
         include "/home/${username}/.config/niri/theme.kdl"

@@ -130,7 +130,7 @@ in
               }
               {
                 provider = "bookmarks";
-                prefix = "%";
+                prefix = "*";
               }
               {
                 provider = "windows";
