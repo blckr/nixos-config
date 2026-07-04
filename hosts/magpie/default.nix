@@ -59,6 +59,10 @@
     pkgs-unstable.antigravity-cli
   ];
 
+  environment.shellAliases = {
+    ws-name = "niri msg action set-workspace-name";
+  };
+
   programs.nix-ld.enable = true;
 
   hardware.graphics = {
