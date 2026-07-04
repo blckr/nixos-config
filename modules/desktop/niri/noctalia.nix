@@ -22,11 +22,13 @@ lib.mkIf config.modules.desktop.enable {
       settings = {
         # Shell
         shell = {
-          font_family = "noto-sans";
+          font_family = "Noto Sans";
           settings_show_advanced = true;
           shared_gl_context = true;
           clipboard_enabled = false;
           app_icon_colorize = true;
+          corner_radius_scale = 0.3;
+          telemetry_enabled = false;
           animation = {
             enabled = true;
             speed = 1.0;
@@ -44,6 +46,11 @@ lib.mkIf config.modules.desktop.enable {
             control_center_placement = "attached";
             wallpaper_placement = "attached";
             session_placement = "attached";
+            open_near_click_control_center = true;
+          };
+          screen_corners = {
+            enabled = true;
+            size = 14;
           };
         };
 
@@ -65,6 +72,9 @@ lib.mkIf config.modules.desktop.enable {
           directory = "/home/${username}/Nextcloud/Archiv/Wallpaper/";
           automation = {
             enabled = false;
+          };
+          default = {
+            path = "/home/${username}/Nextcloud/Archiv/Wallpaper/NordicOutpost.png";
           };
         };
 
@@ -95,6 +105,11 @@ lib.mkIf config.modules.desktop.enable {
           sound_volume = 0.5;
         };
 
+        # Battery
+        battery = {
+          warning_threshold = 30;
+        };
+
         # Brightness
         brightness = {
           enable_ddcutil = false;
@@ -113,8 +128,14 @@ lib.mkIf config.modules.desktop.enable {
           auto_locate = true;
         };
 
+        # Calendar
+        calendar = {
+          enabled = true;
+        };
+
         # Idle
         idle = {
+          pre_action_fade_seconds = 30;
           behavior = {
             lock = {
               timeout = 300;
@@ -153,11 +174,12 @@ lib.mkIf config.modules.desktop.enable {
           main = {
             position = "bottom";
             thickness = 32;
-            background_opacity = 0.93;
-            radius = 4;
+            background_opacity = 1.0;
+            radius = 0;
+            capsule_radius = 4;
             margin_ends = 0;
             margin_edge = 0;
-            padding = 4;
+            padding = 8;
             widget_spacing = 8;
             scale = 1.0;
             shadow = false;
@@ -166,15 +188,12 @@ lib.mkIf config.modules.desktop.enable {
             capsule = false;
             start = [
               "workspaces"
-              # "cpu"
-              # "temp"
-              # "ram"
               "media"
+              # "theme_mode"
             ];
-            center = [ "control-center" ];
+            center = [ "taskbar" ];
             end = [
               "tray"
-              "volume"
               "battery"
               "clock"
               "notifications"
@@ -202,8 +221,8 @@ lib.mkIf config.modules.desktop.enable {
           shortcuts = [
             { type = "wifi"; }
             { type = "bluetooth"; }
-            { type = "wallpaper"; }
-            { type = "screen_recorder"; }
+            { type = "caffeine"; }
+            { type = "power_profile"; }
           ];
         };
 
@@ -221,6 +240,8 @@ lib.mkIf config.modules.desktop.enable {
           workspaces = {
             type = "workspaces";
             minimal = false;
+            display = "name";
+            max_label_chars = 12;
           };
           media = {
             type = "media";
@@ -249,18 +270,55 @@ lib.mkIf config.modules.desktop.enable {
             stat = "ram_used";
             show_label = false;
           };
+          battery = {
+            display_mode = "graphic";
+            scale = 0.75;
+            show_label = false;
+          };
+          taskbar = {
+            color = "primary";
+            empty_color = "tertiary";
+            group_by_workspace = true;
+            hide_empty_workspaces = true;
+            inactive_opacity = 0.8;
+            occupied_color = "tertiary";
+            workspace_label_placement = "centered";
+          };
+          tray = {
+            drawer = true;
+            drawer_columns = 4;
+          };
+          volume = {
+            show_label = false;
+          };
         };
 
         # ==========================================================
         # TEMPLATES
         # ==========================================================
         theme = {
+          builtin = "Nord";
+          mode = "dark";
+          source = "builtin";
+          wallpaper_scheme = "m3-content";
           templates = {
             enable_builtin_templates = true;
             builtin_ids = [
+              "btop"
               "gtk3"
               "gtk4"
+              "helix"
+              "kitty"
+              "niri"
               "qt"
+            ];
+            enable_community_templates = true;
+            community_ids = [
+              "vscode"
+              "discord"
+              "papirus-icons"
+              "steam"
+              "yazi"
             ];
             user = {
               zellij = {
