@@ -1,6 +1,7 @@
 {
   imports = [
     ./btop.nix
+    ./emacs.nix
     ./git.nix
     ./helix.nix
     ./kitty.nix

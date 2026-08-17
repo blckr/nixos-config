@@ -37,11 +37,13 @@
     obsidian
     onlyoffice-desktopeditors # microsoft-like text documents
     qemu
-    signal-desktop
+    pkgs-unstable.signal-desktop
     simple-scan # gnome scanner
     spotify
     # texliveFull
     zotero
+
+    easyeffects
 
     eog
     evince
@@ -54,13 +56,16 @@
 
     yazi
 
-    claude-code
+    zed-editor
 
+    opencode
+    pkgs-unstable.claude-code
     pkgs-unstable.antigravity-cli
   ];
 
   environment.shellAliases = {
     ws-name = "niri msg action set-workspace-name";
+    ws-clear = "niri msg action unset-workspace-name";
   };
 
   programs.nix-ld.enable = true;
