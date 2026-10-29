@@ -1,10 +1,9 @@
 {
   imports = [
     ./btop.nix
-    ./emacs.nix
+    ./ghostty.nix
     ./git.nix
     ./helix.nix
-    ./kitty.nix
     ./networkmanager.nix
     ./standard.nix
     ./xdg.nix
@@ -12,5 +11,6 @@
     ./scripts.nix
     ./shell.nix
     ./ssh.nix
+    ./wireguard.nix
   ];
 }

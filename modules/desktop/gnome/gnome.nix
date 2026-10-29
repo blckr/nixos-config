@@ -7,35 +7,16 @@
 }:
 lib.mkIf config.modules.desktop.enable {
     services = {
-      desktopManager.gnome.enable = true;
-      displayManager.gdm.enable = false;
+      # desktopManager.gnome is NOT enabled here — niri is the active compositor.
+      # Enabling it would start colord, accounts-daemon, bolt, evolution-data-server
+      # and a dozen other GNOME background services that waste power on a niri setup.
+      # gnome-keyring is enabled separately in niri.nix.
       gnome.gnome-keyring.enable = true;
     };
 
     security.pam.services.greetd.enableGnomeKeyring = true;
 
     programs.dconf.enable = true;
-
-    # Remove default GNOME bloat
-    environment.gnome.excludePackages = with pkgs; [
-      gnome-tour
-      epiphany # web browser
-      geary # mail client
-      evince # document viewer
-      baobab
-      gnome-characters
-      gnome-contacts
-      gnome-font-viewer
-      gnome-logs
-      gnome-maps
-      gnome-music
-      gnome-weather
-      gnome-connections
-      gnome-calculator
-      gnome-calendar
-      totem
-      yelp
-    ];
 
     environment.systemPackages = with pkgs; [
       gnomeExtensions.paperwm
@@ -130,14 +111,14 @@ lib.mkIf config.modules.desktop.enable {
           };
 
           "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-            name = "Kitty";
-            command = "kitty";
+            name = "Ghostty";
+            command = "ghostty";
             binding = "<Super>e";
           };
 
           "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-            name = "Zen Browser";
-            command = "zen";
+            name = "Firefox";
+            command = "firefox";
             binding = "<Super>p";
           };
 

@@ -5,15 +5,15 @@
 let
 
   wifi = pkgs.writeShellScriptBin "wifi" ''
-    kitty impala
+    ghostty -e impala
   '';
 
   bluetooth = pkgs.writeShellScriptBin "bluetooth" ''
-    kitty bluetui
+    ghostty -e bluetui
   '';
 
   audio = pkgs.writeShellScriptBin "audio" ''
-    kitty wiremix
+    ghostty -e wiremix
   '';
 
 in

@@ -16,7 +16,7 @@
     vim
     # Nix-Tools
     nil
-    nixfmt-rfc-style
+    nixfmt
     # Network
     dig
     iftop

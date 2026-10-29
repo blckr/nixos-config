@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ ... }:
 {
   imports = [
     ./boot.nix
@@ -16,5 +16,4 @@
   nixpkgs.config.permittedInsecurePackages = [
     "electron-39.8.10"
   ];
-  documentation.man.cache.enable = lib.mkForce false;
 }

@@ -11,22 +11,11 @@ lib.mkIf config.modules.desktop.enable {
 
     # All backends for every active DE live here — no duplication across modules
     extraPortals = [
-      pkgs.kdePackages.xdg-desktop-portal-kde
       pkgs.xdg-desktop-portal-gtk
       pkgs.xdg-desktop-portal-gnome
     ];
 
     config = {
-      # Activated when XDG_CURRENT_DESKTOP=KDE
-      KDE = {
-        default = [ "kde" ];
-        "org.freedesktop.impl.portal.FileChooser" = [ "kde" ];
-        "org.freedesktop.impl.portal.ScreenCast" = [ "kde" ];
-        "org.freedesktop.impl.portal.Screenshot" = [ "kde" ];
-        "org.freedesktop.impl.portal.RemoteDesktop" = [ "kde" ];
-        "org.freedesktop.impl.portal.GlobalShortcuts" = [ "kde" ];
-      };
-
       # Activated when XDG_CURRENT_DESKTOP=niri
       niri = lib.mkForce {
         default = [

@@ -258,22 +258,22 @@ lib.mkIf config.modules.desktop.enable {
           cpu = {
             type = "sysmon";
             stat = "cpu_usage";
-            show_label = false;
+            show_value = false;
           };
           temp = {
             type = "sysmon";
             stat = "cpu_temp";
-            show_label = false;
+            show_value = false;
           };
           ram = {
             type = "sysmon";
             stat = "ram_used";
-            show_label = false;
+            show_value = false;
           };
           battery = {
             display_mode = "graphic";
             scale = 0.75;
-            show_label = false;
+            show_value = false;
           };
           taskbar = {
             color = "primary";
@@ -289,203 +289,21 @@ lib.mkIf config.modules.desktop.enable {
             drawer_columns = 4;
           };
           volume = {
-            show_label = false;
+            show_value = false;
           };
         };
 
-        # ==========================================================
-        # TEMPLATES
-        # ==========================================================
+        # Theme: statisch Nord, keine Templates in andere Programme
         theme = {
           builtin = "Nord";
           mode = "dark";
           source = "builtin";
-          wallpaper_scheme = "m3-content";
           templates = {
-            enable_builtin_templates = true;
-            builtin_ids = [
-              "btop"
-              "gtk3"
-              "gtk4"
-              "helix"
-              "kitty"
-              "niri"
-              "qt"
-            ];
-            enable_community_templates = true;
-            community_ids = [
-              "vscode"
-              "discord"
-              "papirus-icons"
-              "steam"
-              "yazi"
-            ];
-            user = {
-              zellij = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/zellij.kdl";
-                output_path = "$XDG_CONFIG_HOME/zellij/themes/noctalia.kdl";
-              };
-              walker = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/walker.css";
-                output_path = "$XDG_CONFIG_HOME/walker/themes/noctalia-colors.css";
-                post_hook = "systemctl --user restart walker";
-              };
-              firefox = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/firefox-colors.css";
-                output_path = "/home/${username}/.mozilla/firefox/default/chrome/noctalia-colors.css";
-              };
-              thunderbird = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/thunderbird-colors.css";
-                output_path = "/home/${username}/.thunderbird/default/chrome/noctalia-colors.css";
-              };
-              dconf_sync = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/dconf-sync.sh";
-                output_path = "/tmp/noctalia-dconf-sync.sh";
-                post_hook = "bash /tmp/noctalia-dconf-sync.sh";
-              };
-              niri = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/niri-theme.kdl";
-                output_path = "/home/${username}/.config/niri/theme.kdl";
-                post_hook = "niri msg action reload-config";
-              };
-              fish = {
-                input_path = "$XDG_CONFIG_HOME/noctalia/templates/fish-theme.fish";
-                output_path = "$XDG_CONFIG_HOME/fish/conf.d/noctalia-theme.fish";
-              };
-            };
+            enable_builtin_templates = false;
+            enable_community_templates = false;
           };
         };
       };
-    };
-    xdg.configFile."noctalia/templates/zellij.kdl" = {
-      text = "themes {\n  noctalia {\n    fg \"{{ colors.terminal_foreground.default.hex }}\"\n    bg \"{{ colors.terminal_background.default.hex }}\"\n    black \"{{ colors.terminal_normal_black.default.hex }}\"\n    red \"{{ colors.terminal_normal_red.default.hex }}\"\n    green \"{{ colors.terminal_normal_green.default.hex }}\"\n    yellow \"{{ colors.terminal_normal_yellow.default.hex }}\"\n    blue \"{{ colors.terminal_normal_blue.default.hex }}\"\n    magenta \"{{ colors.terminal_normal_magenta.default.hex }}\"\n    cyan \"{{ colors.terminal_normal_cyan.default.hex }}\"\n    white \"{{ colors.terminal_normal_white.default.hex }}\"\n    orange \"{{ colors.terminal_bright_yellow.default.hex }}\"\n  }\n}";
-    };
-
-    xdg.configFile."noctalia/templates/walker.css" = {
-      text = "@define-color bg {{ colors.surface.default.hex }};\n@define-color fg {{ colors.on_surface.default.hex }};\n@define-color accent {{ colors.primary.default.hex }};\n@define-color selection {{ colors.surface_container_highest.default.hex }};\n@define-color border {{ colors.outline_variant.default.hex }};";
-    };
-
-    xdg.configFile."noctalia/templates/firefox-colors.css" = {
-      text = ''
-        :root {
-          --gnome-window-background: {{ colors.surface.default.hex }} !important;
-          --gnome-window-foreground: {{ colors.on_surface.default.hex }} !important;
-          --gnome-view-background: {{ colors.surface.default.hex }} !important;
-          --gnome-view-foreground: {{ colors.on_surface.default.hex }} !important;
-          --gnome-headerbar-background: {{ colors.surface_container.default.hex }} !important;
-          --gnome-headerbar-foreground: {{ colors.on_surface.default.hex }} !important;
-          --gnome-headerbar-backdrop-background: {{ colors.surface.default.hex }} !important;
-
-          --gnome-accent-bg: {{ colors.primary.default.hex }} !important;
-          --gnome-accent-fg: {{ colors.on_primary.default.hex }} !important;
-
-          --gnome-popover-background: {{ colors.surface_container_high.default.hex }} !important;
-          --gnome-popover-foreground: {{ colors.on_surface.default.hex }} !important;
-
-          --gnome-card-background: {{ colors.surface_container_high.default.hex }} !important;
-          --gnome-card-foreground: {{ colors.on_surface.default.hex }} !important;
-
-          --gnome-sidebar-background: {{ colors.surface_container_low.default.hex }} !important;
-          --gnome-sidebar-foreground: {{ colors.on_surface.default.hex }} !important;
-
-          --gnome-dialog-background: {{ colors.surface.default.hex }} !important;
-          --gnome-dialog-foreground: {{ colors.on_surface.default.hex }} !important;
-        }
-      '';
-    };
-
-    xdg.configFile."noctalia/templates/thunderbird-colors.css" = {
-      text = ''
-        :root {
-          --gnome-window-background: {{ colors.surface.default.hex }} !important;
-          --gnome-window-foreground: {{ colors.on_surface.default.hex }} !important;
-          --gnome-view-background: {{ colors.surface.default.hex }} !important;
-          --gnome-view-foreground: {{ colors.on_surface.default.hex }} !important;
-          --gnome-headerbar-background: {{ colors.surface_container.default.hex }} !important;
-          --gnome-headerbar-foreground: {{ colors.on_surface.default.hex }} !important;
-          --gnome-headerbar-backdrop-background: {{ colors.surface.default.hex }} !important;
-
-          --gnome-accent-bg: {{ colors.primary.default.hex }} !important;
-          --gnome-accent-fg: {{ colors.on_primary.default.hex }} !important;
-
-          --gnome-popover-background: {{ colors.surface_container_high.default.hex }} !important;
-          --gnome-popover-foreground: {{ colors.on_surface.default.hex }} !important;
-
-          --gnome-card-background: {{ colors.surface_container_high.default.hex }} !important;
-          --gnome-card-foreground: {{ colors.on_surface.default.hex }} !important;
-
-          --gnome-sidebar-background: {{ colors.surface_container_low.default.hex }} !important;
-          --gnome-sidebar-foreground: {{ colors.on_surface.default.hex }} !important;
-
-          --gnome-dialog-background: {{ colors.surface.default.hex }} !important;
-          --gnome-dialog-foreground: {{ colors.on_surface.default.hex }} !important;
-        }
-      '';
-    };
-
-    xdg.configFile."noctalia/templates/niri-theme.kdl" = {
-      text = ''
-        layout {
-            focus-ring {
-                off
-            }
-            border {
-                on
-                width 2
-                active-color "{{ colors.primary.default.hex }}"
-                inactive-color "{{ colors.surface_container_highest.default.hex }}"
-            }
-        }
-      '';
-    };
-    xdg.configFile."noctalia/templates/fish-theme.fish" = {
-      text = ''
-        set --global fish_color_autosuggestion {{ colors.terminal_bright_black.default.hex_stripped }}
-        set --global fish_color_cancel -r
-        set --global fish_color_command {{ colors.terminal_bright_green.default.hex_stripped }}
-        set --global fish_color_comment {{ colors.terminal_bright_black.default.hex_stripped }}
-        set --global fish_color_cwd {{ colors.terminal_normal_blue.default.hex_stripped }}
-        set --global fish_color_cwd_root {{ colors.terminal_bright_red.default.hex_stripped }}
-        set --global fish_color_end {{ colors.terminal_normal_cyan.default.hex_stripped }}
-        set --global fish_color_error {{ colors.terminal_bright_red.default.hex_stripped }}
-        set --global fish_color_escape {{ colors.terminal_normal_magenta.default.hex_stripped }}
-        set --global fish_color_history_current --bold
-        set --global fish_color_host normal
-        set --global fish_color_host_remote {{ colors.terminal_normal_yellow.default.hex_stripped }}
-        set --global fish_color_match --background={{ colors.terminal_normal_black.default.hex_stripped }}
-        set --global fish_color_normal {{ colors.terminal_foreground.default.hex_stripped }}
-        set --global fish_color_operator {{ colors.terminal_normal_yellow.default.hex_stripped }}
-        set --global fish_color_param {{ colors.terminal_foreground.default.hex_stripped }}
-        set --global fish_color_quote {{ colors.terminal_normal_yellow.default.hex_stripped }}
-        set --global fish_color_redirection {{ colors.terminal_normal_cyan.default.hex_stripped }}
-        set --global fish_color_search_match --background={{ colors.terminal_normal_black.default.hex_stripped }}
-        set --global fish_color_selection --background={{ colors.terminal_normal_black.default.hex_stripped }}
-        set --global fish_color_status {{ colors.terminal_bright_red.default.hex_stripped }}
-        set --global fish_color_user {{ colors.terminal_bright_green.default.hex_stripped }}
-        set --global fish_color_valid_path --underline
-        set --global fish_pager_color_completion {{ colors.terminal_foreground.default.hex_stripped }}
-        set --global fish_pager_color_description {{ colors.terminal_normal_yellow.default.hex_stripped }} --dim
-        set --global fish_pager_color_prefix {{ colors.terminal_foreground.default.hex_stripped }} --bold
-        set --global fish_pager_color_progress {{ colors.terminal_bright_white.default.hex_stripped }} --background={{ colors.terminal_normal_black.default.hex_stripped }}
-        set --global fish_pager_color_selected_background -r
-      '';
-    };
-
-    xdg.configFile."noctalia/templates/dconf-sync.sh" = {
-      text = ''
-        #!/usr/bin/env bash
-        SURFACE="{{ colors.surface.default.hex }}"
-        SURFACE_HEX=''${SURFACE#*#}
-        R=$(printf "%d" 0x''${SURFACE_HEX:0:2})
-        G=$(printf "%d" 0x''${SURFACE_HEX:2:2})
-        B=$(printf "%d" 0x''${SURFACE_HEX:4:2})
-        LUMA=$(( (R * 299 + G * 587 + B * 114) / 1000 ))
-        if [ "$LUMA" -gt 127 ]; then
-          ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
-        else
-          ${pkgs.glib}/bin/gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-        fi
-      '';
     };
   };
 }

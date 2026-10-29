@@ -4,6 +4,12 @@
 # ls /run/current-system/sw/share/applications/
 { username, ... }:
 {
+  # Desktop-Einträge mit Terminal=true (z.B. Helix) in Ghostty öffnen
+  xdg.terminal-exec = {
+    enable = true;
+    settings.default = [ "com.mitchellh.ghostty.desktop" ];
+  };
+
   home-manager.users.${username} =
     { config, ... }:
     {
@@ -11,8 +17,8 @@
         enable = true;
         defaultApplications = {
           "application/pdf" = "org.gnome.Papers.desktop";
-          "text/plain" = "kitty-open.desktop";
-          "text/x-c" = "kitty-open.desktop";
+          "text/plain" = "Helix.desktop";
+          "text/x-c" = "Helix.desktop";
         };
       };
     };

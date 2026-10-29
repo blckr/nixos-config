@@ -10,10 +10,8 @@
 
   documentation.dev.enable = true;
 
-  documentation = {
-    man.enable = true;
-    man.generateCaches = true;
-  };
+  # fish aktiviert den man-Cache per mkDefault; der Build dauert lange
+  documentation.man.cache.enable = false;
 
   programs.fish = {
     interactiveShellInit = ''

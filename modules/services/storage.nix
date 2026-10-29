@@ -10,19 +10,6 @@ with lib; let
 in {
   options.modules.services.storage = {
     enable = mkEnableOption "Enable USB automounting and storage services";
-    
-    udiskie = {
-      notify = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Show desktop notifications for mount/unmount";
-      };
-      tray = mkOption {
-        type = types.enum ["always" "auto" "never"];
-        default = "auto";
-        description = "When to show system tray icon";
-      };
-    };
   };
 
   config = mkIf cfg.enable {
@@ -47,9 +34,6 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
-      udiskie
-      udisks
-      gvfs
       ntfs3g      # Windows NTFS
       exfat       # exFAT
       dosfstools  # FAT32
@@ -59,9 +43,9 @@ in {
       services.udiskie = {
         enable = true;
         automount = true;
-        notify = cfg.udiskie.notify;
-        tray = cfg.udiskie.tray;
-        
+        notify = true;
+        tray = "auto";
+
         settings = {
           program_options = {
             file_manager = "${pkgs.ranger}/bin/ranger";

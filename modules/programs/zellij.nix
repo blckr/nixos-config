@@ -9,7 +9,7 @@ let
     default_mode "locked";
     on_force_close "quit";
 
-    theme "noctalia"
+    theme "nord"
 
     keybinds {
       shared {

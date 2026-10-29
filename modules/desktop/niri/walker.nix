@@ -56,8 +56,8 @@ in
         runAsService = true;
 
         config = {
-          terminal = "${pkgs.kitty}/bin/kitty";
-          theme = "dynamic";
+          terminal = "${pkgs.ghostty}/bin/ghostty";
+          theme = "nord";
           force_keyboard_focus = false;
           close_when_open = true;
           click_to_close = true;
@@ -145,10 +145,14 @@ in
         };
 
         themes = {
-          "dynamic" = {
+          "nord" = {
             style = /* css */ ''
-              /* Wir importieren die von Noctalia generierten Farben! */
-              @import url("/home/${username}/.config/walker/themes/noctalia-colors.css");
+              /* Nord */
+              @define-color bg #2e3440;
+              @define-color fg #eceff4;
+              @define-color accent #8fbcbb;
+              @define-color selection #4c566a;
+              @define-color border #4c566a;
 
               * {
                 all: unset;

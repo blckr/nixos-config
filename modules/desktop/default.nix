@@ -1,7 +1,7 @@
 { lib, config, ... }:
 {
   options.modules.desktop = {
-    enable = lib.mkEnableOption "Enable the desktop environment suite (Niri, GNOME, and KDE)";
+    enable = lib.mkEnableOption "Enable the desktop environment suite (Niri and GNOME)";
   };
 
   imports = [
@@ -14,6 +14,5 @@
 
     ./niri
     ./gnome
-    ./kde
   ];
 }

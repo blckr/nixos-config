@@ -2,13 +2,12 @@
   imports = [
     ./android-studio.nix
     ./ausweisapp.nix
-    ./container.nix
+    ./docker.nix
     ./firefox.nix
     ./mullvad.nix
     ./fnott.nix
     ./vscode.nix
     ./wireshark.nix
-    ./zen-browser.nix
     ./thunderbird.nix
   ];
 }

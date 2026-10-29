@@ -12,7 +12,12 @@ lib.mkIf config.modules.desktop.enable {
     logind.settings.Login = {
       HandlePowerKey = "poweroff";
       HandleLidSwitch = "suspend";
-      LidSwitchIgnoreInhibited = "no";
+      HandleLidSwitchExternalPower = "suspend";
+      # WICHTIG: "yes" (Default) = Deckel-zu suspendet IMMER, auch wenn eine
+      # App (z.B. Firefox bei Video-Wiedergabe) einen Idle-Inhibitor hält.
+      # Vorher stand hier "no" -> Lid-close wurde bei laufendem Video
+      # ignoriert und der Laptop blieb voll an.
+      LidSwitchIgnoreInhibited = "yes";
     };
   };
 
@@ -20,60 +25,28 @@ lib.mkIf config.modules.desktop.enable {
   security.pam.services.login.enableGnomeKeyring = true;
 
   systemd = {
-    user.services = {
-      # Polkit
-      polkit-gnome-authentication-agent-1 = {
-        description = "polkit-gnome-authentication-agent-1";
-        wantedBy = [ "graphical-session.target" ];
-        wants = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-          Restart = "on-failure";
-          RestartSec = 1;
-          PartOf = [ "graphical-session.target" ];
-        };
+    user.timers.niri-display-hz = {
+      wantedBy = [ "graphical-session.target" ];
+      timerConfig = {
+        OnActiveSec = "5s";
+        OnUnitActiveSec = "30s";
       };
-      niri-flake-polkit.enable = false;
+    };
 
-      cliphist = {
-        description = "wl-paste + cliphist service";
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store --text";
-          StandardOutput = "journal";
-          StandardError = "journal";
-          Restart = "on-failure";
-          RestartSec = 1;
-          PartOf = [ "graphical-session.target" ];
-        };
-      };
-      cliphist-image = {
-        description = "wl-paste + cliphist service for pictures";
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store --image";
-          StandardOutput = "journal";
-          StandardError = "journal";
-          Restart = "on-failure";
-          RestartSec = 1;
-          PartOf = [ "graphical-session.target" ];
-        };
-      };
-
-      xwayland-satellite = {
-        description = "xwayland-satellite";
-        wantedBy = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-        serviceConfig = {
-          Type = "notify";
-          ExecStart = "${pkgs.xwayland-satellite}/bin/xwayland-satellite";
-          NotifyAccess = "all";
-          Restart = "on-failure";
-          RestartSec = 2;
-          PartOf = [ "graphical-session.target" ];
-        };
+    user.services.niri-display-hz = {
+      description = "Set display Hz to 60 on battery, 120 on AC";
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = let
+          script = pkgs.writeShellScript "niri-display-hz" ''
+            if [ "$(cat /sys/class/power_supply/AC/online 2>/dev/null)" = "1" ]; then
+              ${pkgs.niri}/bin/niri msg output "eDP-1" mode 2880x1800@120.000 || true
+            else
+              ${pkgs.niri}/bin/niri msg output "eDP-1" mode 2880x1800@60.000 || true
+            fi
+          '';
+        in "${script}";
       };
     };
   };
@@ -85,17 +58,14 @@ lib.mkIf config.modules.desktop.enable {
 
   environment.systemPackages = with pkgs; [
     brightnessctl
-    cliphist
     fuzzel
-    kitty
-    networkmanagerapplet
+    ghostty
     playerctl
     wl-clipboard
     wl-color-picker
     wofi-power-menu
     xwayland-satellite
     libnotify
-    ibus
     gst_all_1.gst-plugins-bad
     gst_all_1.gst-plugins-good
     gst_all_1.gst-plugins-base
@@ -115,16 +85,7 @@ lib.mkIf config.modules.desktop.enable {
   home-manager.users.${username} =
     { pkgs, config, lib, ... }:
     {
-      home.activation.niriPlaceholders = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        mkdir -p "$HOME/.config/niri"
-        [ -f "$HOME/.config/niri/noctalia.kdl" ] || touch "$HOME/.config/niri/noctalia.kdl"
-        [ -f "$HOME/.config/niri/theme.kdl" ] || touch "$HOME/.config/niri/theme.kdl"
-      '';
-
       home.file.".config/niri/config.kdl".text = /* kdl */ ''
-        include "/home/${username}/.config/niri/noctalia.kdl"
-        include "/home/${username}/.config/niri/theme.kdl"
-
         prefer-no-csd
         screenshot-path "~/Nextcloud/Photos/Sammlungen/Screenshots-Desktop/%Y-%m-%d-%H%M%S.png"
 
@@ -138,21 +99,11 @@ lib.mkIf config.modules.desktop.enable {
             GDK_BACKEND "wayland,x11"
             MOZ_ENABLE_WAYLAND "1"
             QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
-            QT_QPA_PLATFORMTHEME "qt6ct"
-            QT_STYLE_OVERRIDE "kvantum"
             SDL_VIDEODRIVER "wayland"
             CLUTTER_BACKEND "wayland"
         }
 
-        spawn-at-startup "sh" "-c" "cliphist wipe"
-        spawn-at-startup "sh" "-c" "systemctl --user start cliphist.service"
-        spawn-at-startup "sh" "-c" "systemctl --user start cliphist-image.service"
-        spawn-at-startup "sh" "-c" "sleep 0.5 && cliphist wipe"
         spawn-at-startup "noctalia"
-        spawn-at-startup "sh" "-c" "systemctl --user start xwayland-satellite.service"
-        spawn-at-startup "sh" "-c" "systemctl --user start kanshi.service"
-        spawn-at-startup "ibus-daemon" "--wayland" "--daemonize" "--replace"
-        spawn-at-startup "nm-applet"
         spawn-at-startup "dbus-send" "--session" "--print-reply" "--dest=org.freedesktop.impl.portal.PermissionStore" "/org/freedesktop/impl/portal/PermissionStore" "org.freedesktop.impl.portal.PermissionStore.SetPermission" "string:devices" "boolean:true" "string:camera" "string:org.gnome.Snapshot" "array:string:yes"
         spawn-at-startup "dbus-send" "--session" "--print-reply" "--dest=org.freedesktop.impl.portal.PermissionStore" "/org/freedesktop/impl/portal/PermissionStore" "org.freedesktop.impl.portal.PermissionStore.SetPermission" "string:devices" "boolean:true" "string:camera" "string:" "array:string:yes"
 
@@ -194,6 +145,33 @@ lib.mkIf config.modules.desktop.enable {
                 left 8
                 right 8
             }
+
+            // Nord
+            focus-ring { off; }
+            border {
+                width 2
+                active-color "#8fbcbb"
+                inactive-color "#4c566a"
+                urgent-color "#bf616a"
+            }
+            tab-indicator {
+                width 8
+                gap -4
+                length total-proportion=0.5
+                gaps-between-tabs 4
+                corner-radius 2
+                active-color "#8fbcbb"
+                inactive-color "#4b5c64"
+                urgent-color "#bf616a"
+            }
+            insert-hint { color "#8fbcbb80"; }
+        }
+
+        recent-windows {
+            highlight {
+                active-color "#8fbcbb"
+                urgent-color "#bf616a"
+            }
         }
 
         window-rule {
@@ -215,20 +193,23 @@ lib.mkIf config.modules.desktop.enable {
             match is-window-cast-target=true
         }
 
-        window-rule {
-            match app-id="spotify"
-            match app-id=".spotify-wrapped"
-            match app-id="discord"
-            opacity 0.9
+        // opacity 0.9 on spotify/discord removed — prevents GPU from caching
+        // those layers, causing constant compositing even when windows are idle
+
+        gestures {
+            hot-corners {
+                off
+            }
         }
 
         binds {
             Mod+Shift+Slash { show-hotkey-overlay; }
-            Mod+E { spawn "kitty"; }
+            Mod+E { spawn "ghostty"; }
             Mod+P { spawn "firefox"; }
             Mod+Space { spawn "walker"; }
             Mod+Return { spawn "walker"; }
             Mod+Shift+L { spawn "noctalia" "msg" "session" "lock"; }
+            Mod+Ctrl+Shift+Alt+L { spawn "firefox" "https://www.linkedin.com"; }
             Mod+Shift+S { spawn "script-selector"; }
             Mod+N { spawn "fnottctl" "dismiss"; }
 

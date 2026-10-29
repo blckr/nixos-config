@@ -23,7 +23,7 @@
       vscode.enable = true;
       fnott.enable = false;
       # swaync.enable = true;
-      container.enable = true;
+      docker.enable = true;
     };
   };
 

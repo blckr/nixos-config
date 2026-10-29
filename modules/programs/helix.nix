@@ -17,17 +17,23 @@
       programs.helix = {
         enable = true;
         defaultEditor = true;
-
-        themes = {
-          noctalia-custom = {
-            inherits = "noctalia";
-            "punctuation" = "outline";
-            "punctuation.special" = "outline";
-          };
-        };
+        # Language-Server (nur im PATH von hx)
+        extraPackages = with pkgs; [
+          nil
+          nixd
+          rust-analyzer
+          clang-tools
+          gopls
+          pyright
+          bash-language-server
+          typescript-language-server
+          yaml-language-server
+          vscode-langservers-extracted
+          marksman
+        ];
 
         settings = {
-          theme = "noctalia-custom";
+          theme = "nord";
 
           editor = {
             auto-format = true;
@@ -79,6 +85,10 @@
               ":reload-all"
             ];
           };
+
+          # Terminal im aktuellen Projektordner (cwd wird von :sh geerbt).
+          # Gegenstück: Super+E in niri spawnt ghostty in $HOME.
+          keys.normal.space.t = ":sh setsid -f ghostty";
         };
 
         languages = {
@@ -86,12 +96,25 @@
             {
               name = "nix";
               formatter = {
-                command = "nixfmt-rfc-style";
+                command = "nixfmt";
               };
               auto-format = true;
             }
           ];
           language-server = {
+            nil = {
+              config = {
+                nix.flake = {
+                  # nil archiviert fehlende Flake-Inputs selbst in den Store
+                  # statt beim Öffnen nachzufragen ("Fetch them now?").
+                  autoArchive = true;
+                  # autoEvalInputs bewusst AUS: nil würde `nix flake show` auf
+                  # jedem Input laufen lassen; bei großen Inputs (home-manager,
+                  # nixpkgs) crasht die Eval mit SIGABRT (core dumped).
+                  autoEvalInputs = false;
+                };
+              };
+            };
             rust-analyzer = {
               config = {
                 inlayHints = {

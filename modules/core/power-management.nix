@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -9,7 +8,7 @@
 
   options.modules.powerManagement = {
     profile = lib.mkOption {
-      type = lib.types.enum [ "tlp" "ppd" "autoCpuFreq" "none" ];
+      type = lib.types.enum [ "tlp" "none" ];
       default = "none";
       description = "Which power management profile to use.";
     };
@@ -26,17 +25,25 @@
         CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
         CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
 
+        # Disable AMD Core Performance Boost on battery — single biggest saving on AMD
+        CPU_BOOST_ON_AC = 1;
+        CPU_BOOST_ON_BAT = 0;
+        CPU_HWP_DYN_BOOST_ON_AC = 1;
+        CPU_HWP_DYN_BOOST_ON_BAT = 0;
+
         # PCIe power management
         # "on" on AC avoids latency spikes from devices waking up
         RUNTIME_PM_ON_AC = "on";
         RUNTIME_PM_ON_BAT = "auto";
         PCIE_ASPM_ON_AC = "default";
-        PCIE_ASPM_ON_BAT = "powersave";
+        PCIE_ASPM_ON_BAT = "powersupersave";
 
-        # Wi-Fi: let iwd manage its own power saving — TLP interfering here
-        # causes latency spikes and slow throughput with the iwd backend
+        # Wi-Fi: NM sets power-save, TLP must not override it
         WIFI_PWR_ON_AC = "off";
         WIFI_PWR_ON_BAT = "off";
+
+        # Wake-on-LAN disabled — prevents NICs from blocking power-gating
+        WOL_DISABLE = "Y";
 
         USB_AUTOSUSPEND = 1;
         USB_EXCLUDE_AUDIO = 1;
@@ -50,27 +57,6 @@
 
         START_CHARGE_THRESH_BAT0 = 75;
         STOP_CHARGE_THRESH_BAT0 = 85;
-      };
-    };
-
-    services.power-profiles-daemon.enable = config.modules.powerManagement.profile == "ppd";
-
-    environment.systemPackages =
-      with pkgs;
-      lib.optionals (config.modules.powerManagement.profile == "tlp") [
-        tlp
-      ]
-      ++ lib.optionals (config.modules.powerManagement.profile == "autoCpuFreq") [
-        auto-cpufreq
-      ];
-
-    systemd.services.auto-cpufreq = lib.mkIf (config.modules.powerManagement.profile == "autoCpuFreq") {
-      description = "auto-cpufreq daemon";
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "simple";
-        ExecStart = "${pkgs.auto-cpufreq}/bin/auto-cpufreq --daemon";
-        Restart = "on-failure";
       };
     };
   };

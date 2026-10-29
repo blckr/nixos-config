@@ -15,7 +15,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${username} =
-      { pkgs, ... }:
+      { ... }:
       let
         extension = shortId: guid: {
           "${guid}" = {
@@ -32,20 +32,14 @@ in
           profiles.default = {
             isDefault = true;
 
-            userChrome = ''
-              @import "${pkgs.firefox-gnome-theme}/share/firefox-gnome-theme/userChrome.css";
-              @import "noctalia-colors.css";
-            '';
-            userContent = ''
-              @import "${pkgs.firefox-gnome-theme}/share/firefox-gnome-theme/userContent.css";
-              @import "noctalia-colors.css";
-            '';
-
             settings = {
-              # GNOME Theme Integration
-              "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-              "browser.tabs.drawInTitlebar" = true;
-              "svg.context-properties.content.enabled" = true;
+              # Eingebautes System-Theme: übernimmt die GTK-Farben (Nordic)
+              "extensions.activeThemeID" = "default-theme@mozilla.org";
+              # Keine GTK-Fensterknöpfe in der Leiste (niri zeichnet den Rahmen)
+              "browser.tabs.inTitlebar" = 0;
+              # Kompakte Dichte (in der UI versteckt, aber unterstützt)
+              "browser.compactmode.show" = true;
+              "browser.uidensity" = 1;
 
               # Form autofill
               "browser.formfill.enable" = false;
@@ -63,6 +57,7 @@ in
               # Vertical tabs (native Firefox sidebar)
               "sidebar.verticalTabs" = true;
               "sidebar.revamp" = true;
+              "sidebar.revamp.round-content-area" = true;
 
               # Other Zen-like defaults (from your original config)
               "extensions.autoDisableScopes" = 0;
