@@ -13,6 +13,6 @@
     ./xdg-desktop-portal.nix
 
     ./niri
-    ./gnome
+    ./gnome.nix
   ];
 }

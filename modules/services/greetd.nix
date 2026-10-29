@@ -16,20 +16,6 @@
   boot.initrd.systemd.enable = true;
   boot.plymouth.enable = true;
 
-  services.displayManager.sessionPackages = [
-    pkgs.niri
-  ];
-
-  environment.etc."share/wayland-sessions/gnome.desktop".text = ''
-    [Desktop Entry]
-    Name=GNOME
-    Comment=This session logs you into GNOME
-    Exec=${pkgs.gnome-session}/bin/gnome-session
-    TryExec=${pkgs.gnome-session}/bin/gnome-session
-    Type=Application
-    DesktopNames=GNOME
-  '';
-
   services.greetd = {
     enable = true;
     settings = {

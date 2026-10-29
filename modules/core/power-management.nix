@@ -18,6 +18,8 @@
 
     services.tlp = lib.mkIf (config.modules.powerManagement.profile == "tlp") {
       enable = true;
+      # power-profiles-daemon compatible D-Bus interface (used by Noctalia and GNOME)
+      pd.enable = true;
       settings = {
         TLP_ENABLE = 1;
         CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
@@ -59,6 +61,9 @@
         STOP_CHARGE_THRESH_BAT0 = 85;
       };
     };
+
+    # GNOME enables it by default; it conflicts with TLP
+    services.power-profiles-daemon.enable = lib.mkIf (config.modules.powerManagement.profile == "tlp") false;
   };
 
 }
