@@ -17,7 +17,6 @@
       programs.helix = {
         enable = true;
         defaultEditor = true;
-        # Language-Server (nur im PATH von hx)
         extraPackages = with pkgs; [
           nil
           nixd
@@ -86,8 +85,6 @@
             ];
           };
 
-          # Terminal im aktuellen Projektordner (cwd wird von :sh geerbt).
-          # Gegenstück: Super+E in niri spawnt ghostty in $HOME.
           keys.normal.space.t = ":sh setsid -f ghostty";
         };
 
@@ -105,12 +102,8 @@
             nil = {
               config = {
                 nix.flake = {
-                  # nil archiviert fehlende Flake-Inputs selbst in den Store
-                  # statt beim Öffnen nachzufragen ("Fetch them now?").
                   autoArchive = true;
-                  # autoEvalInputs bewusst AUS: nil würde `nix flake show` auf
-                  # jedem Input laufen lassen; bei großen Inputs (home-manager,
-                  # nixpkgs) crasht die Eval mit SIGABRT (core dumped).
+                  # Evaluating large inputs (nixpkgs, home-manager) crashes nil
                   autoEvalInputs = false;
                 };
               };
@@ -160,7 +153,6 @@
           FILE="$1"
           LINE="$2"
 
-          # Git Remote URL auslesen
           REMOTE_URL=$(git config --get remote.origin.url 2>/dev/null)
 
           if [ -z "$REMOTE_URL" ]; then
@@ -168,7 +160,6 @@
             exit 1
           fi
 
-          # URL normalisieren (ssh zu https konvertieren)
           if [[ $REMOTE_URL == git@* ]]; then
             HOST=$(echo "$REMOTE_URL" | grep -oP '(?<=@)[^:]+')
             REPO=$(echo "$REMOTE_URL" | grep -oP '(?<=:).*')

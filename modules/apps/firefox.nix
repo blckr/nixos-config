@@ -33,11 +33,9 @@ in
             isDefault = true;
 
             settings = {
-              # Eingebautes System-Theme: übernimmt die GTK-Farben (Nordic)
               "extensions.activeThemeID" = "default-theme@mozilla.org";
-              # Keine GTK-Fensterknöpfe in der Leiste (niri zeichnet den Rahmen)
+              # Hide the GTK window buttons
               "browser.tabs.inTitlebar" = 0;
-              # Kompakte Dichte (in der UI versteckt, aber unterstützt)
               "browser.compactmode.show" = true;
               "browser.uidensity" = 1;
 

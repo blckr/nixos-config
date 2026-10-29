@@ -18,7 +18,6 @@ in
         enable = true;
         profiles.default = {
           isDefault = true;
-          # Eingebautes System-Theme: übernimmt die GTK-Farben (Nordic)
           settings."extensions.activeThemeID" = "default-theme@mozilla.org";
         };
       };

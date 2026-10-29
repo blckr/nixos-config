@@ -1,9 +1,8 @@
 { pkgs, username, ... }:
 {
-  # Qt: Kvantum mit Nordic-Theme, Icons über qt5ct/qt6ct.
   qt = {
     enable = true;
-    platformTheme = "qt5ct"; # qt6ct registriert sich ebenfalls als "qt5ct"
+    platformTheme = "qt5ct"; # qt6ct also registers as "qt5ct"
     style = "kvantum";
   };
 

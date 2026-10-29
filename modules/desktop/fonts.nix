@@ -12,7 +12,6 @@
     nerd-fonts.hack
   ];
 
-  # Optional – hilfreich bei manchen Wayland-Setups
   fonts.enableDefaultPackages = true;
 }
 

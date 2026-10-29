@@ -10,7 +10,7 @@
 
   documentation.dev.enable = true;
 
-  # fish aktiviert den man-Cache per mkDefault; der Build dauert lange
+  # fish enables this by default; generating the cache slows down rebuilds
   documentation.man.cache.enable = false;
 
   programs.fish = {

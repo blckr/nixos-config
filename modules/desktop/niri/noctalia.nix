@@ -12,10 +12,6 @@ lib.mkIf config.modules.desktop.enable {
 
     imports = [ inputs.noctalia.homeModules.default ];
 
-    # ==========================================================
-    # NOCTALIA KONFIGURATION
-    # ==========================================================
-
     programs.noctalia = {
       enable = true;
 
@@ -293,7 +289,7 @@ lib.mkIf config.modules.desktop.enable {
           };
         };
 
-        # Theme: statisch Nord, keine Templates in andere Programme
+        # Theme
         theme = {
           builtin = "Nord";
           mode = "dark";

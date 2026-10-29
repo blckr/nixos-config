@@ -13,10 +13,7 @@ lib.mkIf config.modules.desktop.enable {
       HandlePowerKey = "poweroff";
       HandleLidSwitch = "suspend";
       HandleLidSwitchExternalPower = "suspend";
-      # WICHTIG: "yes" (Default) = Deckel-zu suspendet IMMER, auch wenn eine
-      # App (z.B. Firefox bei Video-Wiedergabe) einen Idle-Inhibitor hält.
-      # Vorher stand hier "no" -> Lid-close wurde bei laufendem Video
-      # ignoriert und der Laptop blieb voll an.
+      # Suspend on lid close even while an app (e.g. video playback) inhibits idle
       LidSwitchIgnoreInhibited = "yes";
     };
   };

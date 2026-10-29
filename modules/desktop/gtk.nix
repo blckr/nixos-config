@@ -13,7 +13,6 @@
           name = "Nordic";
           package = pkgs.nordic;
         };
-        # libadwaita-Apps lesen ~/.config/gtk-4.0/gtk.css -> Nordic auch dort
         gtk4.theme = config.gtk.theme;
         iconTheme = {
           name = "Papirus-Dark";
