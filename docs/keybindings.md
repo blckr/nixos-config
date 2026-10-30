@@ -16,7 +16,6 @@
 | niri `Mod+Tab` als Fensterwechsler    | offen       | Aktion *(prüfen)*                                |
 | niri `Mod+Ctrl+F` Vollbild            | offen       | optional                                         |
 | Chrome-Menü-Shortcuts (Abschnitt 3A)  | offen       | Menütitel und Chrome-Sprache klären, nicht raten |
-| Mac ohne Nix (Weg B, `apply.sh`)      | offen       | nur falls die IT kein Nix erlaubt                |
 | Mac-Benutzername                      | offen       | `flake.nix`, `hosts.work-mac.username`           |
 
 ### Ordnerstruktur
@@ -264,16 +263,9 @@ Die Config ist auf beiden Systemen gleich. `Ctrl` ist überall die echte Control
 
 Achtung: MDM-Profile der IT können einzelne `defaults` überschreiben.
 
-### Zwei Wege zum Ausrollen
+### Ausrollen
 
-|                     | **A. Nix + home-manager auf dem Mac**                                                              | **B. Repo erzeugt ein Mac-Paket**                                                                                                                     |
-| ------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wie                 | `homeConfigurations."arved@mac"`, `targets.darwin.defaults`, `programs.ghostty` (`package = null`) | `nix build .#mac-dotfiles` unter Linux erzeugt die Config-Dateien und `apply.sh` (nur `defaults write` / `ln`). Auf dem Mac: `git pull && ./apply.sh` |
-| Quelle der Wahrheit | dieses Repo                                                                                        | dieses Repo                                                                                                                                           |
-| Auf dem Mac nötig   | Nix (root, `/nix`-Volume, Daemon) → **IT**                                                         | nur git und macOS-Bordmittel                                                                                                                          |
-| Drift-Erkennung     | home-manager                                                                                       | `apply.sh --check` vergleicht `defaults read` mit dem Sollzustand                                                                                     |
-
-**Empfehlung:** Mit **B** starten. Auf **A** wechseln, wenn die IT Nix erlaubt. Die Nix-Definitionen bleiben in beiden Fällen dieselben.
+Nix + home-manager auf dem Mac: `homeConfigurations."arved@work-mac"` aus diesem Repo, `programs.ghostty.package = pkgs.ghostty-bin`. Dafür muss Nix auf dem Mac installiert sein (root, `/nix`-Volume, Daemon) → mit der **IT** klären.
 
 ---
 
@@ -283,7 +275,7 @@ Achtung: MDM-Profile der IT können einzelne `defaults` überschreiben.
 - **niri:** `niri validate`, `nixos-rebuild build`.
 - **GNOME:** `dconf dump /org/gnome/` vorher und nachher vergleichen (`diff`). Zusätzlich zeigt *Einstellungen → Tastatur* doppelt belegte Tasten an.
 - **Layout:** `niri msg keyboard-layouts` muss `eu` zeigen. Tipp-Test `ä ö ü ß €` auf Linux, GNOME, im Greeter und auf dem Mac.
-- **Mac (`apply.sh`):** zweimal hintereinander ausführen, der zweite Lauf darf nichts ändern (idempotent). `apply.sh --check` muss danach sauber durchlaufen. Chrome-Menüs ansehen: Neue Shortcuts stehen neben dem Eintrag.
+- **Mac:** `nix flake check` wertet die Mac-Config unter Linux aus und validiert ihre Ghostty-Config. Auf dem Mac danach `home-manager switch` und ein Blick in die Chrome-Menüs: Neue Shortcuts stehen neben dem Eintrag.
 
 ---
 
@@ -291,7 +283,7 @@ Achtung: MDM-Profile der IT können einzelne `defaults` überschreiben.
 
 1. **„Bookmark-Menü, nicht raten“:** Meinst du, dass die Lesezeichen-Shortcuts in Chrome und Firefox gleich sein sollen (→ Abschnitt 3A)? Oder geht es um etwas anderes?
 2. Ist **Chrome Pflicht** auf dem Mac, oder ginge Firefox (→ 3B, die einfachste Lösung)?
-3. Darf **Nix** auf den Mac (Weg A), oder bleibt es bei Weg B?
+3. Darf **Nix** auf den Mac?
 4. In welcher **Sprache** läuft Chrome auf dem Mac? Die Menütitel hängen davon ab.
 5. Wie kommen **Ghostty und helix** auf den Mac (IT, brew, Self-Service)?
 6. Soll das alte `Mod+X` / `Mod+Shift+L` in niri als Alias bleiben, und wie lange?

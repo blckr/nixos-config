@@ -9,7 +9,6 @@
       firefox.enable = true;
       thunderbird.enable = true;
       vscode.enable = true;
-      fnott.enable = false;
     };
   };
 }

@@ -3,7 +3,6 @@
 {
   imports = [
     ./cursor.nix
-    ./fnott.nix
     ./gnome.nix
     ./gtk.nix
     ./helix.nix

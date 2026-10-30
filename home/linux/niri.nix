@@ -129,7 +129,6 @@
           Mod+Shift+L { spawn "noctalia" "msg" "session" "lock"; }
           Mod+Ctrl+Shift+Alt+L { spawn "firefox" "https://www.linkedin.com"; }
           Mod+Shift+S { spawn "script-selector"; }
-          Mod+N { spawn "fnottctl" "dismiss"; }
 
           XF86AudioMute allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
           XF86AudioPlay { spawn "sh" "-c" "playerctl play-pause"; }
