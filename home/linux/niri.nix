@@ -1,4 +1,4 @@
-{ lib, osConfig, ... }:
+{ lib, osConfig, settings, ... }:
 {
   config = lib.mkIf osConfig.modules.desktop.enable {
     home.file.".config/niri/config.kdl".text = /* kdl */ ''
@@ -26,9 +26,9 @@
       input {
           keyboard {
               xkb {
-                  layout "us"
-                  variant "altgr-intl"
-                  options "caps:none"
+                  layout "${settings.keyboard.layout}"
+                  variant "${settings.keyboard.variant}"
+                  options "${settings.keyboard.options}"
               }
           }
           touchpad {

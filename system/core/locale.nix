@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, settings, ... }:
 {
   # Local Setting
   time.timeZone = "Europe/Berlin";
@@ -19,10 +19,6 @@
     enable = false;
   };
 
-  # Keyboard-Setting
-  # services.xserver.xkb = {
-  #   layout = "us";
-  #   variant = "altgr-intl";
-  #   options = "caps:none";
-  # };
+  # Systemweites Layout (X11/GNOME-Vorgabe); niri und GNOME setzen es zusätzlich selbst
+  services.xserver.xkb = { inherit (settings.keyboard) layout variant options; };
 }

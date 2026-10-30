@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   username,
+  settings,
   ...
 }:
 {
@@ -31,11 +32,7 @@
         size = 18;
         path = pkgs.adwaita-icon-theme;
       };
-      keyboard = {
-        layout = "us";
-        variant = "altgr-intl";
-        options = "caps:none";
-      };
+      keyboard = { inherit (settings.keyboard) layout variant options; };
     };
   };
 }

@@ -1,4 +1,4 @@
-{ lib, pkgs, inputs, username, osConfig, ... }:
+{ lib, pkgs, inputs, username, osConfig, settings, ... }:
 {
   imports = [ inputs.noctalia.homeModules.default ];
 
@@ -62,7 +62,7 @@
             enabled = false;
           };
           default = {
-            path = "/home/${username}/Nextcloud/Archiv/Wallpaper/NordicOutpost.png";
+            path = "${settings.wallpaper}";
           };
         };
 

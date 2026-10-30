@@ -26,6 +26,7 @@ let
         hashedPassword
         pkgs-unstable
         ;
+      settings = import "${self}/settings.nix";
       inherit (inputs) nixos-hardware;
     };
     modules = [

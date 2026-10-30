@@ -2,13 +2,14 @@
   inputs,
   self,
   username,
+  settings,
   ...
 }:
 {
   home-manager.useGlobalPkgs = true;
   home-manager.backupFileExtension = "backup";
   home-manager.overwriteBackup = true;
-  home-manager.extraSpecialArgs = { inherit inputs self username; };
+  home-manager.extraSpecialArgs = { inherit inputs self username settings; };
 
   home-manager.users.${username} = {
     imports = [
