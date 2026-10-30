@@ -1,11 +1,12 @@
 {
-  lib,
+  inputs,
   pkgs,
-  config,
   username,
   ...
 }:
 {
+  imports = [ inputs.noctalia-greeter.nixosModules.default ];
+
   boot.kernelParams = [
     "quiet"
     "splash"
@@ -16,28 +17,25 @@
   boot.initrd.systemd.enable = true;
   boot.plymouth.enable = true;
 
-  services.greetd = {
+  services.displayManager.noctalia-greeter = {
     enable = true;
     settings = {
-      default_session = {
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%H:%M | %A, %d. %B' --remember --remember-user-session --asterisks --cmd niri-session --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions";
-        user = "greeter";
+      session.default = "niri";
+      user.default = username;
+      appearance = {
+        scheme = "Nord";
+        wallpaper.fill_color = "#2e3440";
+      };
+      cursor = {
+        theme = "Adwaita";
+        size = 18;
+        path = pkgs.adwaita-icon-theme;
+      };
+      keyboard = {
+        layout = "us";
+        variant = "altgr-intl";
+        options = "caps:none";
       };
     };
   };
-
-  # Fine-tune the greetd systemd service for running a TUI/GUI greeter properly
-  systemd.services.greetd.serviceConfig = {
-    Type = "idle";
-    StandardInput = "tty";
-    StandardOutput = "tty";
-    StandardError = "journal";
-    TTYReset = true;
-    TTYVHangup = true;
-    TTYVTDisallocate = true;
-  };
-
-  # Disable getty on tty1 to prevent conflict with greetd
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
 }
