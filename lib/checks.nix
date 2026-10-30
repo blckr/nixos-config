@@ -191,7 +191,7 @@ in
     same() { [ "$1" = "$2" ] || { echo "expected '$2', got '$1'"; exit 1; }; }
     same "$(complete 'kit ')" "build dark help keys light switch theme "
     same "$(complete 'kit build ')" "home system "
-    same "$(complete 'kit theme ')" "ayu catppuccin nord "
+    same "$(complete 'kit theme ')" "${toString (lib.attrNames themes)} "
     same "$(complete 'kit keys ')" "ghostty gnome niri "
     [ -z "$(complete 'kit theme nord ')" ] || { echo "no completion after a theme"; exit 1; }
     touch $out

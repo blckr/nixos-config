@@ -40,15 +40,15 @@ assets/wallpapers/   Hintergründe
 
 Alles läuft über `kit` (auf Linux und Mac):
 
-| Befehl                            | Linux                                                                | Mac                                  |
-| --------------------------------- | -------------------------------------------------------------------- | ------------------------------------ |
-| `kit build system`                | System bauen, Diff zum laufenden System                              | – (kein NixOS)                       |
-| `kit build home`                  | nur home-manager bauen, Diff                                         | home-manager bauen, Diff             |
-| `kit switch system`               | `sudo nixos-rebuild switch`                                          | – (kein NixOS)                       |
-| `kit switch home`                 | home-manager aktivieren, ohne sudo                                   | home-manager aktivieren              |
-| `kit keys [ghostty/niri/gnome]`   | Keybindings aus den Nix-Daten                                        | nur Ghostty                          |
-| `kit light` / `kit dark`          | hell/dunkel umschalten, Theme bleibt                                 | macOS-Erscheinungsbild (`osascript`) |
-| `kit theme [nord/ayu/catppuccin]` | Theme wechseln, hell/dunkel bleibt (Specialisation `<theme>-<mode>`) | nur Ghostty-Theme                    |
+| Befehl                          | Linux                                                                | Mac                                  |
+| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------ |
+| `kit build system`              | System bauen, Diff zum laufenden System                              | – (kein NixOS)                       |
+| `kit build home`                | nur home-manager bauen, Diff                                         | home-manager bauen, Diff             |
+| `kit switch system`             | `sudo nixos-rebuild switch`                                          | – (kein NixOS)                       |
+| `kit switch home`               | home-manager aktivieren, ohne sudo                                   | home-manager aktivieren              |
+| `kit keys [ghostty/niri/gnome]` | Keybindings aus den Nix-Daten                                        | nur Ghostty                          |
+| `kit light` / `kit dark`        | hell/dunkel umschalten, Theme bleibt                                 | macOS-Erscheinungsbild (`osascript`) |
+| `kit theme [NAME]`              | Theme wechseln, hell/dunkel bleibt (Specialisation `<theme>-<mode>`) | nur Ghostty-Theme                    |
 
 - `KIT_DRY_RUN=1` zeigt nur die Befehle, `KIT_FLAKE=PFAD` überschreibt den Repo-Pfad.
 - Nach `kit switch` werden das zuvor gewählte Theme und der Modus wieder gesetzt.

@@ -182,4 +182,52 @@ in
       icons = "Papirus-Light";
     };
   };
+
+  # Ghostty only ships Dark Hard and Light Med; GTK and helix use slightly
+  # different Everforest backgrounds. No Kvantum theme, Qt apps keep Nordic.
+  everforest = {
+    noctalia = {
+      source = "custom";
+      custom_palette = "Everforest";
+    };
+    noctaliaPalette = import ./everforest-noctalia.nix;
+    dark = {
+      ghostty = "Everforest Dark Hard";
+      helix = "everforest_dark";
+      btop = "everforest-dark-hard";
+      walker = {
+        bg = "#1e2326";
+        fg = "#d3c6aa";
+        accent = "#a7c080";
+        selection = "#4c3743";
+        border = "#4c3743";
+      };
+      gtk = {
+        name = "Everforest-Dark";
+        package = pkgs.everforest-gtk-theme;
+      };
+      gtk4 = true;
+      icons = "Papirus-Dark";
+      kvantum = nordicKvantum;
+    };
+    light = {
+      ghostty = "Everforest Light Med";
+      helix = "everforest_light";
+      btop = "everforest-light-medium";
+      walker = {
+        bg = "#efebd4";
+        fg = "#5c6a72";
+        accent = "#8da101";
+        selection = "#eaedc8";
+        border = "#eaedc8";
+      };
+      gtk = {
+        name = "Everforest-Light";
+        package = pkgs.everforest-gtk-theme;
+      };
+      gtk4 = true;
+      icons = "Papirus-Light";
+      kvantum = nordicKvantum;
+    };
+  };
 }
