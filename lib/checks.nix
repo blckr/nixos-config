@@ -8,17 +8,26 @@ let
   keybindings = import ./keybindings.nix { inherit lib; };
   binds = import ../home/programs/ghostty/keybinds.nix;
 
-  # Mac-Config wird hier mit Linux-pkgs erzeugt, damit kein Darwin-Builder nötig ist
-  darwinGhostty = pkgs.writeText "ghostty-darwin.conf" (
-    lib.concatMapStrings (b: "keybind = ${b}\n") (
-      keybindings.ghostty {
-        isDarwin = true;
-        inherit (binds) shared;
-        platform = binds.common // binds.darwin;
-      }
-    )
-    + "macos-option-as-alt = left\n"
-  );
+  # Ghostty-Settings eines Mac-Rechners als Config-Datei, mit Linux-pkgs geschrieben
+  # (kein Darwin-Builder nötig)
+  renderGhostty =
+    name: settings:
+    pkgs.writeText "ghostty-${name}.conf" (
+      lib.concatStrings (
+        lib.mapAttrsToList (
+          key: values: lib.concatMapStrings (v: "${key} = ${lib.generators.mkValueStringDefault { } v}\n") values
+        ) settings
+      )
+    );
+  darwinGhostty = lib.mapAttrsToList (
+    name: home: renderGhostty name home.config.programs.ghostty.settings
+  ) self.homeConfigurations;
+
+  # Mac-Konfigurationen müssen unter Linux vollständig auswerten
+  darwinDrvs = lib.mapAttrsToList (
+    name: home: "${name}: ${builtins.unsafeDiscardStringContext home.activationPackage.drvPath}"
+  ) self.homeConfigurations;
+
   linuxGhostty = self.nixosConfigurations.magpie.config.home-manager.users.arved.xdg.configFile."ghostty/config".source;
 
   failures = lib.runTests {
@@ -61,10 +70,12 @@ in
     assert lib.assertMsg (failures == [ ]) "Fehlgeschlagene Tests: ${builtins.toJSON failures}";
     pkgs.runCommand "keybindings-unit" { } "touch $out";
 
+  darwin-eval = pkgs.writeText "darwin-eval" (lib.concatLines darwinDrvs);
+
   ghostty-config = pkgs.runCommand "ghostty-config" { nativeBuildInputs = [ pkgs.ghostty ]; } ''
     export HOME=$TMPDIR XDG_CONFIG_HOME=$TMPDIR
     ghostty +validate-config --config-file=${linuxGhostty}
-    ghostty +validate-config --config-file=${darwinGhostty}
+    ${lib.concatMapStrings (f: "ghostty +validate-config --config-file=${f}\n") darwinGhostty}
     touch $out
   '';
 }

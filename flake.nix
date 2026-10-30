@@ -59,9 +59,10 @@
       lib = import ./lib {
         inherit self inputs;
       };
-    in
-    {
-      nixosConfigurations = lib.genHosts {
+
+      # Alle Rechner. arch = "…-darwin" wird zu homeConfigurations (nur home-manager),
+      # alles andere zu nixosConfigurations.
+      hosts = {
         magpie = {
           username = "arved";
           userDescription = "Arved Bloecker";
@@ -76,7 +77,13 @@
           # Generate the hashedPassword with mkpasswd
           hashedPassword = "$y$j9T$b2Obca/x4HHLzhGeiTBqr/$G.8GGokLUklJ0qnDKx.3l4pvnQWKNP/X.PROPM0BPIC";
         };
+        # TODO: Benutzername des Arbeits-Macs eintragen
+        work-mac = { arch = "aarch64-darwin"; username = "arved"; };
       };
+    in
+    {
+      nixosConfigurations = lib.genHosts hosts;
+      homeConfigurations = lib.genHomes hosts;
 
       checks.x86_64-linux = import ./lib/checks.nix {
         inherit self;
