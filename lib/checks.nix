@@ -185,6 +185,15 @@ in
     niri=$($kit keys niri | wc -l)
     [ "$niri" -eq "$niriExpected" ] || { echo "niri: $niri, expected $niriExpected"; exit 1; }
     $kit keys gnome | grep -q "<Super>q"
+
+    # fish completions
+    complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${linuxKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
+    same() { [ "$1" = "$2" ] || { echo "expected '$2', got '$1'"; exit 1; }; }
+    same "$(complete 'kit ')" "build dark help keys light switch theme "
+    same "$(complete 'kit build ')" "home system "
+    same "$(complete 'kit theme ')" "ayu catppuccin nord "
+    same "$(complete 'kit keys ')" "ghostty gnome niri "
+    [ -z "$(complete 'kit theme nord ')" ] || { echo "no completion after a theme"; exit 1; }
     touch $out
   '';
 
@@ -201,6 +210,10 @@ in
     ln -s $gen $XDG_STATE_HOME/home-manager/gcroots/current-home
     expect "$($kit theme ayu 2>&1)" "$gen/specialisation/ayu/activate"
     [ "$($kit keys | grep -c '^== ')" -eq 1 ] || { echo "Mac must only list ghostty keys"; exit 1; }
+    complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${darwinKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
+    same() { [ "$1" = "$2" ] || { echo "expected '$2', got '$1'"; exit 1; }; }
+    same "$(complete 'kit switch ')" "home "
+    same "$(complete 'kit keys ')" "ghostty "
     touch $out
   '';
 
