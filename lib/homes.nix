@@ -1,5 +1,5 @@
-# Eigenständiges home-manager für Rechner ohne NixOS (Mac).
-# Linux-Rechner bekommen home-manager über NixOS, siehe system/home-manager.nix.
+# Standalone home-manager for machines without NixOS (Mac).
+# Linux machines get home-manager through NixOS, see system/home-manager.nix.
 { self, inputs, ... }:
 
 let

@@ -1,4 +1,4 @@
-# home-manager-Einstellungen nur für diesen Rechner
+# home-manager settings for this machine only
 {
   imports = [ ./kanshi.nix ];
 

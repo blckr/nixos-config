@@ -60,8 +60,8 @@
         inherit self inputs;
       };
 
-      # Alle Rechner. arch = "…-darwin" wird zu homeConfigurations (nur home-manager),
-      # alles andere zu nixosConfigurations.
+      # All machines. arch = "…-darwin" becomes a homeConfiguration (home-manager only),
+      # everything else a nixosConfiguration.
       hosts = {
         magpie = {
           username = "arved";
@@ -77,7 +77,7 @@
           # Generate the hashedPassword with mkpasswd
           hashedPassword = "$y$j9T$b2Obca/x4HHLzhGeiTBqr/$G.8GGokLUklJ0qnDKx.3l4pvnQWKNP/X.PROPM0BPIC";
         };
-        # TODO: Benutzername des Arbeits-Macs eintragen
+        # TODO: set the username of the work Mac
         work-mac = { arch = "aarch64-darwin"; username = "arved"; };
       };
     in

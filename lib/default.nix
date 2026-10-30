@@ -22,7 +22,7 @@ in
   inherit (hosts) mkHost;
   inherit (homes) mkHome;
 
-  # Eine Liste aller Rechner, aufgeteilt nach Plattform
+  # One list of all machines, split by platform
   genHosts = all: hosts.genHosts (only (h: !isDarwin h) all);
   genHomes = all: homes.genHomes (only isDarwin all);
   inherit (systems) eachSystem;

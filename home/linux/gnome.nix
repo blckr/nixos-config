@@ -1,4 +1,4 @@
-# GNOME-Session: Layout, Hintergrund und Systemkürzel wie unter niri bzw. am Mac
+# GNOME session: layout, wallpaper and system shortcuts matching niri and the Mac
 { lib, settings, ... }:
 let
   wallpaper = "file://${settings.wallpaper}";
@@ -17,15 +17,15 @@ in
     };
     "org/gnome/desktop/screensaver".picture-uri = wallpaper;
 
-    # Systemebene wie am Mac (Cmd -> Super), siehe docs/keybindings.md
+    # System level like on the Mac (Cmd -> Super), see docs/keybindings.md
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>q" "<Alt>F4" ];
       minimize = [ "<Super>m" "<Super>h" ];
       toggle-fullscreen = [ "<Super><Control>f" ];
-      # Super+Space ist die Suche; es gibt nur ein Layout
+      # Super+Space is search; there is only one layout
       switch-input-source = [ ];
       switch-input-source-backward = [ ];
-      # Ctrl+Alt(+Shift)+Pfeile gehören Ghostty (Split-Navigation)
+      # Ctrl+Alt(+Shift)+arrows belong to Ghostty (split navigation)
       switch-to-workspace-left = [ "<Super>Page_Up" "<Super><Alt>Left" ];
       switch-to-workspace-right = [ "<Super>Page_Down" "<Super><Alt>Right" ];
       switch-to-workspace-up = [ ];
@@ -43,7 +43,7 @@ in
     };
 
     "org/gnome/settings-daemon/plugins/media-keys" = {
-      # Super+L ist unter niri "Fokus rechts" und soll hier nicht sperren
+      # Super+L is "focus right" in niri and must not lock the screen here
       screensaver = [ "<Super><Control>q" ];
       custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ghostty/" ];
     };

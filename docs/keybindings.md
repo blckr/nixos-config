@@ -38,9 +38,21 @@ assets/wallpapers/   Hintergründe
 
 ### Befehle
 
-- Linux: `sudo nixos-rebuild switch --flake .#magpie` (home-manager läuft mit)
-- Mac: `nix run home-manager/release-26.05 -- switch --flake .#arved@work-mac`
-- Tests: `nix flake check` (Keybinding-Übersetzung, Kollisionen, beide Ghostty-Configs, Mac-Config wertet aus)
+Alles läuft über `kit` (auf Linux und Mac):
+
+| Befehl                          | Linux                                      | Mac                                  |
+| ------------------------------- | ------------------------------------------ | ------------------------------------ |
+| `kit build system`              | System bauen, Diff zum laufenden System    | – (kein NixOS)                       |
+| `kit build home`                | nur home-manager bauen, Diff               | home-manager bauen, Diff             |
+| `kit switch system`             | `sudo nixos-rebuild switch`                | – (kein NixOS)                       |
+| `kit switch home`               | home-manager aktivieren, ohne sudo         | home-manager aktivieren              |
+| `kit keys [ghostty/niri/gnome]` | Keybindings aus den Nix-Daten              | nur Ghostty                          |
+| `kit light` / `kit dark`        | home-manager-Specialisation `light` an/aus | macOS-Erscheinungsbild (`osascript`) |
+
+- `KIT_DRY_RUN=1` zeigt nur die Befehle, `KIT_FLAKE=PFAD` überschreibt den Repo-Pfad.
+- Nach `kit switch` wird ein zuvor gewählter heller Modus wieder gesetzt.
+- Erstinstallation auf dem Mac (vor `kit`): `nix run home-manager/release-26.05 -- switch --flake .#arved@work-mac`
+- Tests: `nix flake check` (Keybinding-Übersetzung, Kollisionen, beide Ghostty-Configs, Mac-Config, kit auf Linux und Mac, helle Variante)
 
 ## Rahmenbedingungen
 

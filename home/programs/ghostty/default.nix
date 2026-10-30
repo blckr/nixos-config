@@ -13,9 +13,10 @@ in
       window-padding-x = 4;
       window-padding-y = 4;
       confirm-close-surface = false;
-      theme = "Nord";
+      # Follows the system (GNOME color-scheme or macOS appearance)
+      theme = "light:Nord Light,dark:Nord";
 
-      # Linke Option = Alt (helix), rechte Option = EurKEY-Umlaute, wie Alt/AltGr unter Linux
+      # Left Option = Alt (helix), right Option = EurKEY umlauts, like Alt/AltGr on Linux
       macos-option-as-alt = "left";
 
       keybind = keybindings.ghostty {

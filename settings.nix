@@ -1,9 +1,9 @@
-# Werte, die System (NixOS) und home-manager gemeinsam nutzen.
-# Kommt als `settings` über specialArgs bzw. extraSpecialArgs in jedes Modul.
+# Values shared by the system (NixOS) and home-manager.
+# Passed to every module as `settings` via specialArgs / extraSpecialArgs.
 {
   wallpaper = ./assets/wallpapers/nordic-outpost.png;
 
-  # EurKEY, wie auf dem Mac: AltGr+a/o/u/s = ä/ö/ü/ß
+  # EurKEY, same as on the Mac: AltGr+a/o/u/s = ä/ö/ü/ß
   keyboard = {
     layout = "eu";
     variant = "";

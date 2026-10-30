@@ -1,5 +1,5 @@
-# Keybindings werden einmal in Mac-Notation geschrieben und für Linux übersetzt
-# (siehe docs/keybindings.md):
+# Keybindings are written once in Mac notation and translated for Linux
+# (see docs/keybindings.md):
 #   cmd+shift+X, cmd+alt+X  ->  ctrl+shift+alt+X
 #   cmd+X                   ->  ctrl+shift+X
 { lib }:
@@ -10,7 +10,7 @@ rec {
     "ctrl+shift+"
   ];
 
-  # Doppelt belegte Tasten in einer Liste von { key, action }
+  # Keys bound more than once in a list of { key, action }
   collisions =
     binds:
     let
@@ -18,9 +18,9 @@ rec {
     in
     lib.filter (k: lib.count (x: x == k) keys > 1) (lib.unique keys);
 
-  # shared: Mac-Notation, wird auf Linux übersetzt
-  # platform: bereits in der Notation der Zielplattform
-  # Ergebnis: Ghostty-`keybind`-Liste, beginnt mit "clear" (keine versteckten Defaults)
+  # shared: Mac notation, translated on Linux
+  # platform: already in the notation of the target platform
+  # Result: Ghostty `keybind` list, starting with "clear" (no hidden defaults)
   ghostty =
     {
       shared,

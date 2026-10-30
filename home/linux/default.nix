@@ -1,7 +1,8 @@
-# Nur unter NixOS: hier ist `osConfig` immer verfügbar.
+# NixOS only: `osConfig` is always available here.
 { pkgs, ... }:
 {
   imports = [
+    ./appearance.nix
     ./cursor.nix
     ./gnome.nix
     ./gtk.nix

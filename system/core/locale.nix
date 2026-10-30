@@ -19,6 +19,6 @@
     enable = false;
   };
 
-  # Systemweites Layout (X11/GNOME-Vorgabe); niri und GNOME setzen es zusätzlich selbst
+  # System-wide layout (X11/GNOME default); niri and GNOME also set it themselves
   services.xserver.xkb = { inherit (settings.keyboard) layout variant options; };
 }

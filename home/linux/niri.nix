@@ -124,7 +124,7 @@
           Mod+P { spawn "firefox"; }
           Mod+Space { spawn "walker"; }
           Mod+Return { spawn "ghostty"; }
-          // Wie am Mac: Ctrl+Cmd+Q sperrt, Cmd+Q schließt
+          // Like on the Mac: Ctrl+Cmd+Q locks, Cmd+Q closes
           Mod+Ctrl+Q { spawn "noctalia" "msg" "session" "lock"; }
           Mod+Shift+L { spawn "noctalia" "msg" "session" "lock"; }
           Mod+Ctrl+Shift+Alt+L { spawn "firefox" "https://www.linkedin.com"; }
@@ -226,7 +226,7 @@
 
           Mod+W { toggle-column-tabbed-display; }
 
-          // Wie am Mac: Cmd+Shift+3/4/5
+          // Like on the Mac: Cmd+Shift+3/4/5
           Mod+Shift+3 { screenshot-screen; }
           Mod+Shift+4 { screenshot; }
           Mod+Shift+5 { screenshot; }

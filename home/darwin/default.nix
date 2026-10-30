@@ -1,15 +1,15 @@
-# Nur Mac (eigenständiges home-manager auf dem Arbeitslaptop).
-# Bewusst klein: keine Systemeingriffe, nur Dateien in ~.
+# Mac only (standalone home-manager on the work laptop).
+# Deliberately small: no system changes, only files in ~.
 { pkgs, ... }:
 {
   programs.ghostty.package = pkgs.ghostty-bin;
 
-  # fish schaltet Man-Caches ein, auf dem Mac gibt es dafür kein man-Paket
+  # fish enables man caches, but there is no man package on the Mac
   programs.man.generateCaches = false;
 
   programs.helix.settings.keys.normal.space.t = ":sh open -na Ghostty";
 
-  # Identität (Name, Arbeits-E-Mail) steht lokal in ~/.gitconfig.local, nicht im Repo
+  # Identity (name, work email) lives locally in ~/.gitconfig.local, not in the repo
   programs.git = {
     enable = true;
     includes = [ { path = "~/.gitconfig.local"; } ];

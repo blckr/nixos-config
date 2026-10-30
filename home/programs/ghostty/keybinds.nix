@@ -1,6 +1,6 @@
-# Ghostty-Keybindings für Mac und Linux, Übersicht in docs/keybindings.md
+# Ghostty keybindings for Mac and Linux, overview in docs/keybindings.md
 {
-  # Mac-Notation, wird für Linux übersetzt (cmd -> ctrl+shift, cmd+shift/alt -> ctrl+shift+alt)
+  # Mac notation, translated for Linux (cmd -> ctrl+shift, cmd+shift/alt -> ctrl+shift+alt)
   shared = {
     "cmd+c" = "copy_to_clipboard";
     "cmd+v" = "paste_from_clipboard";
@@ -34,7 +34,7 @@
     "cmd+alt+i" = "inspector:toggle";
   };
 
-  # Auf beiden Systemen gleich, ohne Übersetzung
+  # Identical on both systems, not translated
   common = {
     "ctrl+tab" = "next_tab";
     "ctrl+shift+tab" = "previous_tab";
@@ -55,7 +55,7 @@
     "cmd+end" = "scroll_to_bottom";
     "cmd+page_up" = "scroll_page_up";
     "cmd+page_down" = "scroll_page_down";
-    # Zeilennavigation wie in macOS-Textfeldern
+    # Line navigation like in macOS text fields
     "cmd+arrow_left" = "text:\\x01";
     "cmd+arrow_right" = "text:\\x05";
     "cmd+backspace" = "text:\\x15";
@@ -70,7 +70,7 @@
     "cmd+digit_9" = "last_tab";
   };
 
-  # App beenden übernimmt Super+Q (niri/GNOME), Vollbild der Fenstermanager
+  # Quitting is Super+Q (niri/GNOME), fullscreen is handled by the window manager
   linux = {
     "ctrl+equal" = "increase_font_size:1";
     "ctrl+plus" = "increase_font_size:1";
@@ -82,7 +82,7 @@
     "shift+page_down" = "scroll_page_down";
     "ctrl+insert" = "copy_to_clipboard";
     "shift+insert" = "paste_from_selection";
-    # Tab N wie in Firefox unter Linux (Alt liegt dort, wo am Mac Cmd liegt)
+    # Tab N like Firefox on Linux (Alt sits where Cmd sits on the Mac)
     "alt+digit_1" = "goto_tab:1";
     "alt+digit_2" = "goto_tab:2";
     "alt+digit_3" = "goto_tab:3";
