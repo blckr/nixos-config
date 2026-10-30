@@ -68,6 +68,17 @@ let
       expr = light.programs.noctalia.settings.theme.mode;
       expected = "light";
     };
+    # Firefox paints its vertical tab bar in the GTK menubar colour
+    testLightMenubar = {
+      expr =
+        lib.hasInfix "menubar," light.gtk.gtk3.extraCss
+        && lib.hasInfix "background: #d8dee9" light.gtk.gtk3.extraCss;
+      expected = true;
+    };
+    testDarkTitlebarUntouched = {
+      expr = linuxHome.gtk.gtk3.extraCss;
+      expected = "";
+    };
     testDarkIsDefault = {
       expr = linuxHome.gtk.theme.name;
       expected = "Nordic";
