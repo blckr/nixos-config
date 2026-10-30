@@ -17,6 +17,11 @@ in
       default = true;
       description = "Enable Bitwarden extension for Walker";
     };
+    # Set per theme and mode by ./appearance.nix
+    colors = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      description = "Walker colours: bg, fg, accent, selection, border";
+    };
   };
 
   imports = [ inputs.walker.homeManagerModules.default ];
@@ -57,7 +62,7 @@ in
 
       config = {
         terminal = "${pkgs.ghostty}/bin/ghostty";
-        theme = "nord";
+        theme = "current";
         force_keyboard_focus = false;
         close_when_open = true;
         click_to_close = true;
@@ -145,14 +150,13 @@ in
       };
 
       themes = {
-        "nord" = {
+        "current" = {
           style = /* css */ ''
-            /* Nord */
-            @define-color bg #2e3440;
-            @define-color fg #eceff4;
-            @define-color accent #8fbcbb;
-            @define-color selection #4c566a;
-            @define-color border #4c566a;
+            @define-color bg ${cfg.colors.bg};
+            @define-color fg ${cfg.colors.fg};
+            @define-color accent ${cfg.colors.accent};
+            @define-color selection ${cfg.colors.selection};
+            @define-color border ${cfg.colors.border};
 
             * {
               all: unset;

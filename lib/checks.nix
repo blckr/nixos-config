@@ -213,11 +213,24 @@ in
         assert lib.assertMsg (
           gvariantString cfg.dconf.settings."org/gnome/desktop/interface".color-scheme == "prefer-${mode}"
         ) "${name}: color-scheme";
+        assert lib.assertMsg (cfg.programs.btop.settings.color_theme == variant.btop) "${name}: btop";
+        assert lib.assertMsg (lib.hasInfix "@define-color bg ${variant.walker.bg};"
+          cfg.xdg.configFile."walker/themes/current/style.css".text
+        ) "${name}: walker";
+        assert lib.assertMsg (cfg.home.activation ? dropNoctaliaOverrides) "${name}: noctalia overrides";
         ''
           echo "== ${name}"
           test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-3.0
           ${lib.optionalString variant.gtk4 "test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-4.0"}
           test -d ${kv}
+          ${
+            if variant.btop == "TTY" then
+              ""
+            else if lib.hasPrefix "/" variant.btop then
+              "test -f ${variant.btop}"
+            else
+              "test -f ${pkgs.btop}/share/btop/themes/${variant.btop}.theme"
+          }
           ghostty +validate-config --config-file=${cfg.xdg.configFile."ghostty/config".source}
         ''
       ) looks

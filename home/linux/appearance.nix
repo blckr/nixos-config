@@ -2,6 +2,7 @@
 # every other theme/mode combination is a home-manager specialisation named
 # "<theme>-<mode>", activated by `kit theme NAME` and `kit light|dark`.
 {
+  config,
   lib,
   pkgs,
   settings,
@@ -44,6 +45,8 @@ let
         inherit mode;
       };
       programs.ghostty.settings.theme = "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
+      programs.btop.settings.color_theme = variant.btop;
+      modules.desktop.walker.colors = variant.walker;
       xdg.configFile = {
         "qt5ct/qt5ct.conf".text = qtct;
         "qt6ct/qt6ct.conf".text = qtct;
@@ -66,6 +69,13 @@ let
 in
 {
   config = lib.mkMerge [
+    {
+      # noctalia keeps settings changed in its GUI in this file, and they win over
+      # config.toml. Only the declarative config counts, so drop it on activation.
+      home.activation.dropNoctaliaOverrides = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        run rm -f "${config.xdg.stateHome}/noctalia/settings.toml"
+      '';
+    }
     (apply settings.theme "dark")
     {
       specialisation = lib.genAttrs variants (
