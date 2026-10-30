@@ -8,6 +8,8 @@
   user,
   flake,
   keys,
+  theme,
+  themes,
 }:
 let
   keysDir = pkgs.linkFarm "kit-keys" (
@@ -22,7 +24,7 @@ pkgs.writeShellApplication {
   runtimeInputs = [ pkgs.coreutils ];
   text =
     lib.replaceStrings
-      [ "@platform@" "@host@" "@user@" "@flake@" "@keys@" ]
-      [ platform host user flake "${keysDir}" ]
+      [ "@platform@" "@host@" "@user@" "@flake@" "@keys@" "@theme@" "@themes@" ]
+      [ platform host user flake "${keysDir}" theme (toString themes) ]
       (builtins.readFile ./kit.sh);
 }

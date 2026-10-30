@@ -3,6 +3,9 @@
 {
   wallpaper = ./assets/wallpapers/nordic-outpost.png;
 
+  # Default colour theme, see home/themes.nix
+  theme = "nord";
+
   # EurKEY, same as on the Mac: AltGr+a/o/u/s = ä/ö/ü/ß
   keyboard = {
     layout = "eu";

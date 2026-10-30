@@ -85,6 +85,23 @@
       nixosConfigurations = lib.genHosts hosts;
       homeConfigurations = lib.genHomes hosts;
 
+      # Needs the live desktop session, so it is a runnable test, not a flake check
+      packages.x86_64-linux.firefox-tabbar-test =
+        let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          home = self.nixosConfigurations.magpie.config.home-manager.users.arved;
+        in
+        pkgs.writeShellApplication {
+          name = "firefox-tabbar-test";
+          runtimeInputs = [
+            pkgs.sway
+            pkgs.grim
+            pkgs.imagemagick
+            home.programs.firefox.finalPackage
+          ];
+          text = builtins.readFile ./tests/firefox-tabbar.sh;
+        };
+
       checks.x86_64-linux = import ./lib/checks.nix {
         inherit self;
         pkgs = nixpkgs.legacyPackages.x86_64-linux;

@@ -282,9 +282,8 @@
         };
 
         # Theme
+        # builtin palette and mode are set in ./appearance.nix
         theme = {
-          builtin = "Nord";
-          mode = "dark";
           source = "builtin";
           templates = {
             enable_builtin_templates = false;

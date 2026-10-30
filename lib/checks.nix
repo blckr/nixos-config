@@ -42,13 +42,22 @@ let
     host = "work-mac";
     user = darwinHome.config.home.username;
     flake = "/repo";
+    theme = "nord";
+    themes = lib.attrNames themes;
     keys = import ../home/programs/kit/keys.nix {
       inherit lib;
       config = darwinHome.config;
     };
   };
 
-  light = linuxHome.specialisation.light.configuration;
+  themes = import ../home/themes.nix { inherit pkgs; };
+  light = linuxHome.specialisation."nord-light".configuration;
+
+  # Base configuration plus every specialisation, by name ("nord-dark" is the base)
+  looks = {
+    "nord-dark" = linuxHome;
+  }
+  // lib.mapAttrs (_: s: s.configuration) linuxHome.specialisation;
   gvariantString = v: if builtins.isAttrs v && v ? value then v.value else v;
 
   failures = lib.runTests {
@@ -136,14 +145,25 @@ in
     expect "$($kit switch home 2>&1)" "<out>/activate"
     if $kit build nonsense 2>/dev/null; then echo "unknown target must fail"; exit 1; fi
 
-    # light/dark against a fake home-manager generation
-    gen=$TMPDIR/gen; mkdir -p $gen/specialisation/light $XDG_STATE_HOME/home-manager/gcroots
+    # theme/mode against a fake home-manager generation; a dry run does not
+    # write state, so each step seeds it
+    gen=$TMPDIR/gen; st=$XDG_STATE_HOME/kit
+    mkdir -p $XDG_STATE_HOME/home-manager/gcroots $st
+    for v in ${toString (lib.attrNames linuxHome.specialisation)}; do mkdir -p $gen/specialisation/$v; done
     ln -s $gen $XDG_STATE_HOME/home-manager/gcroots/current-home
-    expect "$($kit light 2>&1)" "$gen/specialisation/light/activate"
-    # after `kit light` the light generation is current; dark must find the base again
+    expect "$($kit light 2>&1)" "$gen/specialisation/nord-light/activate"
+    echo light > $st/mode
+    expect "$($kit theme ayu 2>&1)" "$gen/specialisation/ayu-light/activate"
+    echo ayu > $st/theme
+    expect "$($kit dark 2>&1)" "$gen/specialisation/ayu-dark/activate"
+    expect "$($kit theme 2>&1)" "* ayu"
+    echo dark > $st/mode
+    expect "$($kit theme catppuccin 2>&1)" "$gen/specialisation/catppuccin-dark/activate"
+    if $kit theme solarized 2>/dev/null; then echo "unknown theme must fail"; exit 1; fi
+    # the variant generation is current now; going back must find the base again
     rm $XDG_STATE_HOME/home-manager/gcroots/current-home
-    mkdir -p $TMPDIR/lightgen; ln -s $TMPDIR/lightgen $XDG_STATE_HOME/home-manager/gcroots/current-home
-    expect "$($kit dark 2>&1)" "$gen/activate"
+    mkdir -p $TMPDIR/variantgen; ln -s $TMPDIR/variantgen $XDG_STATE_HOME/home-manager/gcroots/current-home
+    expect "$($kit theme nord 2>&1)" "$gen/activate"
 
     # kit keys lists every binding exactly once
     ghostty=$($kit keys ghostty | wc -l)
@@ -156,7 +176,7 @@ in
   '';
 
   kit-darwin = pkgs.runCommand "kit-darwin" { } ''
-    export HOME=$TMPDIR KIT_DRY_RUN=1
+    export HOME=$TMPDIR XDG_STATE_HOME=$TMPDIR/state KIT_DRY_RUN=1
     kit=${darwinKit}/bin/kit
     expect() { grep -qF -- "$2" <<<"$1" || { echo "expected '$2' in:"; echo "$1"; exit 1; }; }
 
@@ -164,9 +184,46 @@ in
     if $kit build system 2>/dev/null; then echo "build system must fail on the Mac"; exit 1; fi
     expect "$($kit light 2>&1)" "set dark mode to false"
     expect "$($kit dark 2>&1)" "set dark mode to true"
+    gen=$TMPDIR/gen; mkdir -p $gen/specialisation/ayu $XDG_STATE_HOME/home-manager/gcroots
+    ln -s $gen $XDG_STATE_HOME/home-manager/gcroots/current-home
+    expect "$($kit theme ayu 2>&1)" "$gen/specialisation/ayu/activate"
     [ "$($kit keys | grep -c '^== ')" -eq 1 ] || { echo "Mac must only list ghostty keys"; exit 1; }
     touch $out
   '';
+
+  # Every theme/mode: the referenced theme files exist, Ghostty accepts its theme pair,
+  # and noctalia and color-scheme match
+  themes-check = pkgs.runCommand "themes-check" { nativeBuildInputs = [ pkgs.ghostty ]; } (
+    ''
+      export HOME=$TMPDIR XDG_CONFIG_HOME=$TMPDIR
+    ''
+    + lib.concatStrings (
+      lib.mapAttrsToList (
+        name: cfg:
+        let
+          parts = lib.splitString "-" name;
+          theme = themes.${lib.head parts};
+          mode = lib.last parts;
+          variant = theme.${mode};
+          kv = cfg.xdg.configFile."Kvantum/${variant.kvantum.name}".source;
+        in
+        assert lib.assertMsg (cfg.gtk.theme.name == variant.gtk.name) "${name}: gtk theme";
+        assert lib.assertMsg (cfg.programs.noctalia.settings.theme.builtin == theme.noctalia) "${name}: noctalia";
+        assert lib.assertMsg (cfg.programs.noctalia.settings.theme.mode == mode) "${name}: noctalia mode";
+        assert lib.assertMsg (
+          gvariantString cfg.dconf.settings."org/gnome/desktop/interface".color-scheme == "prefer-${mode}"
+        ) "${name}: color-scheme";
+        ''
+          echo "== ${name}"
+          test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-3.0
+          ${lib.optionalString variant.gtk4 "test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-4.0"}
+          test -d ${kv}
+          ghostty +validate-config --config-file=${cfg.xdg.configFile."ghostty/config".source}
+        ''
+      ) looks
+    )
+    + "touch $out"
+  );
 
   ghostty-config = pkgs.runCommand "ghostty-config" { nativeBuildInputs = [ pkgs.ghostty ]; } ''
     export HOME=$TMPDIR XDG_CONFIG_HOME=$TMPDIR

@@ -9,7 +9,6 @@
     ./helix.nix
     ./niri.nix
     ./noctalia.nix
-    ./qt.nix
     ./ssh.nix
     ./udiskie.nix
     ./walker.nix

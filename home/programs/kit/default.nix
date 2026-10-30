@@ -3,6 +3,7 @@
   lib,
   pkgs,
   hostname,
+  settings,
   ...
 }:
 let
@@ -30,6 +31,8 @@ in
       user = config.home.username;
       inherit (cfg) flake;
       keys = import ./keys.nix { inherit lib config; };
+      inherit (settings) theme;
+      themes = lib.attrNames (import ../../themes.nix { inherit pkgs; });
     };
     home.packages = [ cfg.package ];
   };

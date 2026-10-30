@@ -1,21 +1,82 @@
-# Light variant as a home-manager specialisation, toggled with `kit light` / `kit dark`.
-# Dark is the regular configuration. Ghostty, Firefox and libadwaita follow color-scheme on their own.
-{ lib, ... }:
+# Theme and dark/light mode. The base configuration is `settings.theme` in dark;
+# every other theme/mode combination is a home-manager specialisation named
+# "<theme>-<mode>", activated by `kit theme NAME` and `kit light|dark`.
 {
-  specialisation.light.configuration = {
-    gtk.theme.name = lib.mkForce "Nordic-Polar";
-    gtk.iconTheme.name = lib.mkForce "Papirus-Light";
-    # Nordic-Polar keeps the dark Nordic menubar and titlebar (#2b313c). Firefox
-    # paints its vertical tab bar in the GTK menubar colour (with
-    # browser.tabs.inTitlebar = 0), so give both the light Polar tones.
-    gtk.gtk3.extraCss = ''
-      menubar, headerbar, .titlebar {
-        background: #d8dee9;
-        color: #3b4252;
-      }
-    '';
-    dconf.settings."org/gnome/desktop/interface".color-scheme = lib.mkForce "prefer-light";
-    # noctalia writes color-scheme itself (sync_color_scheme), so switch it as well
-    programs.noctalia.settings.theme.mode = lib.mkForce "light";
-  };
+  lib,
+  pkgs,
+  settings,
+  ...
+}:
+let
+  themes = import ../themes.nix { inherit pkgs; };
+  modes = [
+    "dark"
+    "light"
+  ];
+
+  # Everything that changes with theme and mode
+  apply =
+    name: mode:
+    let
+      theme = themes.${name};
+      variant = theme.${mode};
+      qtct = ''
+        [Appearance]
+        style=kvantum
+        icon_theme=${variant.icons}
+        standard_dialogs=default
+
+        [Interface]
+        dialog_buttons_have_icons=1
+        menus_have_icons=true
+        toolbutton_style=4
+      '';
+    in
+    {
+      gtk.theme = variant.gtk;
+      gtk.gtk4.theme = if variant.gtk4 then variant.gtk else null;
+      gtk.iconTheme.name = variant.icons;
+      gtk.gtk3.extraCss = variant.gtk3Css or "";
+      dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-${mode}";
+      # noctalia writes color-scheme itself (sync_color_scheme), so it must agree
+      programs.noctalia.settings.theme = {
+        builtin = theme.noctalia;
+        inherit mode;
+      };
+      programs.ghostty.settings.theme = "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
+      xdg.configFile = {
+        "qt5ct/qt5ct.conf".text = qtct;
+        "qt6ct/qt6ct.conf".text = qtct;
+        "Kvantum/kvantum.kvconfig".text = ''
+          [General]
+          theme=${variant.kvantum.name}
+        '';
+        "Kvantum/${variant.kvantum.name}".source =
+          "${variant.kvantum.package}/share/Kvantum/${variant.kvantum.name}";
+      };
+    };
+
+  # Specialisations inherit the base configuration, so their values must win
+  force = lib.mapAttrsRecursiveCond (as: !lib.isDerivation as) (_: lib.mkForce);
+
+  base = "${settings.theme}-dark";
+  variants = lib.filter (n: n != base) (
+    lib.concatMap (name: map (mode: "${name}-${mode}") modes) (lib.attrNames themes)
+  );
+in
+{
+  config = lib.mkMerge [
+    (apply settings.theme "dark")
+    {
+      specialisation = lib.genAttrs variants (
+        v:
+        let
+          parts = lib.splitString "-" v;
+        in
+        {
+          configuration = force (apply (lib.head parts) (lib.last parts));
+        }
+      );
+    }
+  ];
 }

@@ -4,6 +4,8 @@ host="@host@"
 user="@user@"
 flake="${KIT_FLAKE:-@flake@}"
 keys="@keys@"
+baseTheme="@theme@"
+themes="@themes@"
 dry="${KIT_DRY_RUN:-}"
 state="${XDG_STATE_HOME:-$HOME/.local/state}"
 kitState="$state/kit"
@@ -23,6 +25,7 @@ kit – Werkzeug für die Nix-Konfiguration ($flake)
   kit switch system|home    bauen und aktivieren
   kit keys [NAME]           Keybindings anzeigen ($(keyNames))
   kit light | dark          helles bzw. dunkles Erscheinungsbild
+  kit theme [NAME]          Farbschema wechseln bzw. auflisten ($themes)
   kit help                  diese Hilfe
 
 KIT_FLAKE=PFAD überschreibt den Pfad zum Repo, KIT_DRY_RUN=1 zeigt nur die Befehle.
@@ -109,9 +112,9 @@ switch() {
       ;;
     *) die "kit switch system|home" ;;
   esac
-  # Activating brings back the dark base, so re-apply light mode
-  if [ "$platform" = linux ] && [ "$(cat "$kitState/mode" 2>/dev/null)" = light ]; then
-    appearance light
+  # Activating brings back the base look, so re-apply the chosen one
+  if [ "$(specFor "$(stateOr theme "$baseTheme")" "$(stateOr mode dark)")" != "$(specFor "$baseTheme" dark)" ]; then
+    look "$(stateOr theme "$baseTheme")" "$(stateOr mode dark)"
   fi
 }
 
@@ -128,21 +131,61 @@ baseGeneration() {
   cat "$kitState/base"
 }
 
-appearance() {
+stateOr() {
+  cat "$kitState/$1" 2>/dev/null || echo "$2"
+}
+
+# Specialisation name: "<theme>-<mode>" on Linux, "<theme>" on the Mac
+# (where only Ghostty is themed and the mode is the macOS appearance)
+specFor() {
+  if [ "$platform" = linux ]; then
+    echo "$1-$2"
+  else
+    echo "$1"
+  fi
+}
+
+# Activates theme $1 in mode $2 and remembers both
+look() {
+  local base spec
+  base="$(baseGeneration)"
+  spec="$(specFor "$1" "$2")"
+  if [ "$spec" = "$(specFor "$baseTheme" dark)" ]; then
+    run "$base/activate"
+  elif [ -d "$base/specialisation/$spec" ]; then
+    run "$base/specialisation/$spec/activate"
+  else
+    die "keine Variante '$spec' in $base"
+  fi
+  if [ -z "$dry" ]; then
+    echo "$1" >"$kitState/theme"
+    echo "$2" >"$kitState/mode"
+  fi
+}
+
+mode() {
   if [ "$platform" = darwin ]; then
     local darkMode=true
     [ "$1" = light ] && darkMode=false
     run osascript -e "tell application \"System Events\" to tell appearance preferences to set dark mode to $darkMode"
     return
   fi
-  local base
-  base="$(baseGeneration)"
-  if [ "$1" = light ]; then
-    run "$base/specialisation/light/activate"
-  else
-    run "$base/activate"
+  look "$(stateOr theme "$baseTheme")" "$1"
+}
+
+theme() {
+  local current t
+  current="$(stateOr theme "$baseTheme")"
+  if [ -z "${1:-}" ]; then
+    for t in $themes; do
+      if [ "$t" = "$current" ]; then echo "* $t"; else echo "  $t"; fi
+    done
+    return
   fi
-  [ -n "$dry" ] || echo "$1" >"$kitState/mode"
+  case " $themes " in
+    *" $1 "*) look "$1" "$(stateOr mode dark)" ;;
+    *) die "unbekanntes Theme '$1'; vorhanden: $themes" ;;
+  esac
 }
 
 showKeys() {
@@ -163,7 +206,8 @@ case "${1:-help}" in
   build) build "${2:-}" ;;
   switch) switch "${2:-}" ;;
   keys) showKeys "${2:-}" ;;
-  light | dark) appearance "$1" ;;
+  light | dark) mode "$1" ;;
+  theme) theme "${2:-}" ;;
   help | -h | --help) usage ;;
   *)
     usage >&2

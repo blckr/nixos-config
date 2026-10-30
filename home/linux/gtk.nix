@@ -1,20 +1,10 @@
-{ pkgs, config, ... }:
+# Theme, icons and color-scheme are set in ./appearance.nix
+{ pkgs, ... }:
 {
   gtk = {
     enable = true;
-    theme = {
-      name = "Nordic";
-      package = pkgs.nordic;
-    };
-    gtk4.theme = config.gtk.theme;
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
+    iconTheme.package = pkgs.papirus-icon-theme;
   };
 
-  dconf.settings."org/gnome/desktop/interface" = {
-    color-scheme = "prefer-dark";
-    accent-color = "blue";
-  };
+  dconf.settings."org/gnome/desktop/interface".accent-color = "blue";
 }

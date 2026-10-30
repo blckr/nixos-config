@@ -1,6 +1,12 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  settings,
+  ...
+}:
 let
   isDarwin = pkgs.stdenv.isDarwin;
+  theme = (import ../../themes.nix { inherit pkgs; }).${settings.theme};
   binds = import ./keybinds.nix;
   keybindings = import ../../../lib/keybindings.nix { inherit lib; };
 in
@@ -14,7 +20,7 @@ in
       window-padding-y = 4;
       confirm-close-surface = false;
       # Follows the system (GNOME color-scheme or macOS appearance)
-      theme = "light:Nord Light,dark:Nord";
+      theme = lib.mkDefault "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
 
       # Left Option = Alt (helix), right Option = EurKEY umlauts, like Alt/AltGr on Linux
       macos-option-as-alt = "left";
