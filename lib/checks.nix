@@ -225,6 +225,33 @@ in
     + "touch $out"
   );
 
+  # The reload hook must reach a process running the real binary of the Ghostty package
+  ghostty-reload =
+    pkgs.runCommand "ghostty-reload"
+      {
+        hook = linuxHome.xdg.configFile."ghostty/config".onChange;
+        passAsFile = [ "hook" ];
+      }
+      ''
+        export USER=$(${pkgs.coreutils}/bin/id -un)
+        for exe in ${linuxHome.programs.ghostty.package}/bin/.* ${linuxHome.programs.ghostty.package}/bin/*; do
+          [ -f "$exe" ] || continue
+          name=$(basename "$exe")
+          # bash as stand-in: unlike coreutils it does not care about its own name
+          cp ${pkgs.bash}/bin/bash "$TMPDIR/$name"
+          "$TMPDIR/$name" -c 'while :; do sleep 1; done' &
+          pid=$!
+          sleep 0.5
+          kill -0 $pid || { echo "stand-in for $name did not start"; exit 1; }
+          [ "$(cat /proc/$pid/comm)" = "$(printf %.15s "$name")" ] || { echo "unexpected comm $(cat /proc/$pid/comm)"; exit 1; }
+          grep pkill "$hookPath" | sh
+          sleep 0.5
+          if kill -0 $pid 2>/dev/null; then echo "reload hook missed a process running $name"; exit 1; fi
+          echo "ok: $name"
+        done
+        touch $out
+      '';
+
   ghostty-config = pkgs.runCommand "ghostty-config" { nativeBuildInputs = [ pkgs.ghostty ]; } ''
     export HOME=$TMPDIR XDG_CONFIG_HOME=$TMPDIR
     ghostty +validate-config --config-file=${linuxGhostty}
