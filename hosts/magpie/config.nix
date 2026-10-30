@@ -8,8 +8,6 @@
 
     powerManagement.profile = "tlp";
 
-    desktop.walker.bitwarden.enable = false;
-
     hardware.lenovo-amd.enable = true;
 
     services.storage.enable = true;
@@ -17,11 +15,7 @@
     apps = {
       # android-studio.enable = true;
       ausweisapp.enable = true;
-      firefox.enable = true;
-      thunderbird.enable = true;
       # mullvad.enable = true;
-      vscode.enable = true;
-      fnott.enable = false;
       # swaync.enable = true;
       docker.enable = true;
     };

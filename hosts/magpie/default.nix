@@ -11,10 +11,11 @@
   imports = [
     ./config.nix
     ./hardware-configuration.nix
-    ./kanshi.nix
 
     # nixos-hardware.nixosModules.lenovo-thinkpad-p14s-amd-gen5
   ];
+
+  home-manager.users.${username}.imports = [ ./home.nix ];
 
   secrets.enable = true;
 

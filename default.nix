@@ -4,7 +4,7 @@
 }:
 {
   imports = [
-    ./modules
+    ./system
   ];
 
   networking.hostName = hostname;
