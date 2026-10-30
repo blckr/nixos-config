@@ -37,7 +37,6 @@ let
       gtk.theme = variant.gtk;
       gtk.gtk4.theme = if variant.gtk4 then variant.gtk else null;
       gtk.iconTheme.name = variant.icons;
-      gtk.gtk3.extraCss = variant.gtk3Css or "";
       dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-${mode}";
       # noctalia writes color-scheme itself (sync_color_scheme), so it must agree
       programs.noctalia.settings.theme = theme.noctalia // {

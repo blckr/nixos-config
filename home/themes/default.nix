@@ -2,6 +2,29 @@
 # `settings.theme`; `kit theme NAME` and `kit light|dark` switch at runtime.
 { pkgs }:
 let
+  # Nordic-Polar keeps the dark Nordic menubar and titlebar (#2b313c). Firefox
+  # paints its vertical tab bar in the GTK menubar colour (with
+  # browser.tabs.inTitlebar = 0), so this copy gives both the light Polar tones.
+  # It has to be part of the theme: GTK reads ~/.config/gtk-3.0/gtk.css only at
+  # startup, a theme switch is applied live.
+  nordicPolarLight =
+    pkgs.runCommand "nordic-polar-light" { } ''
+      theme=$out/share/themes/Nordic-Polar-Light
+      mkdir -p $out/share/themes
+      cp -r ${pkgs.nordic}/share/themes/Nordic-Polar $theme
+      chmod -R u+w $theme
+      sed -i 's/^Name=.*/Name=Nordic-Polar-Light/' $theme/index.theme
+      for css in $theme/gtk-3.0/gtk.css $theme/gtk-4.0/gtk.css; do
+        cat >> $css <<'CSS'
+
+      menubar, headerbar, .titlebar {
+        background: #d8dee9;
+        color: #3b4252;
+      }
+      CSS
+      done
+    '';
+
   nordicKvantum = {
     name = "Nordic";
     package = pkgs.nordic;
@@ -64,22 +87,13 @@ in
         border = "#d8dee9";
       };
       gtk = {
-        name = "Nordic-Polar";
-        package = pkgs.nordic;
+        name = "Nordic-Polar-Light";
+        package = nordicPolarLight;
       };
       gtk4 = true;
       icons = "Papirus-Light";
       # Kvantum-Nordic only exists in dark
       kvantum = nordicKvantum;
-      # Nordic-Polar keeps the dark Nordic menubar and titlebar (#2b313c). Firefox
-      # paints its vertical tab bar in the GTK menubar colour (with
-      # browser.tabs.inTitlebar = 0), so give both the light Polar tones.
-      gtk3Css = ''
-        menubar, headerbar, .titlebar {
-          background: #d8dee9;
-          color: #3b4252;
-        }
-      '';
     };
   };
 

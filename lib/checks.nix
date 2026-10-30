@@ -63,11 +63,11 @@ let
   failures = lib.runTests {
     testLightGtkTheme = {
       expr = light.gtk.theme.name;
-      expected = "Nordic-Polar";
+      expected = "Nordic-Polar-Light";
     };
     testLightGtk4FollowsGtk = {
       expr = light.gtk.gtk4.theme.name;
-      expected = "Nordic-Polar";
+      expected = "Nordic-Polar-Light";
     };
     testLightColorScheme = {
       expr = gvariantString light.dconf.settings."org/gnome/desktop/interface".color-scheme;
@@ -77,16 +77,11 @@ let
       expr = light.programs.noctalia.settings.theme.mode;
       expected = "light";
     };
-    # Firefox paints its vertical tab bar in the GTK menubar colour
-    testLightMenubar = {
-      expr =
-        lib.hasInfix "menubar," light.gtk.gtk3.extraCss
-        && lib.hasInfix "background: #d8dee9" light.gtk.gtk3.extraCss;
+    # Firefox paints its vertical tab bar in the GTK menubar colour; fixes must
+    # live in the theme (applied live), not in gtk.css (read only at startup)
+    testNoStartupOnlyCss = {
+      expr = lib.all (cfg: cfg.gtk.gtk3.extraCss == "") (lib.attrValues looks);
       expected = true;
-    };
-    testDarkTitlebarUntouched = {
-      expr = linuxHome.gtk.gtk3.extraCss;
-      expected = "";
     };
     testDarkIsDefault = {
       expr = linuxHome.gtk.theme.name;
@@ -226,6 +221,8 @@ in
           test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-3.0
           ${lib.optionalString variant.gtk4 "test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-4.0"}
           test -d ${kv}
+          ${lib.optionalString (variant.gtk.name == "Nordic-Polar-Light")
+            "grep -q 'background: #d8dee9' ${variant.gtk.package}/share/themes/Nordic-Polar-Light/gtk-3.0/gtk.css"}
           # helix finds its themes in the default runtime compiled into the binary
           runtime=$(grep -ao '/nix/store/[a-z0-9]*-helix-default-runtime' ${linuxHome.programs.helix.package}/bin/.hx-wrapped | head -1)
           test -f "$runtime/themes/${variant.helix}.toml"
