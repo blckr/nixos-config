@@ -78,18 +78,21 @@ in
     };
   };
 
-  # ayu-theme-gtk has no GTK4 variant, so GTK4 apps use Adwaita there.
+  # ayu-theme-gtk has no GTK4 variant and no Mirage, so GTK4 apps use Adwaita
+  # and GTK3 apps Ayu-Dark.
   # There is no Ayu Kvantum theme, Qt apps keep Nordic.
   ayu = {
     noctalia = "Ayu";
     dark = {
-      ghostty = "Ayu";
-      btop = "ayu";
+      # Ayu Mirage where available. btop's "ayu" is Ayu Dark, TTY uses the
+      # terminal's (Mirage) colours. GTK and noctalia only ship Ayu Dark.
+      ghostty = "Ayu Mirage";
+      btop = "TTY";
       # Selection derived from Ayu's selection blue
       walker = {
-        bg = "#0b0e14";
-        fg = "#bfbdb6";
-        accent = "#e6b450";
+        bg = "#1f2430";
+        fg = "#cccac2";
+        accent = "#ffcc66";
         selection = "alpha(#409fff, 0.3)";
         border = "alpha(#409fff, 0.3)";
       };
