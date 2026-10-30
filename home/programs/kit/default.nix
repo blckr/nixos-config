@@ -14,7 +14,7 @@ in
     flake = lib.mkOption {
       type = lib.types.str;
       default = "${config.home.homeDirectory}/Git/code-blckr/nixos-config";
-      description = "Pfad zu diesem Repo auf dem Rechner";
+      description = "Path to this repo on the machine";
     };
     package = lib.mkOption {
       type = lib.types.package;

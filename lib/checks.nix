@@ -123,7 +123,7 @@ let
 in
 {
   keybindings-unit =
-    assert lib.assertMsg (failures == [ ]) "Fehlgeschlagene Tests: ${builtins.toJSON failures}";
+    assert lib.assertMsg (failures == [ ]) "Failed tests: ${builtins.toJSON failures}";
     pkgs.runCommand "keybindings-unit" { } "touch $out";
 
   darwin-eval = pkgs.writeText "darwin-eval" (lib.concatLines darwinDrvs);

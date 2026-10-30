@@ -66,7 +66,7 @@ let
     lib.concatMap (
       path:
       lib.mapAttrsToList (key: v: [
-        (if strings v == [ ] then "(aus)" else lib.concatStringsSep " " (strings v))
+        (if strings v == [ ] then "(off)" else lib.concatStringsSep " " (strings v))
         key
       ]) (lib.filterAttrs (k: _: k != "custom-keybindings") (dconf.${path} or { }))
     ) gnomeSchemas

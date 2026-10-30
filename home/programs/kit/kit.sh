@@ -19,16 +19,16 @@ keyNames() {
 
 usage() {
   cat <<USAGE
-kit – Werkzeug für die Nix-Konfiguration ($flake)
+kit – tool for the Nix configuration ($flake)
 
-  kit build system|home     bauen und Unterschiede zum laufenden Stand zeigen
-  kit switch system|home    bauen und aktivieren
-  kit keys [NAME]           Keybindings anzeigen ($(keyNames))
-  kit light | dark          helles bzw. dunkles Erscheinungsbild
-  kit theme [NAME]          Farbschema wechseln bzw. auflisten ($themes)
-  kit help                  diese Hilfe
+  kit build system|home     build and show the difference to the running state
+  kit switch system|home    build and activate
+  kit keys [NAME]           show keybindings ($(keyNames))
+  kit light | dark          light or dark appearance
+  kit theme [NAME]          switch or list colour themes ($themes)
+  kit help                  this help
 
-KIT_FLAKE=PFAD überschreibt den Pfad zum Repo, KIT_DRY_RUN=1 zeigt nur die Befehle.
+KIT_FLAKE=PATH overrides the repo path, KIT_DRY_RUN=1 only prints the commands.
 USAGE
 }
 
@@ -46,7 +46,7 @@ run() {
 }
 
 needLinux() {
-  [ "$platform" = linux ] || die "'$1' gibt es nur unter NixOS; auf dem Mac: kit $2 home"
+  [ "$platform" = linux ] || die "'$1' only exists on NixOS; on the Mac use: kit $2 home"
 }
 
 installable() {
@@ -127,7 +127,7 @@ baseGeneration() {
   if [ -n "$cur" ] && [ -d "$cur/specialisation" ]; then
     echo "$cur" >"$kitState/base"
   fi
-  [ -f "$kitState/base" ] || die "keine home-manager-Generation gefunden, zuerst 'kit switch home'"
+  [ -f "$kitState/base" ] || die "no home-manager generation found, run 'kit switch home' first"
   cat "$kitState/base"
 }
 
@@ -155,7 +155,7 @@ look() {
   elif [ -d "$base/specialisation/$spec" ]; then
     run "$base/specialisation/$spec/activate"
   else
-    die "keine Variante '$spec' in $base"
+    die "no variant '$spec' in $base"
   fi
   if [ -z "$dry" ]; then
     echo "$1" >"$kitState/theme"
@@ -184,7 +184,7 @@ theme() {
   fi
   case " $themes " in
     *" $1 "*) look "$1" "$(stateOr mode dark)" ;;
-    *) die "unbekanntes Theme '$1'; vorhanden: $themes" ;;
+    *) die "unknown theme '$1'; available: $themes" ;;
   esac
 }
 
@@ -198,7 +198,7 @@ showKeys() {
   elif [ -f "$keys/$1.txt" ]; then
     cat "$keys/$1.txt"
   else
-    die "keine Keybindings für '$1'; vorhanden: $(keyNames)"
+    die "no keybindings for '$1'; available: $(keyNames)"
   fi
 }
 

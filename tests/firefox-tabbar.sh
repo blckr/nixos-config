@@ -53,9 +53,9 @@ for theme in $(kit theme | tr -d '* '); do
     shot "$theme-$mode"
     bar="$(luminance "$work/$theme-$mode.png" 20,400)"
     if { [ "$mode" = dark ] && [ "$bar" -lt 128 ]; } || { [ "$mode" = light ] && [ "$bar" -ge 128 ]; }; then
-      echo "ok      $theme-$mode (Leiste: Helligkeit $bar)"
+      echo "ok      $theme-$mode (tab bar luminance $bar)"
     else
-      echo "FEHLER  $theme-$mode (Leiste: Helligkeit $bar)"
+      echo "FAIL    $theme-$mode (tab bar luminance $bar)"
       cp "$work/$theme-$mode.png" "${TMPDIR:-/tmp}/firefox-tabbar-$theme-$mode.png"
       failed=1
     fi

@@ -37,6 +37,6 @@ rec {
         ++ lib.mapAttrsToList (key: action: { inherit key action; }) platform;
       dups = collisions binds;
     in
-    assert lib.assertMsg (dups == [ ]) "Ghostty-Keybinding-Kollision: ${toString dups}";
+    assert lib.assertMsg (dups == [ ]) "Ghostty keybinding collision: ${toString dups}";
     [ "clear" ] ++ map (b: "${b.key}=${b.action}") binds;
 }
