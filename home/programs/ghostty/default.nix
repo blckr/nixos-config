@@ -27,7 +27,7 @@ in
 
       keybind = keybindings.ghostty {
         inherit isDarwin;
-        inherit (binds) shared;
+        inherit (binds) shared performable;
         platform = binds.common // (if isDarwin then binds.darwin else binds.linux);
       };
     };

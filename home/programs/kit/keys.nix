@@ -13,9 +13,12 @@ let
   ghostty = lib.concatMap (
     b:
     let
-      m = builtins.match "([^=]+)=(.*)" b;
+      m = builtins.match "(performable:)?([^=]+)=(.*)" b;
     in
-    lib.optional (m != null) m
+    lib.optional (m != null) [
+      (lib.elemAt m 1)
+      (lib.elemAt m 2)
+    ]
   ) config.programs.ghostty.settings.keybind;
 
   # A bind line in niri: `Mod+E { spawn "ghostty"; }`

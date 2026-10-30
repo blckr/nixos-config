@@ -1,5 +1,18 @@
 # Ghostty keybindings for Mac and Linux, overview in docs/keybindings.md
 {
+  # Only consume the key when the action can run (as in Ghostty's own defaults),
+  # e.g. Escape reaches the app unless a search is open
+  performable = [
+    "adjust_selection"
+    "copy_to_clipboard"
+    "end_search"
+    "goto_split"
+    "next_tab"
+    "paste_from_clipboard"
+    "previous_tab"
+    "start_search"
+  ];
+
   # Mac notation, translated for Linux (cmd -> ctrl+shift, cmd+shift/alt -> ctrl+shift+alt)
   shared = {
     "cmd+c" = "copy_to_clipboard";

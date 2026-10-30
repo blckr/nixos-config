@@ -21,10 +21,12 @@ rec {
   # shared: Mac notation, translated on Linux
   # platform: already in the notation of the target platform
   # Result: Ghostty `keybind` list, starting with "clear" (no hidden defaults)
+  # performable: actions that only consume the key when they can run
   ghostty =
     {
       shared,
       platform ? { },
+      performable ? [ ],
       isDarwin,
     }:
     let
@@ -38,5 +40,12 @@ rec {
       dups = collisions binds;
     in
     assert lib.assertMsg (dups == [ ]) "Ghostty keybinding collision: ${toString dups}";
-    [ "clear" ] ++ map (b: "${b.key}=${b.action}") binds;
+    [ "clear" ]
+    ++ map (
+      b:
+      let
+        actionName = lib.head (lib.splitString ":" b.action);
+      in
+      "${lib.optionalString (lib.elem actionName performable) "performable:"}${b.key}=${b.action}"
+    ) binds;
 }

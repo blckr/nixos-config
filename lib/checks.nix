@@ -107,6 +107,24 @@ let
       ];
       expected = [ "a" ];
     };
+    # Escape must reach apps unless a search is open (Ghostty's default)
+    testEscapePerformable = {
+      expr = lib.elem "performable:escape=end_search" linuxHome.programs.ghostty.settings.keybind;
+      expected = true;
+    };
+    testPerformablePrefix = {
+      expr = keybindings.ghostty {
+        isDarwin = false;
+        shared."cmd+c" = "copy_to_clipboard";
+        platform."ctrl+tab" = "next_tab";
+        performable = [ "copy_to_clipboard" ];
+      };
+      expected = [
+        "clear"
+        "performable:ctrl+shift+c=copy_to_clipboard"
+        "ctrl+tab=next_tab"
+      ];
+    };
     # cmd+shift+d and ctrl+shift+alt+d end up on the same key on Linux
     testCollisionAborts = {
       expr =
