@@ -50,7 +50,7 @@ let
     };
   };
 
-  themes = import ../home/themes.nix { inherit pkgs; };
+  themes = import ../home/themes { inherit pkgs; };
   light = linuxHome.specialisation."nord-light".configuration;
 
   # Base configuration plus every specialisation, by name ("nord-dark" is the base)
@@ -193,7 +193,7 @@ in
 
   # Every theme/mode: the referenced theme files exist, Ghostty accepts its theme pair,
   # and noctalia and color-scheme match
-  themes-check = pkgs.runCommand "themes-check" { nativeBuildInputs = [ pkgs.ghostty ]; } (
+  themes-check = pkgs.runCommand "themes-check" { nativeBuildInputs = [ pkgs.ghostty pkgs.jq ]; } (
     ''
       export HOME=$TMPDIR XDG_CONFIG_HOME=$TMPDIR
     ''
@@ -208,7 +208,10 @@ in
           kv = cfg.xdg.configFile."Kvantum/${variant.kvantum.name}".source;
         in
         assert lib.assertMsg (cfg.gtk.theme.name == variant.gtk.name) "${name}: gtk theme";
-        assert lib.assertMsg (cfg.programs.noctalia.settings.theme.builtin == theme.noctalia) "${name}: noctalia";
+        assert lib.assertMsg (
+          lib.all (k: cfg.programs.noctalia.settings.theme.${k} == theme.noctalia.${k}) (lib.attrNames theme.noctalia)
+        ) "${name}: noctalia";
+        assert lib.assertMsg (cfg.programs.helix.settings.theme == variant.helix) "${name}: helix";
         assert lib.assertMsg (cfg.programs.noctalia.settings.theme.mode == mode) "${name}: noctalia mode";
         assert lib.assertMsg (
           gvariantString cfg.dconf.settings."org/gnome/desktop/interface".color-scheme == "prefer-${mode}"
@@ -223,6 +226,15 @@ in
           test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-3.0
           ${lib.optionalString variant.gtk4 "test -d ${variant.gtk.package}/share/themes/${variant.gtk.name}/gtk-4.0"}
           test -d ${kv}
+          # helix finds its themes in the default runtime compiled into the binary
+          runtime=$(grep -ao '/nix/store/[a-z0-9]*-helix-default-runtime' ${linuxHome.programs.helix.package}/bin/.hx-wrapped | head -1)
+          test -f "$runtime/themes/${variant.helix}.toml"
+          ${lib.optionalString (theme ? noctaliaPalette) ''
+            # every noctalia role and all 16 terminal colours, in both modes
+            jq -e '[.dark, .light][] | (keys | map(select(startswith("m"))) | length == 16)
+              and (.terminal.normal | length == 8) and (.terminal.bright | length == 8)' \
+              ${pkgs.writeText "palette.json" cfg.xdg.configFile."noctalia/palettes/${theme.noctalia.custom_palette}.json".text}
+          ''}
           ${
             if variant.btop == "TTY" then
               ""

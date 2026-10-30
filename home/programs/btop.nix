@@ -6,7 +6,7 @@
   ...
 }:
 let
-  theme = (import ../themes.nix { inherit pkgs; }).${settings.theme};
+  theme = (import ../themes { inherit pkgs; }).${settings.theme};
 in
 {
   programs.btop = {

@@ -1,4 +1,12 @@
-{ pkgs, ... }:
+{
+  lib,
+  pkgs,
+  settings,
+  ...
+}:
+let
+  theme = (import ../themes { inherit pkgs; }).${settings.theme};
+in
 {
   programs.helix = {
     enable = true;
@@ -18,7 +26,9 @@
     ];
 
     settings = {
-      theme = "nord";
+      # helix 25.07 cannot follow the terminal's light/dark mode; Linux switches
+      # it per look (home/linux/appearance.nix), the Mac uses the dark variant
+      theme = lib.mkDefault theme.dark.helix;
 
       editor = {
         auto-format = true;

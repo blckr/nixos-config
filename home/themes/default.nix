@@ -28,9 +28,13 @@ let
 in
 {
   nord = {
-    noctalia = "Nord";
+    noctalia = {
+      source = "builtin";
+      builtin = "Nord";
+    };
     dark = {
       ghostty = "Nord";
+      helix = "nord";
       btop = "nord";
       walker = {
         bg = "#2e3440";
@@ -49,6 +53,7 @@ in
     };
     light = {
       ghostty = "Nord Light";
+      helix = "nord_light";
       # btop has no light Nord theme; TTY uses the terminal's 16 colours
       btop = "TTY";
       walker = {
@@ -82,11 +87,17 @@ in
   # and GTK3 apps Ayu-Dark.
   # There is no Ayu Kvantum theme, Qt apps keep Nordic.
   ayu = {
-    noctalia = "Ayu";
+    # noctalia only ships Ayu Dark, so Mirage comes from our own palette
+    noctalia = {
+      source = "custom";
+      custom_palette = "AyuMirage";
+    };
+    noctaliaPalette = import ./ayu-mirage-noctalia.nix;
     dark = {
       # Ayu Mirage where available. btop's "ayu" is Ayu Dark, TTY uses the
       # terminal's (Mirage) colours. GTK and noctalia only ship Ayu Dark.
       ghostty = "Ayu Mirage";
+      helix = "ayu_mirage";
       btop = "TTY";
       # Selection derived from Ayu's selection blue
       walker = {
@@ -106,6 +117,7 @@ in
     };
     light = {
       ghostty = "Ayu Light";
+      helix = "ayu_light";
       btop = "TTY";
       walker = {
         bg = "#f8f9fa";
@@ -125,9 +137,13 @@ in
   };
 
   catppuccin = {
-    noctalia = "Catppuccin";
+    noctalia = {
+      source = "builtin";
+      builtin = "Catppuccin";
+    };
     dark = catppuccin "mocha" // {
       ghostty = "Catppuccin Mocha";
+      helix = "catppuccin_mocha";
       walker = {
         bg = "#1e1e2e";
         fg = "#cdd6f4";
@@ -140,6 +156,7 @@ in
     };
     light = catppuccin "latte" // {
       ghostty = "Catppuccin Latte";
+      helix = "catppuccin_latte";
       walker = {
         bg = "#eff1f5";
         fg = "#4c4f69";

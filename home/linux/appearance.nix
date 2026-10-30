@@ -9,7 +9,7 @@
   ...
 }:
 let
-  themes = import ../themes.nix { inherit pkgs; };
+  themes = import ../themes { inherit pkgs; };
   modes = [
     "dark"
     "light"
@@ -40,14 +40,18 @@ let
       gtk.gtk3.extraCss = variant.gtk3Css or "";
       dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-${mode}";
       # noctalia writes color-scheme itself (sync_color_scheme), so it must agree
-      programs.noctalia.settings.theme = {
-        builtin = theme.noctalia;
+      programs.noctalia.settings.theme = theme.noctalia // {
         inherit mode;
       };
+      programs.helix.settings.theme = variant.helix;
       programs.ghostty.settings.theme = "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
       programs.btop.settings.color_theme = variant.btop;
       modules.desktop.walker.colors = variant.walker;
-      xdg.configFile = {
+      xdg.configFile = lib.optionalAttrs (theme ? noctaliaPalette) {
+        "noctalia/palettes/${theme.noctalia.custom_palette}.json".text =
+          builtins.toJSON theme.noctaliaPalette;
+      }
+      // {
         "qt5ct/qt5ct.conf".text = qtct;
         "qt6ct/qt6ct.conf".text = qtct;
         "Kvantum/kvantum.kvconfig".text = ''

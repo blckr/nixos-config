@@ -32,7 +32,7 @@ in
       inherit (cfg) flake;
       keys = import ./keys.nix { inherit lib config; };
       inherit (settings) theme;
-      themes = lib.attrNames (import ../../themes.nix { inherit pkgs; });
+      themes = lib.attrNames (import ../../themes { inherit pkgs; });
     };
     home.packages = [ cfg.package ];
   };

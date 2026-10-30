@@ -282,9 +282,8 @@
         };
 
         # Theme
-        # builtin palette and mode are set in ./appearance.nix
+        # palette and mode are set in ./appearance.nix
         theme = {
-          source = "builtin";
           templates = {
             enable_builtin_templates = false;
             enable_community_templates = false;

@@ -6,7 +6,7 @@
 }:
 let
   isDarwin = pkgs.stdenv.isDarwin;
-  theme = (import ../../themes.nix { inherit pkgs; }).${settings.theme};
+  theme = (import ../../themes { inherit pkgs; }).${settings.theme};
   binds = import ./keybinds.nix;
   keybindings = import ../../../lib/keybindings.nix { inherit lib; };
 in

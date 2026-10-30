@@ -7,16 +7,17 @@
   ...
 }:
 let
-  themes = import ../themes.nix { inherit pkgs; };
+  themes = import ../themes { inherit pkgs; };
 in
 {
-  # Only Ghostty and btop are themed here; Ghostty follows the macOS appearance.
+  # Only Ghostty, btop and helix are themed here; Ghostty follows the macOS appearance.
   # `kit theme NAME` activates the specialisation NAME.
   specialisation = lib.mapAttrs (_: theme: {
     configuration.programs = {
       ghostty.settings.theme = lib.mkForce "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
       # btop cannot follow the macOS appearance, so it uses the dark variant
       btop.settings.color_theme = lib.mkForce theme.dark.btop;
+      helix.settings.theme = lib.mkForce theme.dark.helix;
     };
   }) (lib.removeAttrs themes [ settings.theme ]);
 
