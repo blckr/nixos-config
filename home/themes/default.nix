@@ -2,6 +2,7 @@
 # `settings.theme`; `kit theme NAME` and `kit light|dark` switch at runtime.
 { pkgs }:
 let
+  everforest = import ./everforest.nix;
   # Nordic-Polar keeps the dark Nordic menubar and titlebar (#2b313c). Firefox
   # paints its vertical tab bar in the GTK menubar colour (with
   # browser.tabs.inTitlebar = 0), so this copy gives both the light Polar tones.
@@ -183,25 +184,20 @@ in
     };
   };
 
-  # Ghostty only ships Dark Hard and Light Med; GTK and helix use slightly
-  # different Everforest backgrounds. No Kvantum theme, Qt apps keep Nordic.
+  # Everforest Medium, as in helix (./everforest.nix). GTK only ships one dark
+  # and one light Everforest. No Kvantum theme, Qt apps keep Nordic.
   everforest = {
     noctalia = {
       source = "custom";
       custom_palette = "Everforest";
     };
-    noctaliaPalette = import ./everforest-noctalia.nix;
+    noctaliaPalette = everforest.noctaliaPalette;
+    ghosttyThemes = everforest.ghosttyThemes;
     dark = {
-      ghostty = "Everforest Dark Hard";
+      ghostty = "everforest-dark-medium";
       helix = "everforest_dark";
-      btop = "everforest-dark-hard";
-      walker = {
-        bg = "#1e2326";
-        fg = "#d3c6aa";
-        accent = "#a7c080";
-        selection = "#4c3743";
-        border = "#4c3743";
-      };
+      btop = "everforest-dark-medium";
+      walker = everforest.walker.dark;
       gtk = {
         name = "Everforest-Dark";
         package = pkgs.everforest-gtk-theme;
@@ -211,16 +207,10 @@ in
       kvantum = nordicKvantum;
     };
     light = {
-      ghostty = "Everforest Light Med";
+      ghostty = "everforest-light-medium";
       helix = "everforest_light";
       btop = "everforest-light-medium";
-      walker = {
-        bg = "#efebd4";
-        fg = "#5c6a72";
-        accent = "#8da101";
-        selection = "#eaedc8";
-        border = "#eaedc8";
-      };
+      walker = everforest.walker.light;
       gtk = {
         name = "Everforest-Light";
         package = pkgs.everforest-gtk-theme;

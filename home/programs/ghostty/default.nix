@@ -6,13 +6,16 @@
 }:
 let
   isDarwin = pkgs.stdenv.isDarwin;
-  theme = (import ../../themes { inherit pkgs; }).${settings.theme};
+  themes = import ../../themes { inherit pkgs; };
+  theme = themes.${settings.theme};
   binds = import ./keybinds.nix;
   keybindings = import ../../../lib/keybindings.nix { inherit lib; };
 in
 {
   programs.ghostty = {
     enable = true;
+    # Themes Ghostty does not ship, e.g. Everforest Medium
+    themes = lib.foldl' (acc: t: acc // (t.ghosttyThemes or { })) { } (lib.attrValues themes);
     settings = {
       font-size = 12;
       cursor-style = "block";

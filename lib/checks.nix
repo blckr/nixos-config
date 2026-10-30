@@ -79,6 +79,12 @@ let
     };
     # Firefox paints its vertical tab bar in the GTK menubar colour; fixes must
     # live in the theme (applied live), not in gtk.css (read only at startup)
+    # home-manager validates custom Ghostty themes with an unquoted path, so a
+    # space in the name breaks the whole activation
+    testGhosttyThemeNamesWithoutSpaces = {
+      expr = lib.filter (lib.hasInfix " ") (lib.attrNames linuxHome.programs.ghostty.themes);
+      expected = [ ];
+    };
     testNoStartupOnlyCss = {
       expr = lib.all (cfg: cfg.gtk.gtk3.extraCss == "") (lib.attrValues looks);
       expected = true;
@@ -222,6 +228,11 @@ in
   themes-check = pkgs.runCommand "themes-check" { nativeBuildInputs = [ pkgs.ghostty pkgs.jq ]; } (
     ''
       export HOME=$TMPDIR XDG_CONFIG_HOME=$TMPDIR
+      # custom Ghostty themes, where Ghostty looks for them
+      mkdir -p $TMPDIR/ghostty/themes
+      ${lib.concatMapStrings (
+        n: "cp ${linuxHome.xdg.configFile."ghostty/themes/${n}".source} \"$TMPDIR/ghostty/themes/${n}\"\n"
+      ) (lib.attrNames linuxHome.programs.ghostty.themes)}
     ''
     + lib.concatStrings (
       lib.mapAttrsToList (
