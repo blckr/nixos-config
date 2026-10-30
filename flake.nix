@@ -78,6 +78,12 @@
         };
       };
 
+      checks.x86_64-linux = import ./lib/checks.nix {
+        inherit self;
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        lib = nixpkgs.lib;
+      };
+
       lib = lib;
     };
 }

@@ -4,7 +4,7 @@
   imports = [
     ./apps
     ./programs/btop.nix
-    ./programs/ghostty.nix
+    ./programs/ghostty
     ./programs/helix.nix
     ./programs/zellij.nix
   ];
