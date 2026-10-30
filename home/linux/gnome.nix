@@ -1,4 +1,4 @@
-# GNOME-Session: Layout und Hintergrund wie unter niri
+# GNOME-Session: Layout, Hintergrund und Systemkürzel wie unter niri bzw. am Mac
 { lib, settings, ... }:
 let
   wallpaper = "file://${settings.wallpaper}";
@@ -16,5 +16,41 @@ in
       picture-options = "zoom"; # entspricht noctalias fill_mode "crop"
     };
     "org/gnome/desktop/screensaver".picture-uri = wallpaper;
+
+    # Systemebene wie am Mac (Cmd -> Super), siehe docs/keybindings.md
+    "org/gnome/desktop/wm/keybindings" = {
+      close = [ "<Super>q" "<Alt>F4" ];
+      minimize = [ "<Super>m" "<Super>h" ];
+      toggle-fullscreen = [ "<Super><Control>f" ];
+      # Super+Space ist die Suche; es gibt nur ein Layout
+      switch-input-source = [ ];
+      switch-input-source-backward = [ ];
+      # Ctrl+Alt(+Shift)+Pfeile gehören Ghostty (Split-Navigation)
+      switch-to-workspace-left = [ "<Super>Page_Up" "<Super><Alt>Left" ];
+      switch-to-workspace-right = [ "<Super>Page_Down" "<Super><Alt>Right" ];
+      switch-to-workspace-up = [ ];
+      switch-to-workspace-down = [ ];
+      move-to-workspace-left = [ "<Super><Shift>Page_Up" "<Super><Shift><Alt>Left" ];
+      move-to-workspace-right = [ "<Super><Shift>Page_Down" "<Super><Shift><Alt>Right" ];
+      move-to-workspace-up = [ ];
+      move-to-workspace-down = [ ];
+    };
+
+    "org/gnome/shell/keybindings" = {
+      toggle-overview = [ "<Super>space" ];
+      screenshot = [ "<Shift>Print" "<Super><Shift>3" ];
+      show-screenshot-ui = [ "Print" "<Super><Shift>4" "<Super><Shift>5" ];
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      # Super+L ist unter niri "Fokus rechts" und soll hier nicht sperren
+      screensaver = [ "<Super><Control>q" ];
+      custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ghostty/" ];
+    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ghostty" = {
+      name = "Ghostty";
+      command = "ghostty";
+      binding = "<Super>e";
+    };
   };
 }

@@ -123,7 +123,9 @@
           Mod+E { spawn "ghostty"; }
           Mod+P { spawn "firefox"; }
           Mod+Space { spawn "walker"; }
-          Mod+Return { spawn "walker"; }
+          Mod+Return { spawn "ghostty"; }
+          // Wie am Mac: Ctrl+Cmd+Q sperrt, Cmd+Q schließt
+          Mod+Ctrl+Q { spawn "noctalia" "msg" "session" "lock"; }
           Mod+Shift+L { spawn "noctalia" "msg" "session" "lock"; }
           Mod+Ctrl+Shift+Alt+L { spawn "firefox" "https://www.linkedin.com"; }
           Mod+Shift+S { spawn "script-selector"; }
@@ -137,6 +139,7 @@
           XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
           XF86MonBrightnessUp { spawn "noctalia" "msg" "brightness-up"; }
           XF86MonBrightnessDown { spawn "noctalia" "msg" "brightness-down"; }
+          Mod+Q { close-window; }
           Mod+X { close-window; }
 
           Mod+H { focus-column-or-monitor-left; }
@@ -190,6 +193,16 @@
           Mod+9 { focus-workspace 9; }
           Mod+Tab { focus-workspace-previous; }
 
+          Mod+Ctrl+1 { move-column-to-workspace 1; }
+          Mod+Ctrl+2 { move-column-to-workspace 2; }
+          Mod+Ctrl+3 { move-column-to-workspace 3; }
+          Mod+Ctrl+4 { move-column-to-workspace 4; }
+          Mod+Ctrl+5 { move-column-to-workspace 5; }
+          Mod+Ctrl+6 { move-column-to-workspace 6; }
+          Mod+Ctrl+7 { move-column-to-workspace 7; }
+          Mod+Ctrl+8 { move-column-to-workspace 8; }
+          Mod+Ctrl+9 { move-column-to-workspace 9; }
+
           Mod+BracketLeft { consume-or-expel-window-left; }
           Mod+BracketRight { consume-or-expel-window-right; }
 
@@ -214,6 +227,10 @@
 
           Mod+W { toggle-column-tabbed-display; }
 
+          // Wie am Mac: Cmd+Shift+3/4/5
+          Mod+Shift+3 { screenshot-screen; }
+          Mod+Shift+4 { screenshot; }
+          Mod+Shift+5 { screenshot; }
           Mod+Shift+P { screenshot; }
           Print { screenshot; }
           Alt+Print { screenshot-window; }
