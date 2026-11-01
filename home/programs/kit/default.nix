@@ -30,7 +30,10 @@ in
       host = hostname;
       user = config.home.username;
       inherit (cfg) flake;
-      keys = import ./keys.nix { inherit lib config; };
+      keys = import ./keys.nix {
+        inherit lib config;
+        inherit (pkgs.stdenv) isDarwin;
+      };
       inherit (settings) theme;
       themes = lib.attrNames (import ../../themes { inherit pkgs; });
     };

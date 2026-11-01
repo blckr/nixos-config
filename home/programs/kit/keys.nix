@@ -1,5 +1,9 @@
 # Keybinding tables for `kit keys`, generated from the same data as the bindings themselves
-{ lib, config }:
+{
+  lib,
+  config,
+  isDarwin,
+}:
 let
   pad = width: s: s + lib.concatStrings (lib.genList (_: " ") (width - lib.stringLength s));
 
@@ -77,9 +81,20 @@ let
       (lib.concatStrings (strings c.binding))
       "${lib.concatStrings (strings c.name)}: ${lib.concatStrings (strings c.command)}"
     ]) (lib.filterAttrs (p: _: lib.hasPrefix "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/" p) dconf);
+  # Browser defaults; Firefox where it is enabled, Chrome on the Mac
+  browser =
+    name:
+    table (
+      map (b: [
+        b.${name}
+        b.action
+      ]) (lib.filter (b: b.${name} != null) (import ./browser.nix))
+    );
 in
 {
   ghostty = table ghostty;
 }
+// lib.optionalAttrs (config.modules.apps.firefox.enable or false) { firefox = browser "firefox"; }
+// lib.optionalAttrs isDarwin { chrome = browser "chrome"; }
 // lib.optionalAttrs (niriText != null) { niri = table niri; }
 // lib.optionalAttrs (gnome != [ ]) { gnome = table gnome; }

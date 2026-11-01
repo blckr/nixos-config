@@ -7,6 +7,7 @@
 let
   keybindings = import ./keybindings.nix { inherit lib; };
   binds = import ../home/programs/ghostty/keybinds.nix;
+  browserKeys = import ../home/programs/kit/browser.nix;
 
   # Ghostty settings of a Mac as a config file, written with Linux pkgs
   # (no Darwin builder needed)
@@ -47,6 +48,7 @@ let
     keys = import ../home/programs/kit/keys.nix {
       inherit lib;
       config = darwinHome.config;
+      isDarwin = true;
     };
   };
 
@@ -191,6 +193,8 @@ in
     niri=$($kit keys niri | wc -l)
     [ "$niri" -eq "$niriExpected" ] || { echo "niri: $niri, expected $niriExpected"; exit 1; }
     $kit keys gnome | grep -q "<Super>q"
+    [ "$($kit keys firefox | wc -l)" -eq ${toString (lib.length (lib.filter (b: b.firefox != null) browserKeys))} ] || { echo "firefox keys incomplete"; exit 1; }
+    $kit keys firefox | grep -q "^Ctrl+Shift+O  *Bookmark manager$"
 
     # fish completions
     complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${linuxKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
@@ -198,7 +202,7 @@ in
     same "$(complete 'kit ')" "build dark help keys light switch theme "
     same "$(complete 'kit build ')" "home system "
     same "$(complete 'kit theme ')" "${toString (lib.attrNames themes)} "
-    same "$(complete 'kit keys ')" "ghostty gnome niri "
+    same "$(complete 'kit keys ')" "firefox ghostty gnome niri "
     [ -z "$(complete 'kit theme nord ')" ] || { echo "no completion after a theme"; exit 1; }
     touch $out
   '';
@@ -215,11 +219,13 @@ in
     gen=$TMPDIR/gen; mkdir -p $gen/specialisation/ayu $XDG_STATE_HOME/home-manager/gcroots
     ln -s $gen $XDG_STATE_HOME/home-manager/gcroots/current-home
     expect "$($kit theme ayu 2>&1)" "$gen/specialisation/ayu/activate"
-    [ "$($kit keys | grep -c '^== ')" -eq 1 ] || { echo "Mac must only list ghostty keys"; exit 1; }
+    [ "$($kit keys | grep -c '^== ')" -eq 2 ] || { echo "Mac must only list chrome and ghostty keys"; exit 1; }
+    $kit keys chrome | grep -q "^Cmd+Alt+B  *Bookmark manager$"
+    if $kit keys chrome | grep -q "Bookmarks sidebar"; then echo "chrome has no bookmarks sidebar shortcut"; exit 1; fi
     complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${darwinKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
     same() { [ "$1" = "$2" ] || { echo "expected '$2', got '$1'"; exit 1; }; }
     same "$(complete 'kit switch ')" "home "
-    same "$(complete 'kit keys ')" "ghostty "
+    same "$(complete 'kit keys ')" "chrome ghostty "
     touch $out
   '';
 

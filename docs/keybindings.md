@@ -46,7 +46,7 @@ Alles läuft über `kit` (auf Linux und Mac):
 | `kit build home`                | nur home-manager bauen, Diff                                         | home-manager bauen, Diff             |
 | `kit switch system`             | `sudo nixos-rebuild switch`                                          | – (kein NixOS)                       |
 | `kit switch home`               | home-manager aktivieren, ohne sudo                                   | home-manager aktivieren              |
-| `kit keys [ghostty/niri/gnome]` | Keybindings aus den Nix-Daten                                        | nur Ghostty                          |
+| `kit keys [NAME]`               | Ghostty, niri, GNOME, Firefox                                        | Ghostty, Chrome                      |
 | `kit light` / `kit dark`        | hell/dunkel umschalten, Theme bleibt                                 | macOS-Erscheinungsbild (`osascript`) |
 | `kit theme [NAME]`              | Theme wechseln, hell/dunkel bleibt (Specialisation `<theme>-<mode>`) | nur Ghostty-Theme                    |
 
@@ -184,6 +184,8 @@ assert lib.length (lib.attrNames linuxBinds) == lib.length (lib.attrNames binds)
 ## 3. Chrome (Mac) ↔ Firefox (Linux) (Priorität 1)
 
 ### Was schon gleich ist (Ctrl ↔ Cmd)
+
+`kit keys firefox` (Linux) und `kit keys chrome` (Mac) zeigen die Standardbelegungen aus `home/programs/kit/browser.nix`.
 
 Neuer Tab `t`, geschlossenen Tab wiederherstellen `Shift+T`, schließen `w`, Fenster schließen `Shift+W`, Adresszeile `l`, Suchen `f` / `g`, Neu laden `r` / `Shift+R`, Zoom `=` `-` `0`, Lesezeichen setzen `d`, Lesezeichenleiste `Shift+B`, `Ctrl+Tab`, Tab N (siehe Ghostty). Beenden ist OS-Ebene: `Cmd+Q` ↔ `Super+Q`.
 
