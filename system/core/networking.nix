@@ -35,6 +35,15 @@
     };
   };
 
+  # ath11k registers the wiphy before wlan0 exists. If iwd starts in that
+  # window it logs "No default interface for wiphy 0" and never picks up
+  # wlan0 until restarted, so wait for the netdev. Wants (not Requires):
+  # if wlan0 never shows up, iwd still starts after the device timeout.
+  systemd.services.iwd = {
+    wants = [ "sys-subsystem-net-devices-wlan0.device" ];
+    after = [ "sys-subsystem-net-devices-wlan0.device" ];
+  };
+
   services.resolved.enable = true;
   environment.systemPackages = [
     pkgs.iw
