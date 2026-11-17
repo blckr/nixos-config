@@ -1,7 +1,5 @@
 # Shared by NixOS and home-manager, passed to every module as `settings`
 {
-  wallpaper = ./assets/wallpapers/nordic-outpost.png;
-
   # see home/themes
   theme = "nord";
 

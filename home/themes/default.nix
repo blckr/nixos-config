@@ -1,6 +1,7 @@
 { pkgs }:
 let
   everforest = import ./everforest.nix;
+  wallpapers = import ./wallpapers.nix { inherit pkgs; };
   # Nordic-Polar has a dark menubar, and Firefox paints its vertical tab bar in that colour.
   # Fixed in the theme because gtk.css is only read at startup.
   nordicPolarLight =
@@ -47,6 +48,7 @@ let
 in
 {
   nord = {
+    wallpaper = wallpapers.nord;
     noctalia = {
       source = "builtin";
       builtin = "Nord";
@@ -95,6 +97,7 @@ in
 
   # ayu-theme-gtk has no GTK4 variant and no Mirage; no Ayu Kvantum theme, Qt keeps Nordic
   ayu = {
+    wallpaper = wallpapers.ayu;
     # noctalia only ships Ayu Dark, so Mirage comes from our own palette
     noctalia = {
       source = "custom";
@@ -143,6 +146,7 @@ in
   };
 
   catppuccin = {
+    wallpaper = wallpapers.catppuccin;
     noctalia = {
       source = "builtin";
       builtin = "Catppuccin";
@@ -177,6 +181,7 @@ in
 
   # No Everforest Kvantum theme, Qt apps keep Nordic
   everforest = {
+    wallpaper = wallpapers.everforest;
     noctalia = {
       source = "custom";
       custom_palette = "Everforest";

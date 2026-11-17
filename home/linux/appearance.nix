@@ -36,11 +36,19 @@ let
       gtk.theme = variant.gtk;
       gtk.gtk4.theme = if variant.gtk4 then variant.gtk else null;
       gtk.iconTheme.name = variant.icons;
-      dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-${mode}";
+      dconf.settings = {
+        "org/gnome/desktop/interface".color-scheme = "prefer-${mode}";
+        "org/gnome/desktop/background" = {
+          picture-uri = "file://${theme.wallpaper.light}";
+          picture-uri-dark = "file://${theme.wallpaper.dark}";
+        };
+        "org/gnome/desktop/screensaver".picture-uri = "file://${theme.wallpaper.${mode}}";
+      };
       # noctalia writes color-scheme itself (sync_color_scheme), so it must agree
       programs.noctalia.settings.theme = theme.noctalia // {
         inherit mode;
       };
+      programs.noctalia.settings.wallpaper.default.path = "${theme.wallpaper.${mode}}";
       programs.helix.settings.theme = variant.helix;
       programs.ghostty.settings.theme = "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
       programs.btop.settings.color_theme = variant.btop;

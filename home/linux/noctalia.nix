@@ -59,9 +59,6 @@
           automation = {
             enabled = false;
           };
-          default = {
-            path = "${settings.wallpaper}";
-          };
         };
 
         notification = {

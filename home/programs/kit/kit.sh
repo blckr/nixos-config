@@ -11,6 +11,7 @@ dry="${KIT_DRY_RUN:-}"
 state="${XDG_STATE_HOME:-$HOME/.local/state}"
 kitState="$state/kit"
 currentHome="$state/home-manager/gcroots/current-home"
+wallpapers="${XDG_DATA_HOME:-$HOME/.local/share}/wallpapers"
 
 keyNames() {
   for f in "$keys"/*.txt; do
@@ -125,7 +126,24 @@ switch() {
   # Activating brings back the base look, so re-apply the chosen one
   if [ "$(specFor "$(stateOr theme "$baseTheme")" "$(stateOr mode dark)")" != "$(specFor "$baseTheme" dark)" ]; then
     look "$(stateOr theme "$baseTheme")" "$(stateOr mode dark)"
+  else
+    setWallpaper "$(appearance)"
   fi
+}
+
+appearance() {
+  if command -v defaults >/dev/null && defaults read -g AppleInterfaceStyle 2>/dev/null | grep -q Dark; then
+    echo dark
+  else
+    echo light
+  fi
+}
+
+# Mac only; on Linux noctalia and GNOME take the wallpaper from the configuration.
+# The store path (not the symlink) makes macOS notice the change.
+setWallpaper() {
+  [ "$platform" = darwin ] || return 0
+  run osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$(readlink -m "$wallpapers/$1")\""
 }
 
 # Linux: the generation with specialisation/ is the base. It is remembered,
@@ -170,6 +188,7 @@ look() {
     echo "$1" >"$kitState/theme"
     echo "$2" >"$kitState/mode"
   fi
+  setWallpaper "$(appearance)"
 }
 
 mode() {
@@ -177,6 +196,7 @@ mode() {
     local darkMode=true
     [ "$1" = light ] && darkMode=false
     run osascript -e "tell application \"System Events\" to tell appearance preferences to set dark mode to $darkMode"
+    setWallpaper "$1"
     return
   fi
   look "$(stateOr theme "$baseTheme")" "$1"

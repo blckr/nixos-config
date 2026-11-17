@@ -124,6 +124,38 @@ let
       expected = [ "a" ];
     };
     # Escape must reach apps unless a search is open (Ghostty's default)
+    testDarwinGhosttyReload = {
+      expr = lib.all (h: lib.hasInfix "pkill -USR2" h.xdg.configFile."ghostty/config".onChange) (
+        lib.attrValues darwinSystemHomes ++ map (h: h.config) (lib.attrValues self.homeConfigurations)
+      );
+      expected = true;
+    };
+    testWallpaperFollowsLook = {
+      expr = lib.mapAttrs (_: cfg: cfg.programs.noctalia.settings.wallpaper.default.path) looks;
+      expected = lib.listToAttrs (
+        lib.concatMap (
+          name:
+          map (mode: lib.nameValuePair "${name}-${mode}" "${themes.${name}.wallpaper.${mode}}") [
+            "dark"
+            "light"
+          ]
+        ) (lib.attrNames themes)
+      );
+    };
+    testGnomeWallpaperPair = {
+      expr = gvariantString linuxHome.dconf.settings."org/gnome/desktop/background".picture-uri-dark;
+      expected = "file://${themes.nord.wallpaper.dark}";
+    };
+    testDarwinWallpapers = {
+      expr = lib.mapAttrs (_: f: f.source) (
+        lib.filterAttrs (name: _: lib.hasPrefix "wallpapers/" name)
+          (lib.head (lib.attrValues darwinSystemHomes)).specialisation.ayu.configuration.xdg.dataFile
+      );
+      expected = {
+        "wallpapers/light" = themes.ayu.wallpaper.light;
+        "wallpapers/dark" = themes.ayu.wallpaper.dark;
+      };
+    };
     testEscapePerformable = {
       expr = lib.elem "performable:escape=end_search" linuxHome.programs.ghostty.settings.keybind;
       expected = true;
@@ -222,10 +254,13 @@ in
     expect "$($kit build home 2>&1)" '/repo#homeConfigurations."${darwinHome.config.home.username}@work-mac".activationPackage'
     if $kit build system 2>/dev/null; then echo "build system must fail on the Mac"; exit 1; fi
     expect "$($kit light 2>&1)" "set dark mode to false"
+    expect "$($kit light 2>&1)" "set picture to \"$HOME/.local/share/wallpapers/light\""
     expect "$($kit dark 2>&1)" "set dark mode to true"
+    expect "$($kit dark 2>&1)" "set picture to \"$HOME/.local/share/wallpapers/dark\""
     gen=$TMPDIR/gen; mkdir -p $gen/specialisation/ayu $XDG_STATE_HOME/home-manager/gcroots
     ln -s $gen $XDG_STATE_HOME/home-manager/gcroots/current-home
     expect "$($kit theme ayu 2>&1)" "$gen/specialisation/ayu/activate"
+    expect "$($kit theme ayu 2>&1)" "set picture to"
     [ "$($kit keys | grep -c '^== ')" -eq 2 ] || { echo "Mac must only list chrome and ghostty keys"; exit 1; }
     $kit keys chrome | grep -q "^Cmd+Alt+B  *Bookmark manager$"
     if $kit keys chrome | grep -q "Bookmarks sidebar"; then echo "chrome has no bookmarks sidebar shortcut"; exit 1; fi

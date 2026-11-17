@@ -1,7 +1,4 @@
 { lib, settings, ... }:
-let
-  wallpaper = "file://${settings.wallpaper}";
-in
 {
   dconf.settings = {
     "org/gnome/desktop/input-sources" = {
@@ -9,12 +6,8 @@ in
       xkb-options = [ settings.keyboard.options ];
     };
 
-    "org/gnome/desktop/background" = {
-      picture-uri = wallpaper;
-      picture-uri-dark = wallpaper;
-      picture-options = "zoom"; # matches noctalia's fill_mode "crop"
-    };
-    "org/gnome/desktop/screensaver".picture-uri = wallpaper;
+    # Pictures per theme and mode are set in ./appearance.nix
+    "org/gnome/desktop/background".picture-options = "zoom"; # matches noctalia's fill_mode "crop"
 
     # System level like on the Mac (Cmd -> Super), see docs/keybindings.md
     "org/gnome/desktop/wm/keybindings" = {
