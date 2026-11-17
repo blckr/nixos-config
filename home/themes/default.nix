@@ -1,7 +1,7 @@
 { pkgs }:
 let
   everforest = import ./everforest.nix;
-  wallpapers = import ./wallpapers.nix { inherit pkgs; };
+  wallpapers = import ./wallpapers.nix;
   # Nordic-Polar has a dark menubar, and Firefox paints its vertical tab bar in that colour.
   # Fixed in the theme because gtk.css is only read at startup.
   nordicPolarLight =
