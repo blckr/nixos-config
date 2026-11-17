@@ -127,7 +127,7 @@ switch() {
   if [ "$(specFor "$(stateOr theme "$baseTheme")" "$(stateOr mode dark)")" != "$(specFor "$baseTheme" dark)" ]; then
     look "$(stateOr theme "$baseTheme")" "$(stateOr mode dark)"
   else
-    setWallpaper "$(appearance)"
+    applyMacLook
   fi
 }
 
@@ -144,6 +144,20 @@ appearance() {
 setWallpaper() {
   [ "$platform" = darwin ] || return 0
   run osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$(readlink -m "$wallpapers/$1")\""
+}
+
+# Mac only: Ghostty ignores SIGUSR2 there and the onChange hook does not reach it
+reloadGhostty() {
+  [ "$platform" = darwin ] || return 0
+  run osascript \
+    -e 'if application "Ghostty" is running then' \
+    -e 'tell application "Ghostty" to perform action "reload_config" on focused terminal of selected tab of front window' \
+    -e 'end if' || true
+}
+
+applyMacLook() {
+  setWallpaper "$(appearance)"
+  reloadGhostty
 }
 
 # Linux: the generation with specialisation/ is the base. It is remembered,
@@ -188,7 +202,7 @@ look() {
     echo "$1" >"$kitState/theme"
     echo "$2" >"$kitState/mode"
   fi
-  setWallpaper "$(appearance)"
+  applyMacLook
 }
 
 mode() {

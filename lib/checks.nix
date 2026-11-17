@@ -124,12 +124,6 @@ let
       expected = [ "a" ];
     };
     # Escape must reach apps unless a search is open (Ghostty's default)
-    testDarwinGhosttyReload = {
-      expr = lib.all (h: lib.hasInfix "reload_config" h.xdg.configFile."ghostty/config".onChange) (
-        lib.attrValues darwinSystemHomes ++ map (h: h.config) (lib.attrValues self.homeConfigurations)
-      );
-      expected = true;
-    };
     testWallpaperFollowsLook = {
       expr = lib.mapAttrs (_: cfg: cfg.programs.noctalia.settings.wallpaper.default.path) looks;
       expected = lib.listToAttrs (
@@ -261,6 +255,7 @@ in
     ln -s $gen $XDG_STATE_HOME/home-manager/gcroots/current-home
     expect "$($kit theme ayu 2>&1)" "$gen/specialisation/ayu/activate"
     expect "$($kit theme ayu 2>&1)" "set picture to"
+    expect "$($kit theme ayu 2>&1)" 'perform action "reload_config"'
     [ "$($kit keys | grep -c '^== ')" -eq 2 ] || { echo "Mac must only list chrome and ghostty keys"; exit 1; }
     $kit keys chrome | grep -q "^Cmd+Alt+B  *Bookmark manager$"
     if $kit keys chrome | grep -q "Bookmarks sidebar"; then echo "chrome has no bookmarks sidebar shortcut"; exit 1; fi
