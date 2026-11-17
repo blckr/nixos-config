@@ -298,7 +298,12 @@ in
         assert lib.assertMsg (
           lib.all (k: cfg.programs.noctalia.settings.theme.${k} == theme.noctalia.${k}) (lib.attrNames theme.noctalia)
         ) "${name}: noctalia";
-        assert lib.assertMsg (cfg.programs.helix.settings.theme == variant.helix) "${name}: helix";
+        assert lib.assertMsg (
+          cfg.programs.helix.settings.theme == {
+            dark = theme.dark.helix;
+            light = theme.light.helix;
+          }
+        ) "${name}: helix";
         assert lib.assertMsg (cfg.programs.noctalia.settings.theme.mode == mode) "${name}: noctalia mode";
         assert lib.assertMsg (
           gvariantString cfg.dconf.settings."org/gnome/desktop/interface".color-scheme == "prefer-${mode}"
@@ -315,9 +320,7 @@ in
           test -d ${kv}
           ${lib.optionalString (variant.gtk.name == "Nordic-Polar-Light")
             "grep -q 'background: #d8dee9' ${variant.gtk.package}/share/themes/Nordic-Polar-Light/gtk-3.0/gtk.css"}
-          # helix finds its themes in the default runtime compiled into the binary
-          runtime=$(grep -ao '/nix/store/[a-z0-9]*-helix-default-runtime' ${linuxHome.programs.helix.package}/bin/.hx-wrapped | head -1)
-          test -f "$runtime/themes/${variant.helix}.toml"
+          test -f ${linuxHome.xdg.configFile."helix/runtime/themes".source}/${variant.helix}.toml
           ${lib.optionalString (theme ? noctaliaPalette) ''
             # every noctalia role and all 16 terminal colours, in both modes
             jq -e '[.dark, .light][] | (keys | map(select(startswith("m"))) | length == 16)

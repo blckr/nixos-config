@@ -8,8 +8,13 @@ let
   theme = (import ../themes { inherit pkgs; }).${settings.theme};
 in
 {
+  # The nixpkgs steelix package ships a runtime without themes; helix looks here first
+  xdg.configFile."helix/runtime/themes".source = "${pkgs.steelix.src}/runtime/themes";
+
   programs.helix = {
     enable = true;
+    # Helix with Steel plugins; unlike the 25.07 release it switches themes with the terminal's light/dark mode
+    package = pkgs.steelix;
     defaultEditor = true;
     extraPackages = with pkgs; [
       nil
@@ -26,7 +31,10 @@ in
     ];
 
     settings = {
-      theme = lib.mkDefault theme.dark.helix;
+      theme = lib.mkDefault {
+        dark = theme.dark.helix;
+        light = theme.light.helix;
+      };
 
       editor = {
         auto-format = true;

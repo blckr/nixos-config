@@ -14,14 +14,17 @@ let
   };
 in
 {
-  # Only Ghostty, btop, helix and the wallpaper are themed; Ghostty follows the macOS appearance
+  # Only Ghostty, btop, helix and the wallpaper are themed; Ghostty and helix follow the macOS appearance
   specialisation = lib.mapAttrs (_: theme: {
     configuration = {
       programs = {
         ghostty.settings.theme = lib.mkForce "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
         # btop cannot follow the macOS appearance, so it uses the dark variant
         btop.settings.color_theme = lib.mkForce theme.dark.btop;
-        helix.settings.theme = lib.mkForce theme.dark.helix;
+        helix.settings.theme = lib.mkForce {
+          dark = theme.dark.helix;
+          light = theme.light.helix;
+        };
       };
       xdg.dataFile = lib.mapAttrs (_: lib.mapAttrs (_: lib.mkForce)) (wallpapers theme);
     };

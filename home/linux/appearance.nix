@@ -49,7 +49,10 @@ let
         inherit mode;
       };
       programs.noctalia.settings.wallpaper.default.path = "${theme.wallpaper.${mode}}";
-      programs.helix.settings.theme = variant.helix;
+      programs.helix.settings.theme = {
+        dark = theme.dark.helix;
+        light = theme.light.helix;
+      };
       programs.ghostty.settings.theme = "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";
       programs.btop.settings.color_theme = variant.btop;
       modules.desktop.walker.colors = variant.walker;
