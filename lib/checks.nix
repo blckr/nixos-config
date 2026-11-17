@@ -45,11 +45,10 @@ let
     lib.attrValues (lib.filterAttrs (name: _: lib.hasSuffix "@work-mac" name) self.homeConfigurations)
   );
   darwinKitFor =
-    systemType: host:
+    systemType: host: user:
     import ../home/programs/kit/package.nix {
-      inherit pkgs lib systemType host;
+      inherit pkgs lib systemType host user;
       platform = "darwin";
-      user = darwinHome.config.home.username;
       flake = "/repo";
       theme = "nord";
       themes = lib.attrNames themes;
@@ -59,8 +58,9 @@ let
         isDarwin = true;
       };
     };
-  darwinKit = darwinKitFor "none" "work-mac";
-  darwinSystemKit = darwinKitFor "darwin" "heron";
+  heronUser = self.darwinConfigurations.heron.config.system.primaryUser;
+  darwinKit = darwinKitFor "none" "work-mac" darwinHome.config.home.username;
+  darwinSystemKit = darwinKitFor "darwin" "heron" heronUser;
 
   themes = import ../home/themes { inherit pkgs; };
   light = linuxHome.specialisation."nord-light".configuration;
@@ -237,7 +237,7 @@ in
     kit=${darwinSystemKit}/bin/kit
     expect "$($kit build system 2>&1)" "/repo#darwinConfigurations.heron.system"
     expect "$($kit switch system 2>&1)" "sudo darwin-rebuild switch --flake /repo#heron"
-    expect "$($kit build home 2>&1)" "/repo#darwinConfigurations.heron.config.home-manager.users.${darwinHome.config.home.username}.home.activationPackage"
+    expect "$($kit build home 2>&1)" "/repo#darwinConfigurations.heron.config.home-manager.users.${heronUser}.home.activationPackage"
     complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${darwinSystemKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
     same "$(complete 'kit switch ')" "home system "
     touch $out

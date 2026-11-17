@@ -84,7 +84,7 @@
         };
         # TODO: set the username of the work Mac
         work-mac = { arch = "aarch64-darwin"; username = "arved"; };
-        heron = { arch = "aarch64-darwin"; username = "arved"; darwinSystem = true; };
+        heron = { arch = "aarch64-darwin"; username = "bloecker"; darwinSystem = true; };
       };
     in
     {
