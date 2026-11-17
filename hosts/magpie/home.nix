@@ -1,5 +1,8 @@
 {
-  imports = [ ./kanshi.nix ];
+  imports = [
+    ./kanshi.nix
+    ./easyeffects.nix
+  ];
 
   modules = {
     desktop.walker.bitwarden.enable = false;

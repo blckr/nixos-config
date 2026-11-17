@@ -43,8 +43,6 @@
     # texliveFull
     zotero
 
-    easyeffects
-
     eog
     evince
     gnome-sound-recorder
