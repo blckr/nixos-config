@@ -125,7 +125,7 @@ let
     };
     # Escape must reach apps unless a search is open (Ghostty's default)
     testDarwinGhosttyReload = {
-      expr = lib.all (h: lib.hasInfix "pkill -USR2" h.xdg.configFile."ghostty/config".onChange) (
+      expr = lib.all (h: lib.hasInfix "reload_config" h.xdg.configFile."ghostty/config".onChange) (
         lib.attrValues darwinSystemHomes ++ map (h: h.config) (lib.attrValues self.homeConfigurations)
       );
       expected = true;

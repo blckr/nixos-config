@@ -30,8 +30,12 @@ in
   xdg.dataFile = wallpapers themes.${settings.theme};
 
   programs.ghostty.package = pkgs.ghostty-bin;
+  # The macOS app ignores SIGUSR2; AppleScript runs the same action as Cmd+Shift+,
   xdg.configFile."ghostty/config".onChange = ''
-    /usr/bin/pkill -USR2 -u "$USER" -x ghostty || true
+    /usr/bin/osascript \
+      -e 'if application "Ghostty" is running then' \
+      -e 'tell application "Ghostty" to perform action "reload_config" on focused terminal of selected tab of front window' \
+      -e 'end if' 2>/dev/null || true
   '';
 
   # fish enables man caches, but there is no man package on the Mac
