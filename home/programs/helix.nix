@@ -26,8 +26,6 @@ in
     ];
 
     settings = {
-      # helix 25.07 cannot follow the terminal's light/dark mode; Linux switches
-      # it per look (home/linux/appearance.nix), the Mac uses the dark variant
       theme = lib.mkDefault theme.dark.helix;
 
       editor = {

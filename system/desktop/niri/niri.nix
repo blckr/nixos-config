@@ -21,33 +21,6 @@ lib.mkIf config.modules.desktop.enable {
   security.pam.services.niri.enableGnomeKeyring = true;
   security.pam.services.login.enableGnomeKeyring = true;
 
-  systemd = {
-    user.timers.niri-display-hz = {
-      wantedBy = [ "graphical-session.target" ];
-      timerConfig = {
-        OnActiveSec = "5s";
-        OnUnitActiveSec = "30s";
-      };
-    };
-
-    user.services.niri-display-hz = {
-      description = "Set display Hz to 60 on battery, 120 on AC";
-      after = [ "graphical-session.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = let
-          script = pkgs.writeShellScript "niri-display-hz" ''
-            if [ "$(cat /sys/class/power_supply/AC/online 2>/dev/null)" = "1" ]; then
-              ${pkgs.niri}/bin/niri msg output "eDP-1" mode 2880x1800@120.000 || true
-            else
-              ${pkgs.niri}/bin/niri msg output "eDP-1" mode 2880x1800@60.000 || true
-            fi
-          '';
-        in "${script}";
-      };
-    };
-  };
-
   nixpkgs.overlays = [ inputs.niri.overlays.niri ];
   niri-flake.cache.enable = false;
 
