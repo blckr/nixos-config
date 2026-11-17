@@ -1,4 +1,3 @@
-# fish completions for kit. Nix fills in the @…@ placeholders at build time.
 complete -c kit -f
 
 set -l commands build switch keys light dark theme help

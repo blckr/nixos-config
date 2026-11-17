@@ -3,13 +3,11 @@
 {
   users.users.${username}.extraGroups = [ "dialout" ];
 
-  # Add udev rules for ESP32 and other development boards
   services.udev.packages = with pkgs; [
     platformio-core
     openocd
   ];
 
-  # Additional udev rules for ESP32 specifically
   services.udev.extraRules = ''
     # ESP32-S2 and ESP32-S3 boards
     SUBSYSTEM=="usb", ATTR{idVendor}=="303a", MODE="0666", GROUP="dialout", ENV{ID_MM_DEVICE_IGNORE}="1"

@@ -1,7 +1,5 @@
-# noctalia palette for Ayu Mirage (noctalia only ships Ayu Dark). Terminal colours
-# are Ghostty's "Ayu Mirage"; the light variant is noctalia's built-in Ayu light.
-# UI roles follow the built-in Ayu palette, mapped to Mirage. Chosen by hand
-# (no Mirage source): tertiary, error, surface variant, outline.
+# noctalia only ships Ayu Dark. Terminal colours from Ghostty's "Ayu Mirage";
+# tertiary, error, surface variant and outline are chosen by hand.
 {
   dark = {
     mPrimary = "#FFCC66";

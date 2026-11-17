@@ -81,7 +81,6 @@ let
       (lib.concatStrings (strings c.binding))
       "${lib.concatStrings (strings c.name)}: ${lib.concatStrings (strings c.command)}"
     ]) (lib.filterAttrs (p: _: lib.hasPrefix "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/" p) dconf);
-  # Browser defaults; Firefox where it is enabled, Chrome on the Mac
   browser =
     name:
     table (

@@ -15,6 +15,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware";
     };
@@ -60,8 +65,8 @@
         inherit self inputs;
       };
 
-      # All machines. arch = "…-darwin" becomes a homeConfiguration (home-manager only),
-      # everything else a nixosConfiguration.
+      # arch = "…-darwin" becomes a homeConfiguration (home-manager only), with darwinSystem = true
+      # a darwinConfiguration; everything else a nixosConfiguration
       hosts = {
         magpie = {
           username = "arved";
@@ -79,11 +84,13 @@
         };
         # TODO: set the username of the work Mac
         work-mac = { arch = "aarch64-darwin"; username = "arved"; };
+        heron = { arch = "aarch64-darwin"; username = "arved"; darwinSystem = true; };
       };
     in
     {
       nixosConfigurations = lib.genHosts hosts;
       homeConfigurations = lib.genHomes hosts;
+      darwinConfigurations = lib.genDarwins hosts;
 
       # Needs the live desktop session, so it is a runnable test, not a flake check
       packages.x86_64-linux.firefox-tabbar-test =

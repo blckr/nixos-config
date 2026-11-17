@@ -1,9 +1,8 @@
-# Values shared by the system (NixOS) and home-manager.
-# Passed to every module as `settings` via specialArgs / extraSpecialArgs.
+# Shared by NixOS and home-manager, passed to every module as `settings`
 {
   wallpaper = ./assets/wallpapers/nordic-outpost.png;
 
-  # Default colour theme, see home/themes.nix
+  # see home/themes
   theme = "nord";
 
   # EurKEY, same as on the Mac: AltGr+a/o/u/s = ä/ö/ü/ß

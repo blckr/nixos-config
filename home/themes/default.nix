@@ -1,13 +1,8 @@
-# Colour themes, each with a dark and a light variant. The default is
-# `settings.theme`; `kit theme NAME` and `kit light|dark` switch at runtime.
 { pkgs }:
 let
   everforest = import ./everforest.nix;
-  # Nordic-Polar keeps the dark Nordic menubar and titlebar (#2b313c). Firefox
-  # paints its vertical tab bar in the GTK menubar colour (with
-  # browser.tabs.inTitlebar = 0), so this copy gives both the light Polar tones.
-  # It has to be part of the theme: GTK reads ~/.config/gtk-3.0/gtk.css only at
-  # startup, a theme switch is applied live.
+  # Nordic-Polar has a dark menubar, and Firefox paints its vertical tab bar in that colour.
+  # Fixed in the theme because gtk.css is only read at startup.
   nordicPolarLight =
     pkgs.runCommand "nordic-polar-light" { } ''
       theme=$out/share/themes/Nordic-Polar-Light
@@ -98,9 +93,7 @@ in
     };
   };
 
-  # ayu-theme-gtk has no GTK4 variant and no Mirage, so GTK4 apps use Adwaita
-  # and GTK3 apps Ayu-Dark.
-  # There is no Ayu Kvantum theme, Qt apps keep Nordic.
+  # ayu-theme-gtk has no GTK4 variant and no Mirage; no Ayu Kvantum theme, Qt keeps Nordic
   ayu = {
     # noctalia only ships Ayu Dark, so Mirage comes from our own palette
     noctalia = {
@@ -109,12 +102,10 @@ in
     };
     noctaliaPalette = import ./ayu-mirage-noctalia.nix;
     dark = {
-      # Ayu Mirage where available. btop's "ayu" is Ayu Dark, TTY uses the
-      # terminal's (Mirage) colours. GTK and noctalia only ship Ayu Dark.
+      # btop's "ayu" is Ayu Dark, TTY uses the terminal's Mirage colours
       ghostty = "Ayu Mirage";
       helix = "ayu_mirage";
       btop = "TTY";
-      # Selection derived from Ayu's selection blue
       walker = {
         bg = "#1f2430";
         fg = "#cccac2";
@@ -184,8 +175,7 @@ in
     };
   };
 
-  # Everforest Medium, as in helix (./everforest.nix). GTK only ships one dark
-  # and one light Everforest. No Kvantum theme, Qt apps keep Nordic.
+  # No Everforest Kvantum theme, Qt apps keep Nordic
   everforest = {
     noctalia = {
       source = "custom";

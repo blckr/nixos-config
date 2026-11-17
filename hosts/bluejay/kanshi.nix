@@ -1,6 +1,4 @@
-# Kanshi defines how displays should be ordered in relation to another.
-#
-# Execute `niri msg outputs` to find the name of the registered screens.
+# Output names: `niri msg outputs`
 {
   username,
   ...
@@ -25,7 +23,6 @@
       }
       {
         profile = {
-          # Laptop screen below external Screen
           name = "home";
           outputs = [
             {
@@ -47,7 +44,6 @@
       }
       {
         profile = {
-          # Laptop screen below external Screen
           name = "lab-pc30";
           outputs = [
             {
@@ -70,7 +66,6 @@
       }
       {
         profile = {
-          # Laptop screen below external Screen
           name = "family";
           outputs = [
             {

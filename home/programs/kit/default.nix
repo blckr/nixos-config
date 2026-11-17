@@ -3,6 +3,7 @@
   lib,
   pkgs,
   hostname,
+  osConfig ? null,
   settings,
   ...
 }:
@@ -27,6 +28,13 @@ in
     modules.kit.package = import ./package.nix {
       inherit pkgs lib;
       platform = if pkgs.stdenv.isDarwin then "darwin" else "linux";
+      systemType =
+        if !pkgs.stdenv.isDarwin then
+          "nixos"
+        else if osConfig != null then
+          "darwin"
+        else
+          "none";
       host = hostname;
       user = config.home.username;
       inherit (cfg) flake;

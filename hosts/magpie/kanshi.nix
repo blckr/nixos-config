@@ -5,11 +5,10 @@
 let
   internalDisplay = {
     criteria = "Lenovo Group Limited 0x414B Unknown";
-    # Fixed refresh rate: switching modes at runtime (e.g. 60 Hz on battery)
-    # triggers a modeset that makes every screen on the MST dock flicker
+    # Fixed rate: a runtime mode switch makes every screen on the dock flicker
     mode = "2880x1800@120.000";
     status = "enable";
-    scale = 1.5; # Per default to 1.5
+    scale = 1.5;
   };
 in
 {

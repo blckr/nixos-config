@@ -1,5 +1,6 @@
 # kit: tool for this configuration. Nix fills in the @…@ placeholders at build time.
 platform="@platform@" # linux | darwin
+systemType="@systemType@" # nixos | darwin | none
 host="@host@"
 user="@user@"
 flake="${KIT_FLAKE:-@flake@}"
@@ -45,19 +46,24 @@ run() {
   fi
 }
 
-needLinux() {
-  [ "$platform" = linux ] || die "'$1' only exists on NixOS; on the Mac use: kit $2 home"
+needSystem() {
+  [ "$systemType" != none ] || die "'$1' needs a system configuration; on this Mac use: kit $2 home"
 }
 
 installable() {
   case "$1" in
-    system) echo "$flake#nixosConfigurations.$host.config.system.build.toplevel" ;;
+    system)
+      case "$systemType" in
+        nixos) echo "$flake#nixosConfigurations.$host.config.system.build.toplevel" ;;
+        darwin) echo "$flake#darwinConfigurations.$host.system" ;;
+      esac
+      ;;
     home)
-      if [ "$platform" = linux ]; then
-        echo "$flake#nixosConfigurations.$host.config.home-manager.users.$user.home.activationPackage"
-      else
-        echo "$flake#homeConfigurations.\"$user@$host\".activationPackage"
-      fi
+      case "$systemType" in
+        nixos) echo "$flake#nixosConfigurations.$host.config.home-manager.users.$user.home.activationPackage" ;;
+        darwin) echo "$flake#darwinConfigurations.$host.config.home-manager.users.$user.home.activationPackage" ;;
+        none) echo "$flake#homeConfigurations.\"$user@$host\".activationPackage" ;;
+      esac
       ;;
   esac
 }
@@ -89,7 +95,7 @@ showDiff() {
 
 build() {
   case "${1:-}" in
-    system) needLinux "build system" build ;;
+    system) needSystem "build system" build ;;
     home) ;;
     *) die "kit build system|home" ;;
   esac
@@ -101,8 +107,12 @@ build() {
 switch() {
   case "${1:-}" in
     system)
-      needLinux "switch system" switch
-      run sudo nixos-rebuild switch --flake "$flake#$host"
+      needSystem "switch system" switch
+      if [ "$systemType" = darwin ]; then
+        run sudo darwin-rebuild switch --flake "$flake#$host"
+      else
+        run sudo nixos-rebuild switch --flake "$flake#$host"
+      fi
       ;;
     home)
       local out
@@ -145,7 +155,6 @@ specFor() {
   fi
 }
 
-# Activates theme $1 in mode $2 and remembers both
 look() {
   local base spec
   base="$(baseGeneration)"

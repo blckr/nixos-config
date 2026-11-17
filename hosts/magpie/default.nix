@@ -1,4 +1,3 @@
-# Custom Settings for each user/pc that might be very individual. It only needs the import of ./hardware-configuration.nix as a bare minimum.
 {
   pkgs,
   pkgs-unstable,
@@ -32,14 +31,14 @@
     bitwarden-desktop
     element-desktop
     freecad
-    fwupd # install Firmware updates
-    marktext # markdown editor
+    fwupd
+    marktext
     nextcloud-client
     obsidian
-    onlyoffice-desktopeditors # microsoft-like text documents
+    onlyoffice-desktopeditors
     qemu
     pkgs-unstable.signal-desktop
-    simple-scan # gnome scanner
+    simple-scan
     spotify
     # texliveFull
     zotero
@@ -76,19 +75,14 @@
     enable32Bit = true;
   };
 
-  # Thinkpad Specific Power Management Features
   # services.thermald.enable = true;
 
-  # Fingerprintreader
   #services.fprintd.enable = true;
 
-  # Enable zramSwap to avoid using a large disk partition.
-  # Since you have ~64GB RAM, capping ZRAM at 25% provides ~16GB of highly compressed swap.
   zramSwap = {
     enable = true;
     memoryPercent = 25;
   };
 
-  # Pin on Linux Version X
   boot.kernelPackages = pkgs.linuxPackages_latest;
 }

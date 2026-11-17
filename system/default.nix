@@ -1,6 +1,6 @@
 {
   imports = [
-    ./development.nix # Can be deleted if not needed
+    ./development.nix
   
     ./home-manager.nix
     ./nix.nix

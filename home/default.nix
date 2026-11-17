@@ -1,5 +1,3 @@
-# Platform-neutral home-manager configuration (Linux and Mac).
-# Platform-specific parts live in ./linux and ./darwin.
 {
   imports = [
     ./apps

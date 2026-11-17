@@ -15,7 +15,6 @@ let
     "light"
   ];
 
-  # Everything that changes with theme and mode
   apply =
     name: mode:
     let

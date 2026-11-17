@@ -1,4 +1,3 @@
-# modules/desktop/xdg-portal.nix
 {
   pkgs,
   lib,
@@ -9,7 +8,6 @@ lib.mkIf config.modules.desktop.enable {
   xdg.portal = {
     enable = true;
 
-    # All backends for every active DE live here — no duplication across modules
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
       pkgs.xdg-desktop-portal-gnome
@@ -32,7 +30,6 @@ lib.mkIf config.modules.desktop.enable {
         "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
       };
 
-      # Neutral fallback for any future DE or unknown session
       common.default = [ "gtk" ];
     };
   };

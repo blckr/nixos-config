@@ -1,4 +1,3 @@
-# This module defines the basic properties of all users.
 {
   pkgs,
   username,
@@ -9,7 +8,7 @@
 {
   users.defaultUserShell = pkgs.fish;
 
-  users.mutableUsers = false; # Allows only hashed Passwords
+  users.mutableUsers = false;
   
   users.users.${username} = {
     isNormalUser = true;

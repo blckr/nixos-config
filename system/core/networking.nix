@@ -27,18 +27,13 @@
     Network = {
       NameResolvingService = "systemd";
     };
-    # Disable scan-based roaming — ath11k (QCNFA765) repeatedly tries to auth
-    # to the 5GHz BSS (+8 BSSID offset) and times out, causing ~75s wakeup
-    # loops. DisableRoamingScan prevents proactive scanning for alternatives.
+    # ath11k keeps trying to roam to the 5 GHz BSS and times out (~75 s wakeup loops)
     Station = {
       DisableRoamingScan = true;
     };
   };
 
-  # ath11k registers the wiphy before wlan0 exists. If iwd starts in that
-  # window it logs "No default interface for wiphy 0" and never picks up
-  # wlan0 until restarted, so wait for the netdev. Wants (not Requires):
-  # if wlan0 never shows up, iwd still starts after the device timeout.
+  # iwd started before wlan0 exists never picks it up ("No default interface for wiphy 0")
   systemd.services.iwd = {
     wants = [ "sys-subsystem-net-devices-wlan0.device" ];
     after = [ "sys-subsystem-net-devices-wlan0.device" ];
@@ -52,10 +47,7 @@
     pkgs.bluetui
   ];
 
-  # iwd (as NM backend) manages the WiFi interface exclusively and implements
-  # its own power save — nl80211 PS via "iw dev wlan0 set power_save on" is
-  # blocked by iwd. PowerTOP's "Wireless Power Saving" warning is a false
-  # positive: iwd's internal PS is active, just not visible to nl80211 queries.
+  # PowerTOP's "Wireless Power Saving" warning is a false positive: iwd does its own power save
 
   hardware.bluetooth = {
     enable = true;
@@ -74,8 +66,7 @@
     };
   };
 
-  # After s2idle suspend/resume the BT adapter can end up soft-blocked.
-  # This ensures it is always powered on after any wakeup.
+  # The adapter can end up soft-blocked after s2idle resume
   systemd.services.bluetooth-resume = {
     description = "Re-enable Bluetooth after resume";
     wantedBy = [ "post-resume.target" ];

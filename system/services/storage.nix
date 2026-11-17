@@ -34,9 +34,9 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
-      ntfs3g      # Windows NTFS
-      exfat       # exFAT
-      dosfstools  # FAT32
+      ntfs3g
+      exfat
+      dosfstools
     ];
   };
 }

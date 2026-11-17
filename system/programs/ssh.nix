@@ -8,7 +8,6 @@
 {
   sops = {
     secrets = {
-      # SSH Keys
       id_github = {
         key = "ssh/github/private-key";
         owner = username;
@@ -50,7 +49,6 @@
         owner = username;
       };
 
-      # SSH Host/User/Port info
       github_hostname = {
         key = "ssh/github/host-name";
       };

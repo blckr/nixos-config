@@ -1,4 +1,3 @@
-# Firefox is a webbrowser
 {
   config,
   lib,
@@ -31,38 +30,30 @@ in
 
         settings = {
           "extensions.activeThemeID" = "default-theme@mozilla.org";
-          # Hide the GTK window buttons
           "browser.tabs.inTitlebar" = 0;
           "browser.compactmode.show" = true;
           "browser.uidensity" = 1;
 
-          # Form autofill
           "browser.formfill.enable" = false;
           "forms.autocomplete.enabled" = false;
           "signon.autofillForms" = false;
 
-          # Password saving
           "signon.rememberSignons" = false;
           "signon.generation.enabled" = false;
 
-          # Form/search history
           "browser.formfill.remember" = false;
           "browser.history.folders.enabled" = false;
 
-          # Vertical tabs (native Firefox sidebar)
           "sidebar.verticalTabs" = true;
           "sidebar.revamp" = true;
           "sidebar.revamp.round-content-area" = true;
 
-          # Other Zen-like defaults (from your original config)
           "extensions.autoDisableScopes" = 0;
           "extensions.pocket.enabled" = false;
 
-          # Spellcheck: German + English
           "layout.spellcheckDefault" = 2; # 0=off, 1=inline, 2=bottom window
           "spellchecker.dictionary" = "de-DE,en-US";
 
-          # Optional: Enable multilingual spellcheck
           "layout.spellcheckDefaultMultilingual" = true;
 
           "widget.wayland.fractional-scale.enabled" = true;

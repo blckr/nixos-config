@@ -1,4 +1,3 @@
-# Git is a tool for verioncontrol
 { lib, pkgs, config, username, ... }:
 
 let

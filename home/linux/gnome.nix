@@ -1,4 +1,3 @@
-# GNOME session: layout, wallpaper and system shortcuts matching niri and the Mac
 { lib, settings, ... }:
 let
   wallpaper = "file://${settings.wallpaper}";
@@ -13,7 +12,7 @@ in
     "org/gnome/desktop/background" = {
       picture-uri = wallpaper;
       picture-uri-dark = wallpaper;
-      picture-options = "zoom"; # entspricht noctalias fill_mode "crop"
+      picture-options = "zoom"; # matches noctalia's fill_mode "crop"
     };
     "org/gnome/desktop/screensaver".picture-uri = wallpaper;
 

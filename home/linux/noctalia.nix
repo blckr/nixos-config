@@ -8,7 +8,6 @@
       enable = true;
 
       settings = {
-        # Shell
         shell = {
           font_family = "Noto Sans";
           settings_show_advanced = true;
@@ -42,7 +41,6 @@
           };
         };
 
-        # Wallpaper
         wallpaper = {
           enabled = true;
           fill_mode = "crop";
@@ -66,44 +64,37 @@
           };
         };
 
-        # Notification
         notification = {
           enable_daemon = true;
           layer = "overlay";
           background_opacity = 1.0;
         };
 
-        # OSD
         osd = {
           position = "top_right";
           background_opacity = 1.0;
         };
 
-        # Lock Screen
         lockscreen = {
           blurred_desktop = false;
           blur_intensity = 0.0;
           tint_intensity = 0.0;
         };
 
-        # Audio
         audio = {
           enable_overdrive = false;
           enable_sounds = false;
           sound_volume = 0.5;
         };
 
-        # Battery
         battery = {
           warning_threshold = 30;
         };
 
-        # Brightness
         brightness = {
           enable_ddcutil = false;
         };
 
-        # Night Light
         nightlight = {
           enabled = false;
           force = false;
@@ -111,17 +102,14 @@
           temperature_night = 4000;
         };
 
-        # Location
         location = {
           auto_locate = true;
         };
 
-        # Calendar
         calendar = {
           enabled = true;
         };
 
-        # Idle
         idle = {
           pre_action_fade_seconds = 30;
           behavior = {
@@ -144,7 +132,6 @@
           };
         };
 
-        # Keybinds
         keybinds = {
           validate = [
             "return"
@@ -157,7 +144,6 @@
           down = [ "down" ];
         };
 
-        # Bar
         bar = {
           main = {
             position = "bottom";
@@ -189,7 +175,6 @@
           };
         };
 
-        # Dock
         dock = {
           enabled = false;
           position = "bottom";
@@ -199,12 +184,10 @@
           margin_edge = 8;
         };
 
-        # Desktop Widgets
         desktop_widgets = {
           enabled = false;
         };
 
-        # Control Center
         control_center = {
           shortcuts = [
             { type = "wifi"; }
@@ -214,7 +197,6 @@
           ];
         };
 
-        # Widgets
         widget = {
           clock = {
             type = "clock";
@@ -281,7 +263,6 @@
           };
         };
 
-        # Theme
         # palette and mode are set in ./appearance.nix
         theme = {
           templates = {

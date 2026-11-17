@@ -10,14 +10,12 @@ in
   config = lib.mkIf cfg.enable {
     boot.kernelParams = [
       "amdgpu.abmlevel=0"
-      # rtc_cmos.use_acpi_alarm=1 already set in boot.nix — not duplicated here
     ];
 
     # Load amdgpu in stage 1 so Plymouth starts on the real driver. Otherwise
     # amdgpu takes over from simpledrm ~11s into boot and the screen blanks.
     hardware.amdgpu.initrd.enable = true;
 
-    # Disable wakeup sources that cause accidental wakeups on Lenovo ThinkPads
     systemd.services.disable-wakeup-devices = {
       description = "Disable problematic ACPI and NIC wakeup sources";
       wantedBy = [ "multi-user.target" ];

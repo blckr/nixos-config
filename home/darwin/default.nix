@@ -1,5 +1,4 @@
-# Mac only (standalone home-manager on the work laptop).
-# Deliberately small: no system changes, only files in ~.
+# Mac: standalone home-manager or through nix-darwin
 {
   lib,
   pkgs,
@@ -10,8 +9,7 @@ let
   themes = import ../themes { inherit pkgs; };
 in
 {
-  # Only Ghostty, btop and helix are themed here; Ghostty follows the macOS appearance.
-  # `kit theme NAME` activates the specialisation NAME.
+  # Only Ghostty, btop and helix are themed; Ghostty follows the macOS appearance
   specialisation = lib.mapAttrs (_: theme: {
     configuration.programs = {
       ghostty.settings.theme = lib.mkForce "light:${theme.light.ghostty},dark:${theme.dark.ghostty}";

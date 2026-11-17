@@ -1,4 +1,3 @@
-# BTOP is a modern system monitor
 {
   lib,
   pkgs,

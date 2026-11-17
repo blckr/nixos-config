@@ -1,4 +1,3 @@
-# Custom Settings for each user/pc that might be very individual. It only needs the import of ./hardware-configuration.nix as a bare minimum.
 {
   pkgs,
   username,
@@ -27,14 +26,14 @@
     ausweisapp
     bitwarden-desktop
     element-desktop
-    fwupd # install Firmware updates
-    marktext # markdown editor
+    fwupd
+    marktext
     nextcloud-client
     obsidian
-    onlyoffice-desktopeditors # microsoft-like text documents
+    onlyoffice-desktopeditors
     qemu
     signal-desktop
-    simple-scan # gnome scanner
+    simple-scan
     spotify
     # texliveFull
     vscode
@@ -62,15 +61,11 @@
   programs.ausweisapp.enable = true;
   programs.ausweisapp.openFirewall = true;
 
-  # Thinkpad Specific Power Management Features
   services.thermald.enable = true;
 
-  # AMD GPU Power Management
   hardware.amdgpu.opencl.enable = true;
 
-  # Fingerprintreader
   #services.fprintd.enable = true;
 
-  # Pin on Linux Version X
   boot.kernelPackages = pkgs.linuxPackages_6_18;
 }

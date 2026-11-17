@@ -1,4 +1,3 @@
-# Setting for the shell
 {
   ...
 }:

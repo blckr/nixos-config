@@ -18,7 +18,6 @@
     };
   };
 
-  # Enable Sops and Sops-Connected Modules
   secrets.enable = true;
   sops = {
     gitConfig.enable = true;

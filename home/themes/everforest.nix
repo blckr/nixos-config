@@ -1,7 +1,5 @@
-# Everforest Medium, taken from helix's everforest_dark / everforest_light palettes.
-# Ghostty only ships Dark Hard and Light Med, so its themes are defined here: the
-# 16 terminal colours are Ghostty's (accents are the same in every Everforest
-# contrast), backgrounds and selection come from the helix palette.
+# Everforest Medium from helix's palettes. Ghostty only ships Dark Hard and Light Med,
+# so its themes use Ghostty's 16 colours with helix backgrounds.
 let
   ansi = {
     dark = [

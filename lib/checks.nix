@@ -20,14 +20,19 @@ let
         ) settings
       )
     );
-  darwinGhostty = lib.mapAttrsToList (
-    name: home: renderGhostty name home.config.programs.ghostty.settings
-  ) self.homeConfigurations;
+  darwinSystemHomes = lib.concatMapAttrs (
+    host: system:
+    lib.mapAttrs' (user: home: lib.nameValuePair "${user}@${host}" home) system.config.home-manager.users
+  ) self.darwinConfigurations;
+  darwinGhostty =
+    lib.mapAttrsToList (name: home: renderGhostty name home.config.programs.ghostty.settings) self.homeConfigurations
+    ++ lib.mapAttrsToList (name: home: renderGhostty name home.programs.ghostty.settings) darwinSystemHomes;
 
   # Mac configurations must fully evaluate on Linux
-  darwinDrvs = lib.mapAttrsToList (
-    name: home: "${name}: ${builtins.unsafeDiscardStringContext home.activationPackage.drvPath}"
-  ) self.homeConfigurations;
+  drvLine = name: drv: "${name}: ${builtins.unsafeDiscardStringContext drv.drvPath}";
+  darwinDrvs =
+    lib.mapAttrsToList (name: home: drvLine name home.activationPackage) self.homeConfigurations
+    ++ lib.mapAttrsToList (name: system: drvLine name system.system) self.darwinConfigurations;
 
   linuxGhostty = self.nixosConfigurations.magpie.config.home-manager.users.arved.xdg.configFile."ghostty/config".source;
 
@@ -36,21 +41,26 @@ let
   niriConfig = pkgs.writeText "niri.kdl" linuxHome.home.file.".config/niri/config.kdl".text;
 
   # The Mac variant of kit, built with Linux pkgs so its logic can run here
-  darwinHome = lib.head (lib.attrValues self.homeConfigurations);
-  darwinKit = import ../home/programs/kit/package.nix {
-    inherit pkgs lib;
-    platform = "darwin";
-    host = "work-mac";
-    user = darwinHome.config.home.username;
-    flake = "/repo";
-    theme = "nord";
-    themes = lib.attrNames themes;
-    keys = import ../home/programs/kit/keys.nix {
-      inherit lib;
-      config = darwinHome.config;
-      isDarwin = true;
+  darwinHome = lib.head (
+    lib.attrValues (lib.filterAttrs (name: _: lib.hasSuffix "@work-mac" name) self.homeConfigurations)
+  );
+  darwinKitFor =
+    systemType: host:
+    import ../home/programs/kit/package.nix {
+      inherit pkgs lib systemType host;
+      platform = "darwin";
+      user = darwinHome.config.home.username;
+      flake = "/repo";
+      theme = "nord";
+      themes = lib.attrNames themes;
+      keys = import ../home/programs/kit/keys.nix {
+        inherit lib;
+        config = darwinHome.config;
+        isDarwin = true;
+      };
     };
-  };
+  darwinKit = darwinKitFor "none" "work-mac";
+  darwinSystemKit = darwinKitFor "darwin" "heron";
 
   themes = import ../home/themes { inherit pkgs; };
   light = linuxHome.specialisation."nord-light".configuration;
@@ -79,8 +89,6 @@ let
       expr = light.programs.noctalia.settings.theme.mode;
       expected = "light";
     };
-    # Firefox paints its vertical tab bar in the GTK menubar colour; fixes must
-    # live in the theme (applied live), not in gtk.css (read only at startup)
     # home-manager validates custom Ghostty themes with an unquoted path, so a
     # space in the name breaks the whole activation
     testGhosttyThemeNamesWithoutSpaces = {
@@ -196,7 +204,6 @@ in
     [ "$($kit keys firefox | wc -l)" -eq ${toString (lib.length (lib.filter (b: b.firefox != null) browserKeys))} ] || { echo "firefox keys incomplete"; exit 1; }
     $kit keys firefox | grep -q "^Ctrl+Shift+O  *Bookmark manager$"
 
-    # fish completions
     complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${linuxKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
     same() { [ "$1" = "$2" ] || { echo "expected '$2', got '$1'"; exit 1; }; }
     same "$(complete 'kit ')" "build dark help keys light switch theme "
@@ -226,6 +233,13 @@ in
     same() { [ "$1" = "$2" ] || { echo "expected '$2', got '$1'"; exit 1; }; }
     same "$(complete 'kit switch ')" "home "
     same "$(complete 'kit keys ')" "chrome ghostty "
+
+    kit=${darwinSystemKit}/bin/kit
+    expect "$($kit build system 2>&1)" "/repo#darwinConfigurations.heron.system"
+    expect "$($kit switch system 2>&1)" "sudo darwin-rebuild switch --flake /repo#heron"
+    expect "$($kit build home 2>&1)" "/repo#darwinConfigurations.heron.config.home-manager.users.${darwinHome.config.home.username}.home.activationPackage"
+    complete() { HOME=$TMPDIR ${pkgs.fish}/bin/fish --no-config -c "source ${darwinSystemKit}/share/fish/vendor_completions.d/kit.fish; complete --do-complete '$1'" | cut -f1 | sort | tr '\n' ' '; }
+    same "$(complete 'kit switch ')" "home system "
     touch $out
   '';
 
