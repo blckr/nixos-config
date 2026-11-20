@@ -1,5 +1,6 @@
 # Mac: standalone home-manager or through nix-darwin
 {
+  config,
   lib,
   pkgs,
   settings,
@@ -33,6 +34,15 @@ in
   xdg.dataFile = wallpapers themes.${settings.theme};
 
   programs.ghostty.package = pkgs.ghostty-bin;
+  # The macOS login shell stays zsh; on NixOS fish is the default user shell
+  programs.ghostty.settings.command = lib.getExe config.programs.fish.package;
+
+  # On NixOS this comes from system/programs/shell.nix
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    silent = true;
+  };
   # Reloaded by kit (reloadGhostty), the macOS app ignores SIGUSR2
 
   # fish enables man caches, but there is no man package on the Mac
