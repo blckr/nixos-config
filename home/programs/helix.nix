@@ -19,6 +19,7 @@ in
     extraPackages = with pkgs; [
       nil
       nixd
+      nixfmt
       rust-analyzer
       clang-tools
       gopls

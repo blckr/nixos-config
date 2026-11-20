@@ -188,6 +188,28 @@ in
 
   darwin-eval = pkgs.writeText "darwin-eval" (lib.concatLines darwinDrvs);
 
+  # The programming environment must be the same on NixOS and both Macs
+  dev-env =
+    let
+      homes = {
+        linux = linuxHome;
+        work-mac = darwinHome.config;
+        heron = self.darwinConfigurations.heron.config.home-manager.users.${heronUser};
+      };
+      has = cfg: name: lib.any (p: (p.pname or "") == name) cfg.home.packages;
+      check =
+        host: cfg:
+        assert lib.assertMsg cfg.programs.direnv.nix-direnv.enable "${host}: nix-direnv";
+        assert lib.assertMsg (lib.hasInfix "direnv hook fish"
+          cfg.programs.fish.interactiveShellInit
+        ) "${host}: direnv fish hook";
+        assert lib.assertMsg (cfg.programs.git.settings.core.editor == "hx") "${host}: git editor";
+        assert lib.assertMsg (lib.any (p: (p.pname or "") == "nixfmt") cfg.programs.helix.extraPackages) "${host}: nixfmt";
+        assert lib.assertMsg (has cfg "lazygit") "${host}: lazygit";
+        host;
+    in
+    pkgs.writeText "dev-env" (lib.concatLines (lib.mapAttrsToList check homes));
+
   kit-linux = pkgs.runCommand "kit-linux" { } ''
     export HOME=$TMPDIR XDG_STATE_HOME=$TMPDIR/state KIT_DRY_RUN=1 KIT_FLAKE=/repo
     kit=${linuxKit}/bin/kit

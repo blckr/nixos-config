@@ -42,7 +42,6 @@ in
   };
 
   programs.fish = {
-    enable = true;
     # interactiveShellInit = ''
     #   if status is-interactive
     #     eval (zellij setup --generate-auto-start fish)

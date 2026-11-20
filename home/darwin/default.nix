@@ -36,13 +36,6 @@ in
   programs.ghostty.package = pkgs.ghostty-bin;
   # The macOS login shell stays zsh; on NixOS fish is the default user shell
   programs.ghostty.settings.command = lib.getExe config.programs.fish.package;
-
-  # On NixOS this comes from system/programs/shell.nix
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    silent = true;
-  };
   # Reloaded by kit (reloadGhostty), the macOS app ignores SIGUSR2
 
   # fish enables man caches, but there is no man package on the Mac
@@ -51,14 +44,5 @@ in
   programs.helix.settings.keys.normal.space.t = ":sh open -na Ghostty";
 
   # Identity (name, work email) lives locally in ~/.gitconfig.local, not in the repo
-  programs.git = {
-    enable = true;
-    includes = [ { path = "~/.gitconfig.local"; } ];
-    settings = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-      core.editor = "hx";
-    };
-  };
+  programs.git.includes = [ { path = "~/.gitconfig.local"; } ];
 }
